@@ -1,0 +1,660 @@
+/* Design Tokens */
+:root {
+  --navy: #1B2A4A;
+  --navy-light: #2A3F6B;
+  --cream: #FAF8F5;
+  --white: #FFFFFF;
+  --red-muted: #C4483E;
+  --blue-muted: #3B6FA0;
+  --gold: #D4A843;
+  --star-silver: #A8B4C4;
+  --success: #4A8C6F;
+  --text-primary: #1A1A2E;
+  --text-secondary: #5A6577;
+  --border-color: #E2E8F0;
+  --shadow-subtle: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+}
+
+/* Reset and Globals */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif !important;
+  background-color: var(--cream) !important;
+  color: var(--text-primary) !important;
+  font-size: 15px !important;
+  line-height: 1.6 !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Layout Container */
+.content-container {
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 24px 16px !important;
+}
+
+/* Patriotic Title Banner Header */
+.patriotic-header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%) !important;
+  color: var(--white) !important;
+  text-align: center !important;
+  padding: 40px 20px !important;
+  position: relative !important;
+  box-shadow: var(--shadow-medium) !important;
+}
+
+.header-seal {
+  font-size: 24px !important;
+  color: var(--gold) !important;
+  margin-bottom: 8px !important;
+  letter-spacing: 6px !important;
+}
+
+.patriotic-header h1 {
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  margin-bottom: 8px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+}
+
+.patriotic-header h2 {
+  font-size: 18px !important;
+  font-weight: 500 !important;
+  color: var(--star-silver) !important;
+  margin-bottom: 4px !important;
+}
+
+.patriotic-header h3 {
+  font-size: 16px !important;
+  font-weight: 400 !important;
+  color: var(--gold) !important;
+  letter-spacing: 2px !important;
+}
+
+/* Stripes Divider */
+.patriotic-stripes {
+  display: flex !important;
+  height: 6px !important;
+  width: 100% !important;
+}
+
+.stripe {
+  flex: 1 !important;
+}
+.stripe-red { background-color: var(--red-muted) !important; }
+.stripe-white { background-color: var(--white) !important; }
+.stripe-blue { background-color: var(--blue-muted) !important; }
+
+/* Stat Grid - Hero Cards */
+.stat-grid {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+  margin-top: 24px !important;
+  margin-bottom: 24px !important;
+}
+
+.stat-card {
+  flex: 1 1 240px !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 20px !important;
+  border-radius: 12px !important;
+  border: 1px solid var(--border-color) !important;
+  box-shadow: var(--shadow-subtle) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: var(--shadow-medium) !important;
+}
+
+.glass-card {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.stat-icon {
+  font-size: 32px !important;
+  margin-right: 16px !important;
+}
+
+.stat-info {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.stat-label {
+  font-size: 14px !important;
+  color: var(--text-secondary) !important;
+  font-weight: 500 !important;
+}
+
+.stat-value {
+  font-size: 26px !important;
+  color: var(--navy) !important;
+  font-weight: 700 !important;
+}
+
+/* Party Turnout Overview Cards */
+.party-container {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 16px !important;
+  margin-bottom: 32px !important;
+}
+
+.party-card {
+  flex: 1 1 300px !important;
+  background-color: var(--white) !important;
+  border-radius: 12px !important;
+  border: 1px solid var(--border-color) !important;
+  padding: 24px !important;
+  box-shadow: var(--shadow-subtle) !important;
+  transition: transform 0.2s ease !important;
+}
+
+.party-card:hover {
+  transform: translateY(-2px) !important;
+}
+
+.party-card-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 16px !important;
+}
+
+.party-card-header h3 {
+  font-size: 16px !important;
+  color: var(--text-primary) !important;
+  font-weight: 600 !important;
+}
+
+.party-badge {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  padding: 4px 8px !important;
+  border-radius: 4px !important;
+}
+
+.rep-theme { border-top: 5px solid var(--red-muted) !important; }
+.rep-theme .party-badge { background-color: rgba(196, 72, 62, 0.1) !important; color: var(--red-muted) !important; }
+.rep-theme .progress-bar { background-color: var(--red-muted) !important; }
+
+.dem-theme { border-top: 5px solid var(--blue-muted) !important; }
+.dem-theme .party-badge { background-color: rgba(59, 111, 160, 0.1) !important; color: var(--blue-muted) !important; }
+.dem-theme .progress-bar { background-color: var(--blue-muted) !important; }
+
+.gen-theme { border-top: 5px solid var(--gold) !important; }
+.gen-theme .party-badge { background-color: rgba(212, 168, 67, 0.1) !important; color: var(--gold) !important; }
+.gen-theme .progress-bar { background-color: var(--gold) !important; }
+
+.party-num-display {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: baseline !important;
+  margin-bottom: 12px !important;
+}
+
+.party-count {
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  color: var(--navy) !important;
+}
+
+.party-pct {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+
+.progress-bar-container {
+  height: 8px !important;
+  background-color: #EDF2F7 !important;
+  border-radius: 4px !important;
+  overflow: hidden !important;
+}
+
+.progress-bar {
+  height: 100% !important;
+  width: 0%;
+  border-radius: 4px !important;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Turnout Details Table Section */
+.table-section {
+  background-color: var(--white) !important;
+  border-radius: 12px !important;
+  border: 1px solid var(--border-color) !important;
+  padding: 24px !important;
+  box-shadow: var(--shadow-subtle) !important;
+  margin-bottom: 32px !important;
+}
+
+.table-header-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 20px !important;
+  flex-wrap: wrap !important;
+  gap: 12px !important;
+}
+
+.table-header-row h2 {
+  font-size: 18px !important;
+  color: var(--navy) !important;
+  font-weight: 700 !important;
+}
+
+/* Export Button Sizing & Style */
+.export-btn {
+  background-color: var(--navy) !important;
+  color: var(--white) !important;
+  border: none !important;
+  border-radius: 6px !important;
+  padding: 12px 24px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  transition: background-color 0.2s ease, transform 0.1s ease !important;
+}
+
+.export-btn:hover {
+  background-color: var(--navy-light) !important;
+}
+
+.export-btn:active {
+  transform: scale(0.98) !important;
+}
+
+/* Table Design with scroll wrapper & sticky date */
+.table-scroll-wrapper {
+  overflow-x: auto !important;
+  width: 100% !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 8px !important;
+}
+
+.turnout-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  text-align: left !important;
+  font-size: 14px !important;
+}
+
+.turnout-table th, 
+.turnout-table td {
+  padding: 12px 16px !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+.turnout-table th {
+  background-color: #F7FAFC !important;
+  color: var(--navy) !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  font-size: 12px !important;
+  letter-spacing: 0.5px !important;
+}
+
+/* Sticky first column */
+.sticky-col {
+  position: sticky !important;
+  left: 0 !important;
+  background-color: #F7FAFC !important;
+  z-index: 2 !important;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.04) !important;
+  white-space: nowrap !important;
+}
+
+.turnout-table tbody td.sticky-col {
+  background-color: var(--white) !important;
+  font-weight: 600 !important;
+  color: var(--navy) !important;
+}
+
+.turnout-table tbody tr:nth-child(even) td {
+  background-color: #F8FAFC !important;
+}
+.turnout-table tbody tr:nth-child(even) td.sticky-col {
+  background-color: #F8FAFC !important;
+}
+
+.turnout-table tbody tr:hover td {
+  background-color: #EDF2F7 !important;
+}
+
+/* Expanded Detail Section Row */
+.details-row td {
+  padding: 0 !important;
+  background-color: #F7FAFC !important;
+}
+
+.details-wrapper {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.details-wrapper.expanded {
+  max-height: 1000px;
+}
+
+.details-container {
+  padding: 20px 24px !important;
+  border-left: 4px solid var(--gold) !important;
+  background-color: #F7FAFC !important;
+}
+
+.details-container h4 {
+  font-size: 14px !important;
+  color: var(--navy) !important;
+  margin-bottom: 12px !important;
+  font-weight: 600 !important;
+}
+
+.mini-details-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  font-size: 13px !important;
+  background-color: var(--white) !important;
+  border-radius: 6px !important;
+  overflow: hidden !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+.mini-details-table th,
+.mini-details-table td {
+  padding: 8px 12px !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+.mini-details-table th {
+  background-color: #EDF2F7 !important;
+  font-weight: 600 !important;
+}
+
+.stacked-bar-container {
+  display: flex !important;
+  height: 20px !important;
+  border-radius: 4px !important;
+  overflow: hidden !important;
+  width: 100% !important;
+  background-color: #E2E8F0 !important;
+}
+
+.stacked-bar-segment {
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  color: var(--white) !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+}
+
+.stacked-bar-segment.gen-seg {
+  color: var(--navy) !important;
+}
+
+.share-cell-content {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  min-width: 120px !important;
+}
+
+.share-text-legend {
+  display: flex !important;
+  justify-content: space-between !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  color: var(--text-secondary) !important;
+  padding: 0 2px !important;
+}
+
+.share-legend-item {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+}
+
+.legend-dot {
+  display: inline-block !important;
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+}
+
+/* Row Details Toggle Button */
+.detail-toggle-btn {
+  background: none !important;
+  border: none !important;
+  color: var(--blue-muted) !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  padding: 6px 12px !important;
+  border-radius: 4px !important;
+  transition: background-color 0.2s !important;
+}
+
+.detail-toggle-btn:hover {
+  background-color: rgba(59, 111, 160, 0.1) !important;
+}
+
+.detail-arrow {
+  display: inline-block !important;
+  transition: transform 0.2s ease !important;
+}
+
+.detail-arrow.rotated {
+  transform: rotate(90deg) !important;
+}
+
+/* styled badges */
+.na-badge {
+  background-color: #E2E8F0 !important;
+  color: var(--text-secondary) !important;
+  padding: 2px 6px !important;
+  border-radius: 4px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  display: inline-block !important;
+}
+
+.totals-row td {
+  font-weight: 700 !important;
+  color: var(--navy) !important;
+  background-color: #EDF2F7 !important;
+}
+
+.totals-row td.sticky-col {
+  background-color: #EDF2F7 !important;
+}
+
+/* Visualizations - Physical columns */
+.visualization-layout {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 24px !important;
+  margin-top: 16px !important;
+}
+
+.vis-column-left {
+  flex: 1 1 500px !important;
+}
+
+.vis-column-right {
+  flex: 1 1 500px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 24px !important;
+}
+
+.card-surface {
+  background-color: var(--white) !important;
+  border-radius: 12px !important;
+  border: 1px solid var(--border-color) !important;
+  padding: 24px !important;
+  box-shadow: var(--shadow-subtle) !important;
+}
+
+.chart-container h3 {
+  font-size: 16px !important;
+  color: var(--navy) !important;
+  margin-bottom: 16px !important;
+  font-weight: 600 !important;
+}
+
+.chart-wrapper {
+  position: relative !important;
+  width: 100% !important;
+  height: 320px !important;
+}
+
+/* Patriotic Footer */
+.patriotic-footer {
+  background-color: var(--navy) !important;
+  color: var(--white) !important;
+  padding: 32px 20px !important;
+  text-align: center !important;
+  margin-top: 48px !important;
+  font-size: 13px !important;
+}
+
+.footer-container {
+  max-width: 800px !important;
+  margin: 0 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+
+.warning-symbol {
+  font-size: 24px !important;
+}
+
+.patriotic-footer p {
+  color: var(--star-silver) !important;
+  line-height: 1.5 !important;
+}
+
+/* CSS text-wrapping and orphans */
+.text-nowrap {
+  white-space: nowrap !important;
+}
+
+/* Current Election Highlighting */
+.current-election-row td {
+  background-color: rgba(27, 42, 74, 0.05) !important;
+  font-weight: 600 !important;
+}
+
+.current-election-row td.sticky-col {
+  background-color: #F0F4F8 !important;
+  border-left: 4px solid var(--navy) !important;
+}
+
+/* Print CSS Stylesheet */
+@media print {
+  body {
+    background-color: var(--white) !important;
+    color: #000000 !important;
+    font-size: 14px !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  .content-container {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+  
+  .patriotic-header {
+    background: linear-gradient(to right, #1B2A4A, #2A3F6B) !important;
+    color: var(--white) !important;
+    padding: 20px !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  .stat-card,
+  .party-card,
+  .card-surface,
+  .turnout-table th {
+    border: 1px solid #000000 !important;
+    box-shadow: none !important;
+    background-color: var(--white) !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+  
+  .export-btn, 
+  .detail-toggle-btn {
+    display: none !important;
+  }
+  
+  .table-scroll-wrapper {
+    overflow-x: visible !important;
+    border: none !important;
+  }
+  
+  .sticky-col {
+    position: static !important;
+    box-shadow: none !important;
+    background-color: var(--white) !important;
+  }
+  
+  .turnout-table tbody td.sticky-col {
+    background-color: var(--white) !important;
+  }
+  
+  .details-row {
+    display: none !important;
+  }
+  
+  .visualization-layout {
+    display: block !important;
+  }
+  
+  .vis-column-left,
+  .vis-column-right {
+    width: 100% !important;
+    display: block !important;
+  }
+  
+  .chart-container {
+    margin-bottom: 20px !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+  
+  .stripe {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  
+  * {
+    font-size: max(14px, inherit) !important;
+  }
+}

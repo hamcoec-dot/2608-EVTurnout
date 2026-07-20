@@ -1,0 +1,20 @@
+{
+  "electionTitle": "Hamilton TN Early Voting & Absentee Daily Turnout Report",
+  "electionName": "State & Federal Primary and County General",
+  "electionDate": "August 6th, 2026",
+  "totalRegisteredVoters": 218764,
+  "earlyVotingStartDate": "2026-07-17",
+  "earlyVotingEndDate": "2026-08-01",
+  "holidays": [],
+  "pastElections": {
+    "2024": {
+      "totalRegisteredVoters": 231431
+    },
+    "2022": {
+      "totalRegisteredVoters": 235853
+    },
+    "2018": {
+      "totalRegisteredVoters": 197052
+    }
+  }
+}

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hamilton County TN - Early Voting &amp; Absentee Turnout Report</title>
+  <meta name="description" content="Official daily turnout metrics for the State &amp; Federal Primary and County General election in Hamilton County, TN.">
+  <link rel="stylesheet" href="index.css">
+  <!-- Load Inter font from Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <!-- Load Chart.js and DataLabels plugin from CDNs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+</head>
+<body onload="initApp()">
+
+  <!-- Patriotic Title Banner Header -->
+  <header class="patriotic-header">
+    <div class="header-container">
+      <div class="header-seal" aria-hidden="true">&#x2605;&#x2605;&#x2605;</div>
+      <h1 id="main-report-title">Hamilton County TN Turnout Report</h1>
+      <h2 id="sub-election-name">State &amp; Federal Primary and County General</h2>
+      <h3 id="sub-election-date">August 6th, 2026</h3>
+    </div>
+  </header>
+  
+  <!-- Red, White, and Blue Stripe Divider Bar -->
+  <div class="patriotic-stripes" aria-hidden="true">
+    <div class="stripe stripe-red"></div>
+    <div class="stripe stripe-white"></div>
+    <div class="stripe stripe-blue"></div>
+  </div>
+
+  <main class="content-container">
+
+    <!-- Hero Stat Cards (Flex Grid) -->
+    <section class="stat-grid" aria-label="Key Election Statistics">
+      <div class="stat-card glass-card">
+        <div class="stat-icon" aria-hidden="true">&#x1F5F3;&#xFE0F;</div>
+        <div class="stat-info">
+          <span class="stat-label">Grand Total Turnout</span>
+          <strong class="stat-value" id="stat-grand-total">0</strong>
+        </div>
+      </div>
+      
+      <div class="stat-card glass-card">
+        <div class="stat-icon" aria-hidden="true">&#x1F464;</div>
+        <div class="stat-info">
+          <span class="stat-label">Registered Voters</span>
+          <strong class="stat-value" id="stat-registered">0</strong>
+        </div>
+      </div>
+      
+      <div class="stat-card glass-card">
+        <div class="stat-icon" aria-hidden="true">&#x1F4C8;</div>
+        <div class="stat-info">
+          <span class="stat-label">Percentage Turnout</span>
+          <strong class="stat-value" id="stat-percent">0.00%</strong>
+        </div>
+      </div>
+      
+      <div class="stat-card glass-card">
+        <div class="stat-icon" aria-hidden="true">&#x23F3;</div>
+        <div class="stat-info">
+          <span class="stat-label">Days of EV Remaining</span>
+          <strong class="stat-value" id="stat-days-left">0</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- Party Turnout Section -->
+    <section class="party-container" aria-label="Turnout by Party Groupings">
+      <div class="party-card rep-theme">
+        <div class="party-card-header">
+          <h3>Republican Primary</h3>
+          <span class="party-badge">GOP</span>
+        </div>
+        <div class="party-num-display">
+          <span class="party-count" id="rep-count">0</span>
+          <span class="party-pct" id="rep-pct">0.0%</span>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="rep-progress" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <div class="party-card dem-theme">
+        <div class="party-card-header">
+          <h3>Democrat Primary</h3>
+          <span class="party-badge">DEM</span>
+        </div>
+        <div class="party-num-display">
+          <span class="party-count" id="dem-count">0</span>
+          <span class="party-pct" id="dem-pct">0.0%</span>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="dem-progress" style="width: 0%;"></div>
+        </div>
+      </div>
+
+      <div class="party-card gen-theme">
+        <div class="party-card-header">
+          <h3>General Election</h3>
+          <span class="party-badge">GEN</span>
+        </div>
+        <div class="party-num-display">
+          <span class="party-count" id="gen-count">0</span>
+          <span class="party-pct" id="gen-pct">0.0%</span>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="gen-progress" style="width: 0%;"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Turnout Details Table Section -->
+    <section class="table-section" aria-label="Daily Turnout Breakdown by Location">
+      <div class="table-header-row">
+        <h2>Daily Turnout Breakdown</h2>
+        <!-- Accessible CSV Export Button -->
+        <button type="button" class="export-btn" id="btn-export-csv" onclick="exportToCSV()" aria-label="Export turnout data to CSV file">
+          <span class="btn-icon" aria-hidden="true">&#x1F4E5;</span> Export CSV
+        </button>
+      </div>
+
+      <!-- Scroll Wrapper for responsive table behavior -->
+      <div class="table-scroll-wrapper">
+        <table class="turnout-table" id="data-turnout-table">
+          <thead>
+            <tr id="table-headers">
+              <th scope="col" class="sticky-col">Date</th>
+              <!-- Dynamically populated headers -->
+            </tr>
+          </thead>
+          <tbody id="table-body">
+            <!-- Dynamically populated turnout rows -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Historical Comparison Table Section -->
+    <section class="table-section" aria-label="Historical Turnout Comparison">
+      <div class="table-header-row">
+        <h2>Historical Turnout Comparison (August Elections)</h2>
+      </div>
+      
+      <div class="table-scroll-wrapper">
+        <table class="turnout-table" id="comparison-table">
+          <thead>
+            <tr>
+              <th scope="col" class="sticky-col">Election Year</th>
+              <th scope="col">Early Voting</th>
+              <th scope="col">Absentee/Mail</th>
+              <th scope="col">Grand Total</th>
+              <th scope="col">Registered Voters</th>
+              <th scope="col">Turnout Rate</th>
+              <th scope="col">Republican share</th>
+              <th scope="col">Democrat share</th>
+              <th scope="col">General share</th>
+            </tr>
+          </thead>
+          <tbody id="comparison-table-body">
+            <!-- Dynamically populated comparison rows -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Visualizations Layout (Physical Columns for screen readers) -->
+    <section class="visualization-layout" aria-label="Turnout Visualizations">
+      <div class="vis-column-left">
+        <div class="chart-container card-surface">
+          <h3>Cumulative Turnout Progression (vs. Past Cycles)</h3>
+          <div class="chart-wrapper">
+            <canvas id="cumulativeChart"></canvas>
+          </div>
+        </div>
+      </div>
+      
+      <div class="vis-column-right">
+        <div class="chart-container card-surface">
+          <h3>Turnout by Location</h3>
+          <div class="chart-wrapper">
+            <canvas id="locationChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="chart-container card-surface">
+          <h3>Primary Election Distribution</h3>
+          <div class="chart-wrapper">
+            <canvas id="partyDistributionChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer Disclaimer -->
+  <footer class="patriotic-footer">
+    <div class="footer-container">
+      <div class="warning-symbol" aria-hidden="true">&#x26A0;&#xFE0F;</div>
+      <p id="disclaimer-text">*All totals are unofficial and are subject to verification and certification by the Hamilton County Election Commission.</p>
+    </div>
+  </footer>
+
+  <!-- Load generated data first -->
+  <script src="data.js"></script>
+  <!-- Load application rendering logic -->
+  <script src="app.js"></script>
+</body>
+</html>
