@@ -7,6 +7,7 @@ Chart.register(ChartDataLabels);
 var cumulativeChartRef = null;
 var locationChartRef = null;
 var partyDistributionChartRef = null;
+var historicalPartyChartRef = null;
 
 // Initialization function run on body load
 function initApp() {
@@ -25,6 +26,9 @@ function initApp() {
 
   // Render Stats with Animate value
   renderMetricStats();
+  
+  // Render Turnout Projection Card
+  renderTurnoutProjection();
   
   // Render Party breakdown cards
   renderPartyCards();
@@ -470,6 +474,7 @@ function renderComparisonTable() {
       var abs = 0;
       if (y === "2024") abs = 1885;
       else if (y === "2022") abs = 2164;
+      else if (y === "2020") abs = 8276;
       else if (y === "2018") abs = 346;
       
       var ev = s.grandTotal - abs;
@@ -563,6 +568,7 @@ function renderCharts() {
   if (cumulativeChartRef) cumulativeChartRef.destroy();
   if (locationChartRef) locationChartRef.destroy();
   if (partyDistributionChartRef) partyDistributionChartRef.destroy();
+  if (historicalPartyChartRef) historicalPartyChartRef.destroy();
   
   var daily = TURNOUT_DATA.dailyTurnout;
   
@@ -592,12 +598,14 @@ function renderCharts() {
   // Load historical arrays
   var y2024 = [];
   var y2022 = [];
+  var y2020 = [];
   var y2018 = [];
   
   var hist = TURNOUT_DATA.historical;
   if (hist) {
     if (hist["2024"]) y2024 = hist["2024"].cumulativeTotals;
     if (hist["2022"]) y2022 = hist["2022"].cumulativeTotals;
+    if (hist["2020"]) y2020 = hist["2020"].cumulativeTotals;
     if (hist["2018"]) y2018 = hist["2018"].cumulativeTotals;
   }
   
@@ -640,6 +648,19 @@ function renderCharts() {
       fill: false
     });
   }
+
+  if (y2020.length > 0) {
+    datasets.push({
+      label: '2020 Election',
+      data: y2020,
+      borderColor: '#7E57C2',
+      borderWidth: 2,
+      borderDash: [4, 4],
+      pointRadius: 2,
+      tension: 0.1,
+      fill: false
+    });
+  }
   
   if (y2018.length > 0) {
     datasets.push({
@@ -659,7 +680,7 @@ function renderCharts() {
     cumulativeChartRef = new Chart(ctx1, {
       type: 'line',
       data: {
-        labels: X_labels.slice(0, Math.max(curCumulative.length, y2024.length, y2022.length, y2018.length)),
+        labels: X_labels.slice(0, Math.max(curCumulative.length, y2024.length, y2022.length, y2020.length, y2018.length)),
         datasets: datasets
       },
       options: {
@@ -787,4 +808,185 @@ function renderCharts() {
       }
     });
   }
+  
+  // 4. Historical Partisan Primary Share Trend stacked bar chart
+  renderHistoricalPartyTrendChart();
+}
+
+// Render Turnout Projection Card
+function renderTurnoutProjection() {
+  var rangeEl = document.getElementById("stat-projected-range");
+  var pctEl = document.getElementById("stat-projected-pct");
+  if (!rangeEl) return;
+
+  var daily = TURNOUT_DATA.dailyTurnout;
+  var hist = TURNOUT_DATA.historical;
+  if (!daily || !hist) {
+    rangeEl.innerHTML = "TBD";
+    return;
+  }
+
+  // 1. Find the current active early voting day index (D)
+  var lastActiveIndex = -1;
+  var curCumulative = 0;
+  for (var i = 0; i < daily.length; i++) {
+    // Only count dates with totals, up to the day before Election Day
+    if (daily[i].total > 0 && daily[i].date.indexOf("Election Day") === -1) {
+      lastActiveIndex = i;
+      curCumulative += daily[i].total;
+    }
+  }
+
+  if (lastActiveIndex < 0) {
+    rangeEl.innerHTML = "TBD";
+    if (pctEl) pctEl.innerHTML = "Waiting for early voting to start";
+    return;
+  }
+
+  // 2. Loop through historical years and compute projections
+  var projections = [];
+  var years = Object.keys(hist);
+  for (var i = 0; i < years.length; i++) {
+    var yr = years[i];
+    var hData = hist[yr];
+    if (hData.cumulativeTotals && lastActiveIndex < hData.cumulativeTotals.length) {
+      var histCum = hData.cumulativeTotals[lastActiveIndex];
+      var histGrandTotal = hData.summary.grandTotal;
+      if (histCum > 0 && histGrandTotal > 0) {
+        var ratio = histCum / histGrandTotal;
+        var proj = curCumulative / ratio;
+        projections.push(proj);
+      }
+    }
+  }
+
+  if (projections.length === 0) {
+    rangeEl.innerHTML = "TBD";
+    if (pctEl) pctEl.innerHTML = "No historical curve match";
+    return;
+  }
+
+  // 3. Find the projection range
+  var minProj = Math.min.apply(null, projections);
+  var maxProj = Math.max.apply(null, projections);
+
+  // Round to nearest 50
+  var minProjRounded = Math.round(minProj / 50) * 50;
+  var maxProjRounded = Math.round(maxProj / 50) * 50;
+
+  // Format with commas
+  var rangeText = formatNumber(minProjRounded) + " - " + formatNumber(maxProjRounded);
+  rangeEl.innerHTML = rangeText;
+
+  // Percentage Range calculation
+  if (pctEl) {
+    var regVoters = TURNOUT_DATA.summary.totalRegistered || 218764;
+    var minPct = (minProjRounded / regVoters * 100).toFixed(2) + "%";
+    var maxPct = (maxProjRounded / regVoters * 100).toFixed(2) + "%";
+    pctEl.innerHTML = minPct + " - " + maxPct + " of registered";
+  }
+}
+
+// Render Historical Partisan Primary Ballot Share Trend Stacked Bar Chart
+function renderHistoricalPartyTrendChart() {
+  var ctx = document.getElementById('historicalPartyChart');
+  if (!ctx) return;
+
+  var labels = [];
+  var gopData = [];
+  var demData = [];
+  var genData = [];
+
+  var hist = TURNOUT_DATA.historical;
+  if (hist) {
+    // Sort years ascending: 2018, 2020, 2022, 2024
+    var years = Object.keys(hist).sort(function(a, b) { return a - b; });
+    for (var i = 0; i < years.length; i++) {
+      var yr = years[i];
+      var s = hist[yr].summary;
+      var tot = s.grandTotal || 1;
+      labels.push("August " + yr);
+      gopData.push(parseFloat((s.republican / tot * 100).toFixed(1)));
+      demData.push(parseFloat((s.democrat / tot * 100).toFixed(1)));
+      genData.push(parseFloat((s.general / tot * 100).toFixed(1)));
+    }
+  }
+
+  // Appending current year (2026) dynamically if party details are loaded
+  var curSum = TURNOUT_DATA.summary.grandTotal || 1;
+  var curParty = TURNOUT_DATA.partyTotals;
+  if (curParty && curParty.total > 0) {
+    labels.push("August 2026 (Cur.)");
+    gopData.push(parseFloat((curParty.republican / curSum * 100).toFixed(1)));
+    demData.push(parseFloat((curParty.democrat / curSum * 100).toFixed(1)));
+    genData.push(parseFloat((curParty.general / curSum * 100).toFixed(1)));
+  }
+
+  historicalPartyChartRef = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Republican',
+          data: gopData,
+          backgroundColor: '#C4483E',
+          borderColor: '#B33E35',
+          borderWidth: 1
+        },
+        {
+          label: 'Democrat',
+          data: demData,
+          backgroundColor: '#3B6FA0',
+          borderColor: '#325E88',
+          borderWidth: 1
+        },
+        {
+          label: 'General Election Only',
+          data: genData,
+          backgroundColor: '#D4A843',
+          borderColor: '#C39A3C',
+          borderWidth: 1
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          stacked: true,
+          grid: { display: false }
+        },
+        y: {
+          stacked: true,
+          beginAtZero: true,
+          max: 100,
+          ticks: {
+            callback: function(value) {
+              return value + "%";
+            }
+          },
+          grid: { color: '#E2E8F0' }
+        }
+      },
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { boxWidth: 12, font: { size: 11 } }
+        },
+        datalabels: {
+          display: true,
+          color: function(context) {
+            // Dark text for General Only (gold background) for contrast, white for others
+            return context.datasetIndex === 2 ? '#1B2A4A' : '#FFFFFF';
+          },
+          font: { weight: 'bold', size: 10 },
+          formatter: function(value) {
+            return value > 4 ? value + '%' : ''; // Only show text if label space permits
+          }
+        }
+      }
+    }
+  });
 }

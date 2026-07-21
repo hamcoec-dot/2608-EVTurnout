@@ -144,6 +144,13 @@ body {
   font-weight: 700 !important;
 }
 
+.stat-sublabel {
+  font-size: 12px !important;
+  color: var(--text-secondary) !important;
+  margin-top: 4px !important;
+  font-weight: 500 !important;
+}
+
 /* Party Turnout Overview Cards */
 .party-container {
   display: flex !important;
@@ -499,6 +506,9 @@ body {
 
 .vis-column-left {
   flex: 1 1 500px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 24px !important;
 }
 
 .vis-column-right {

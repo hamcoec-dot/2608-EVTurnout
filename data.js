@@ -543,6 +543,52 @@ var TURNOUT_DATA = {
         "registered": 231431,
         "turnoutPercent": 0.06649930216781676
       }
+    },
+    "2020": {
+      "dailyTotals": [
+        2515,
+        1554,
+        610,
+        1627,
+        1964,
+        1391,
+        1688,
+        1585,
+        775,
+        2048,
+        1444,
+        2017,
+        1937,
+        2911,
+        2274,
+        2231
+      ],
+      "cumulativeTotals": [
+        2515,
+        4069,
+        4679,
+        6306,
+        8270,
+        9661,
+        11349,
+        12934,
+        13709,
+        15757,
+        17201,
+        19218,
+        21155,
+        24066,
+        26340,
+        28571
+      ],
+      "summary": {
+        "republican": 14937,
+        "democrat": 12866,
+        "general": 768,
+        "grandTotal": 28571,
+        "registered": 222004,
+        "turnoutPercent": 0.12869587935352517
+      }
     }
   },
   "disclaimer": "*All totals are unofficial and are subject to verification and certification by the Hamilton County Election Commission"

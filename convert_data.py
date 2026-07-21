@@ -52,9 +52,9 @@ def parse_historical_pdf(path):
         text = doc[0].get_text()
         lines = [line.strip() for line in text.split('\n') if line.strip()]
         
-        # Regex matching dates: Thru X/Y/Z, X/Y/Z, X/Y/Z-Election Day, etc.
+        # Regex matching dates: Thru X/Y/Z, X/Y/Z, X/Y/Z-Election Day, etc., and supporting 2020's specific format
         date_pattern = re.compile(
-            r'^(Thru\s+\d+/\d+/\d+|\d+/\d+(?:/\d+)?(?:\s*-\s*Election Day)?|\d+/\d+(?:/\d+)?-Election Day|Election Day)$', 
+            r'^(Thru\s+\d+/\d+/\d+|\d+/\d+(?:/\d+)?(?:\s*-\s*Election Day)?|\d+/\d+(?:/\d+)?-Election Day|Election Day|\d+-\d+\s+thru\s+\d+-\d+|\d+/\d+/\d+\s*-\s*\d+/\d+/\d+)$', 
             re.IGNORECASE
         )
         
@@ -441,6 +441,7 @@ def main():
                     if not reg_voters:
                         if year == "2024": reg_voters = 231431
                         elif year == "2022": reg_voters = 235853
+                        elif year == "2020": reg_voters = 222004
                         elif year == "2018": reg_voters = 197052
                         else: reg_voters = 200000
                         

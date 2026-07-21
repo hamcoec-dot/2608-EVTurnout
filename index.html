@@ -66,6 +66,15 @@
           <strong class="stat-value" id="stat-days-left">0</strong>
         </div>
       </div>
+      
+      <div class="stat-card glass-card" id="projection-card">
+        <div class="stat-icon" aria-hidden="true">&#x1F52E;</div>
+        <div class="stat-info">
+          <span class="stat-label">Projected Early Turnout</span>
+          <strong class="stat-value text-nowrap" id="stat-projected-range">Calculating...</strong>
+          <span class="stat-sublabel" id="stat-projected-pct"></span>
+        </div>
+      </div>
     </section>
 
     <!-- Party Turnout Section -->
@@ -73,7 +82,7 @@
       <div class="party-card rep-theme">
         <div class="party-card-header">
           <h3>Republican Primary</h3>
-          <span class="party-badge">GOP</span>
+          <span class="party-badge">REP</span>
         </div>
         <div class="party-num-display">
           <span class="party-count" id="rep-count">0</span>
@@ -174,6 +183,13 @@
           <h3>Cumulative Turnout Progression (vs. Past Cycles)</h3>
           <div class="chart-wrapper">
             <canvas id="cumulativeChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="chart-container card-surface">
+          <h3>Historical Partisan Primary Share Trend</h3>
+          <div class="chart-wrapper">
+            <canvas id="historicalPartyChart"></canvas>
           </div>
         </div>
       </div>
