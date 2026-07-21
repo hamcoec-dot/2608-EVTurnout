@@ -447,9 +447,9 @@ var TURNOUT_DATA = {
         "republican": 11913,
         "democrat": 9338,
         "general": 107,
-        "grandTotal": 11913,
+        "grandTotal": 21358,
         "registered": 197052,
-        "turnoutPercent": 0.060456123256805314
+        "turnoutPercent": 0.10838763372104825
       }
     },
     "2022": {

@@ -82,35 +82,31 @@ def parse_historical_pdf(path):
                     current_date = None
                     current_values = []
             
-            # Look for summary lines
-            lower_line = line.lower()
-            if 'republican primary' in lower_line or (line == 'REP' and i + 4 < len(lines)):
+        # Detect and parse summary party totals
+        grouped_found = False
+        for k in range(len(lines) - 7):
+            if lines[k] == 'REP' and lines[k+1] == 'DEM' and lines[k+2] == 'GEN' and lines[k+3] == 'GRAND TOTAL':
+                republican = clean_num(lines[k+4])
+                democrat = clean_num(lines[k+5])
+                general = clean_num(lines[k+6])
+                grand_total = clean_num(lines[k+7])
+                grouped_found = True
+                break
+                
+        if not grouped_found:
+            for i, line in enumerate(lines):
+                lower_line = line.lower()
                 if 'republican primary' in lower_line:
                     val = clean_num(lines[i+1]) if i+1 < len(lines) else 0
                     if isinstance(val, int): republican = val
-                else:
-                    val = clean_num(lines[i+4])
-                    if isinstance(val, int): republican = val
-            elif 'democratic primary' in lower_line or (line == 'DEM' and i + 3 < len(lines) and not line.replace('.', '', 1).isdigit()):
-                if 'democratic primary' in lower_line:
+                elif 'democratic primary' in lower_line:
                     val = clean_num(lines[i+1]) if i+1 < len(lines) else 0
                     if isinstance(val, int): democrat = val
-                else:
-                    val = clean_num(lines[i+4])
-                    if isinstance(val, int): democrat = val
-            elif 'general only' in lower_line or 'general election' in lower_line or (line == 'GEN' and i + 2 < len(lines)):
-                if 'general only' in lower_line or 'general election' in lower_line:
+                elif 'general only' in lower_line or 'general election' in lower_line:
                     val = clean_num(lines[i+1]) if i+1 < len(lines) else 0
                     if isinstance(val, int): general = val
-                else:
-                    val = clean_num(lines[i+4])
-                    if isinstance(val, int): general = val
-            elif 'grand total' in lower_line or 'grand total' in line.lower() or (line == 'GRAND TOTAL' and i + 1 < len(lines)):
-                if 'grand total' in lower_line:
+                elif 'grand total' in lower_line:
                     val = clean_num(lines[i+1]) if i+1 < len(lines) else 0
-                    if isinstance(val, int): grand_total = val
-                else:
-                    val = clean_num(lines[i+4])
                     if isinstance(val, int): grand_total = val
                     
         if current_date:
