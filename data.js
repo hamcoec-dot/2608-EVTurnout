@@ -265,16 +265,59 @@ var TURNOUT_DATA = {
       "date": "2026-07-22",
       "isMailOnly": false,
       "values": {
-        "By Mail/NH Voters": 0,
-        "Brainerd": 0,
-        "Collegedale": 0,
-        "Election Comm.": 0,
-        "Harrison": 0,
-        "Hixson": 0,
-        "Soddy Daisy": 0
+        "By Mail/NH Voters": 58,
+        "Brainerd": 241,
+        "Collegedale": 335,
+        "Election Comm.": 521,
+        "Harrison": 150,
+        "Hixson": 396,
+        "Soddy Daisy": 179
       },
-      "total": 0,
-      "partyBreakdown": null
+      "total": 1880,
+      "partyBreakdown": {
+        "By Mail/NH Voters": {
+          "total": 58,
+          "democrat": 24,
+          "republican": 26,
+          "general": 8
+        },
+        "Brainerd": {
+          "total": 241,
+          "democrat": 177,
+          "republican": 64,
+          "general": 0
+        },
+        "Collegedale": {
+          "total": 335,
+          "democrat": 97,
+          "republican": 236,
+          "general": 2
+        },
+        "Election Comm.": {
+          "total": 521,
+          "democrat": 270,
+          "republican": 242,
+          "general": 9
+        },
+        "Harrison": {
+          "total": 150,
+          "democrat": 39,
+          "republican": 111,
+          "general": 0
+        },
+        "Hixson": {
+          "total": 396,
+          "democrat": 118,
+          "republican": 269,
+          "general": 9
+        },
+        "Soddy Daisy": {
+          "total": 179,
+          "democrat": 34,
+          "republican": 145,
+          "general": 0
+        }
+      }
     },
     {
       "date": "2026-07-23",
@@ -428,27 +471,27 @@ var TURNOUT_DATA = {
     }
   ],
   "totals": {
-    "By Mail/NH Voters": 846,
-    "Brainerd": 1017,
-    "Collegedale": 1198,
-    "Election Comm.": 1963,
-    "Harrison": 602,
-    "Hixson": 1716,
-    "Soddy Daisy": 804,
-    "total": 8146
+    "By Mail/NH Voters": 904,
+    "Brainerd": 1258,
+    "Collegedale": 1533,
+    "Election Comm.": 2484,
+    "Harrison": 752,
+    "Hixson": 2112,
+    "Soddy Daisy": 983,
+    "total": 10026
   },
   "summary": {
     "totalRegistered": 218764,
-    "turnoutPercent": 0.0372364740085206,
-    "earlyVoting": 7300,
-    "absenteeNH": 846,
-    "grandTotal": 8146
+    "turnoutPercent": 0.04583020972372054,
+    "earlyVoting": 9122,
+    "absenteeNH": 904,
+    "grandTotal": 10026
   },
   "partyTotals": {
-    "republican": 4770,
-    "democrat": 3216,
-    "general": 160,
-    "total": 8146
+    "republican": 5863,
+    "democrat": 3975,
+    "general": 188,
+    "total": 10026
   },
   "historical": {
     "2018": {
