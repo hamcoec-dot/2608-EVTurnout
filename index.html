@@ -201,6 +201,19 @@
             <canvas id="locationChart"></canvas>
           </div>
         </div>
+
+        <div class="chart-container card-surface">
+          <div class="chart-header-row">
+            <h3>Partisan Primary Share by Location</h3>
+            <div class="view-switch-group" role="group" aria-label="Partisan Location View Switch">
+              <button type="button" class="view-switch-btn active" id="btn-part-loc-pct" onclick="setPartisanLocationMode('pct')">% Share</button>
+              <button type="button" class="view-switch-btn" id="btn-part-loc-count" onclick="setPartisanLocationMode('count')">Voters</button>
+            </div>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="partisanLocationChart"></canvas>
+          </div>
+        </div>
         
         <div class="chart-container card-surface">
           <h3>Primary Election Distribution</h3>

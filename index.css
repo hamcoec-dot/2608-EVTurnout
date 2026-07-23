@@ -668,3 +668,48 @@ body {
     font-size: max(14px, inherit) !important;
   }
 }
+
+/* Partisan Location Chart Header & Toggle Controls */
+.chart-header-row {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 12px !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+}
+
+.chart-header-row h3 {
+  margin: 0 !important;
+}
+
+.view-switch-group {
+  display: inline-flex !important;
+  background-color: #E2E8F0 !important;
+  border-radius: 6px !important;
+  padding: 2px !important;
+  gap: 2px !important;
+}
+
+.view-switch-btn {
+  background: transparent !important;
+  border: none !important;
+  color: #4A5568 !important;
+  padding: 4px 10px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.view-switch-btn:hover {
+  color: #1A202C !important;
+}
+
+.view-switch-btn.active {
+  background-color: #1B2A4A !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+}
+

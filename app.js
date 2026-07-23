@@ -8,6 +8,8 @@ var cumulativeChartRef = null;
 var locationChartRef = null;
 var partyDistributionChartRef = null;
 var historicalPartyChartRef = null;
+var partisanLocationChartRef = null;
+var currentPartisanLocationMode = 'pct';
 
 // Initialization function run on body load
 function initApp() {
@@ -569,6 +571,7 @@ function renderCharts() {
   if (locationChartRef) locationChartRef.destroy();
   if (partyDistributionChartRef) partyDistributionChartRef.destroy();
   if (historicalPartyChartRef) historicalPartyChartRef.destroy();
+  if (partisanLocationChartRef) partisanLocationChartRef.destroy();
   
   var daily = TURNOUT_DATA.dailyTurnout;
   
@@ -809,7 +812,10 @@ function renderCharts() {
     });
   }
   
-  // 4. Historical Partisan Primary Share Trend stacked bar chart
+  // 4. Partisan Primary Share by Location stacked bar chart
+  renderPartisanLocationChart();
+  
+  // 5. Historical Partisan Primary Share Trend stacked bar chart
   renderHistoricalPartyTrendChart();
 }
 
@@ -984,6 +990,168 @@ function renderHistoricalPartyTrendChart() {
           font: { weight: 'bold', size: 10 },
           formatter: function(value) {
             return value > 4 ? value + '%' : ''; // Only show text if label space permits
+          }
+        }
+      }
+    }
+  });
+}
+
+// Toggle view mode between Percentage Share and Vote Count for Partisan Location chart
+function setPartisanLocationMode(mode) {
+  currentPartisanLocationMode = mode;
+  var btnPct = document.getElementById('btn-part-loc-pct');
+  var btnCount = document.getElementById('btn-part-loc-count');
+  if (btnPct && btnCount) {
+    if (mode === 'pct') {
+      btnPct.classList.add('active');
+      btnCount.classList.remove('active');
+    } else {
+      btnCount.classList.add('active');
+      btnPct.classList.remove('active');
+    }
+  }
+  renderPartisanLocationChart();
+}
+
+// Render Partisan Primary Share by Location Stacked Bar Chart
+function renderPartisanLocationChart() {
+  if (partisanLocationChartRef) {
+    partisanLocationChartRef.destroy();
+    partisanLocationChartRef = null;
+  }
+  
+  var ctx = document.getElementById('partisanLocationChart');
+  if (!ctx) return;
+  
+  var locations = TURNOUT_DATA.locations || [];
+  var locPartyData = {};
+  for (var i = 0; i < locations.length; i++) {
+    locPartyData[locations[i]] = { democrat: 0, republican: 0, general: 0, total: 0 };
+  }
+  
+  var daily = TURNOUT_DATA.dailyTurnout || [];
+  for (var d = 0; d < daily.length; d++) {
+    var pb = daily[d].partyBreakdown;
+    if (pb) {
+      for (var loc in pb) {
+        if (pb.hasOwnProperty(loc) && locPartyData[loc]) {
+          locPartyData[loc].democrat += (pb[loc].democrat || 0);
+          locPartyData[loc].republican += (pb[loc].republican || 0);
+          locPartyData[loc].general += (pb[loc].general || 0);
+          locPartyData[loc].total += (pb[loc].total || 0);
+        }
+      }
+    }
+  }
+  
+  var labels = [];
+  var repData = [];
+  var demData = [];
+  var genData = [];
+  
+  var isPctMode = (currentPartisanLocationMode === 'pct');
+  
+  for (var j = 0; j < locations.length; j++) {
+    var lName = locations[j];
+    labels.push(lName);
+    var item = locPartyData[lName] || { democrat: 0, republican: 0, general: 0, total: 0 };
+    var tot = item.democrat + item.republican + item.general;
+    
+    if (isPctMode) {
+      if (tot > 0) {
+        repData.push(parseFloat(((item.republican / tot) * 100).toFixed(1)));
+        demData.push(parseFloat(((item.democrat / tot) * 100).toFixed(1)));
+        genData.push(parseFloat(((item.general / tot) * 100).toFixed(1)));
+      } else {
+        repData.push(0);
+        demData.push(0);
+        genData.push(0);
+      }
+    } else {
+      repData.push(item.republican);
+      demData.push(item.democrat);
+      genData.push(item.general);
+    }
+  }
+  
+  partisanLocationChartRef = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Republican',
+          data: repData,
+          backgroundColor: '#C0392B',
+          borderRadius: 4
+        },
+        {
+          label: 'Democrat',
+          data: demData,
+          backgroundColor: '#2980B9',
+          borderRadius: 4
+        },
+        {
+          label: 'General',
+          data: genData,
+          backgroundColor: '#D4A843',
+          borderRadius: 4
+        }
+      ]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          stacked: true,
+          max: isPctMode ? 100 : undefined,
+          grid: { color: '#E2E8F0' },
+          title: {
+            display: true,
+            text: isPctMode ? 'Primary Ballot Share (%)' : 'Ballot Count'
+          }
+        },
+        y: {
+          stacked: true,
+          grid: { display: false }
+        }
+      },
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: { boxWidth: 12, font: { size: 11 } }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              var val = context.parsed.x;
+              var label = context.dataset.label || '';
+              if (isPctMode) {
+                return label + ': ' + val + '%';
+              } else {
+                return label + ': ' + formatNumber(val) + ' voters';
+              }
+            }
+          }
+        },
+        datalabels: {
+          display: function(context) {
+            var val = context.dataset.data[context.dataIndex];
+            return isPctMode ? (val > 4) : (val > 30);
+          },
+          color: function(context) {
+            return context.datasetIndex === 2 ? '#1B2A4A' : '#FFFFFF';
+          },
+          font: { weight: 'bold', size: 10 },
+          formatter: function(value) {
+            if (isPctMode) {
+              return value.toFixed(1) + '%';
+            } else {
+              return formatNumber(value);
+            }
           }
         }
       }
