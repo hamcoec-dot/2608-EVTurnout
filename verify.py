@@ -8,6 +8,10 @@ def print_result(check_id, status, message):
     print(f"[{status}] {check_id}: {message}")
 
 def main():
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    if base_dir:
+        os.chdir(base_dir)
+
     print("============================================")
     print("  Verification Report — Early Voting HTML  ")
     print("============================================")

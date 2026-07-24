@@ -145,6 +145,10 @@ def parse_historical_pdf(path):
         return None
 
 def main():
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    if base_dir:
+        os.chdir(base_dir)
+
     excel_path = 'Early Voting & Absentee Daily Turnout Report - Full County.xlsx'
     config_path = 'config.json'
     
