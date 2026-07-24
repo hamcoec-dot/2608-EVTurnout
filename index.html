@@ -176,64 +176,63 @@
       </div>
     </section>
 
-    <!-- Visualizations Layout (Physical Columns for screen readers) -->
-    <section class="visualization-layout" aria-label="Turnout Visualizations">
-      <div class="vis-column-left">
-        <div class="chart-container card-surface">
-          <h3>Cumulative Turnout Progression (vs. Past Cycles)</h3>
-          <div class="chart-wrapper">
-            <canvas id="cumulativeChart"></canvas>
-          </div>
+    <!-- Full-Width Featured Chart: Cumulative Turnout Progression -->
+    <section class="full-width-chart-section" aria-label="Cumulative Turnout Progression Chart">
+      <div class="chart-container card-surface featured-chart-container">
+        <div class="chart-header-row">
+          <h2>Cumulative Turnout Progression (vs. Past Cycles)</h2>
         </div>
-        
-        <div class="chart-container card-surface">
-          <h3>Historical Partisan Primary Share Trend</h3>
-          <div class="chart-wrapper">
-            <canvas id="historicalPartyChart"></canvas>
-          </div>
+        <div class="chart-wrapper cumulative-chart-wrapper">
+          <canvas id="cumulativeChart"></canvas>
         </div>
       </div>
-      
-        <div class="chart-container card-surface">
-          <div class="chart-header-row">
-            <h3>Turnout by Location</h3>
-            <div class="view-switch-group" role="group" aria-label="Location View Switch">
-              <button type="button" class="view-switch-btn active" id="btn-loc-pct" onclick="setLocationMode('pct')">% Share</button>
-              <button type="button" class="view-switch-btn" id="btn-loc-count" onclick="setLocationMode('count')">Voters</button>
-            </div>
-          </div>
-          <div class="chart-wrapper location-chart-wrapper">
-            <canvas id="locationChart"></canvas>
+    </section>
+
+    <!-- Symmetrical 2-Column Visualizations Grid -->
+    <section class="visualization-grid" aria-label="Turnout Visualizations">
+      <!-- Row 1: Location Analytics -->
+      <div class="chart-container card-surface">
+        <div class="chart-header-row">
+          <h3>Turnout by Location</h3>
+          <div class="view-switch-group" role="group" aria-label="Location View Switch">
+            <button type="button" class="view-switch-btn active" id="btn-loc-pct" onclick="setLocationMode('pct')">% Share</button>
+            <button type="button" class="view-switch-btn" id="btn-loc-count" onclick="setLocationMode('count')">Voters</button>
           </div>
         </div>
+        <div class="chart-wrapper">
+          <canvas id="locationChart"></canvas>
+        </div>
+      </div>
 
-        <div class="chart-container card-surface">
-          <div class="chart-header-row">
-            <h3>Partisan Primary Share by Location</h3>
-            <div class="view-switch-group" role="group" aria-label="Partisan Location View Switch">
-              <button type="button" class="view-switch-btn active" id="btn-part-loc-pct" onclick="setPartisanLocationMode('pct')">% Share</button>
-              <button type="button" class="view-switch-btn" id="btn-part-loc-count" onclick="setPartisanLocationMode('count')">Voters</button>
-            </div>
-          </div>
-          <div class="chart-wrapper">
-            <canvas id="partisanLocationChart"></canvas>
+      <div class="chart-container card-surface">
+        <div class="chart-header-row">
+          <h3>Partisan Primary Share by Location</h3>
+          <div class="view-switch-group" role="group" aria-label="Partisan Location View Switch">
+            <button type="button" class="view-switch-btn active" id="btn-part-loc-pct" onclick="setPartisanLocationMode('pct')">% Share</button>
+            <button type="button" class="view-switch-btn" id="btn-part-loc-count" onclick="setPartisanLocationMode('count')">Voters</button>
           </div>
         </div>
-        
-        <div class="chart-grid-two-col">
-          <div class="chart-container card-surface compact-card">
-            <h3>Primary Election Distribution</h3>
-            <div class="chart-wrapper compact-wrapper">
-              <canvas id="partyDistributionChart"></canvas>
-            </div>
-          </div>
+        <div class="chart-wrapper">
+          <canvas id="partisanLocationChart"></canvas>
+        </div>
+      </div>
 
-          <div class="chart-container card-surface compact-card">
-            <h3>Turnout by Sex</h3>
-            <div class="chart-wrapper compact-wrapper">
-              <canvas id="genderChart"></canvas>
-            </div>
-          </div>
+      <!-- Row 2: Historical & Primary Trends -->
+      <div class="chart-container card-surface">
+        <div class="chart-header-row">
+          <h3>Historical Partisan Primary Share Trend</h3>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="historicalPartyChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-container card-surface">
+        <div class="chart-header-row">
+          <h3>Primary Election Distribution</h3>
+        </div>
+        <div class="chart-wrapper">
+          <canvas id="partyDistributionChart"></canvas>
         </div>
       </div>
     </section>
@@ -244,44 +243,50 @@
         <h2>Voter Demographic Breakdown</h2>
       </div>
 
-      <div class="visualization-layout">
-        <div class="vis-column-left">
-          <div class="chart-container card-surface">
-            <div class="chart-header-row">
-              <h3>Turnout by Age Brackets</h3>
-              <div class="view-switch-group" role="group" aria-label="Age View Switch">
-                <button type="button" class="view-switch-btn active" id="btn-age-pct" onclick="setAgeMode('pct')">% Share</button>
-                <button type="button" class="view-switch-btn" id="btn-age-count" onclick="setAgeMode('count')">Voters</button>
-              </div>
+      <div class="visualization-grid">
+        <div class="chart-container card-surface">
+          <div class="chart-header-row">
+            <h3>Turnout by Age Brackets</h3>
+            <div class="view-switch-group" role="group" aria-label="Age View Switch">
+              <button type="button" class="view-switch-btn active" id="btn-age-pct" onclick="setAgeMode('pct')">% Share</button>
+              <button type="button" class="view-switch-btn" id="btn-age-count" onclick="setAgeMode('count')">Voters</button>
             </div>
-            <div class="chart-wrapper">
-              <canvas id="ageChart"></canvas>
-            </div>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="ageChart"></canvas>
           </div>
         </div>
 
-        <div class="vis-column-right">
-          <div class="chart-container card-surface">
-            <div class="chart-header-row header-flex-wrap">
-              <h3>District Breakdown</h3>
-              <div class="feature-controls">
-                <div class="view-switch-group" role="group" aria-label="District Type Switch">
-                  <button type="button" class="view-switch-btn active" id="btn-dist-commission" onclick="setDistrictView('commission')">Commission</button>
-                  <button type="button" class="view-switch-btn" id="btn-dist-senate" onclick="setDistrictView('senate')">Senate</button>
-                  <button type="button" class="view-switch-btn" id="btn-dist-house" onclick="setDistrictView('house')">House</button>
-                  <button type="button" class="view-switch-btn" id="btn-dist-school" onclick="setDistrictView('school')">School</button>
-                  <button type="button" class="view-switch-btn" id="btn-dist-city" onclick="setDistrictView('city')">City</button>
-                </div>
-                <div class="view-switch-group" role="group" aria-label="District Unit Switch">
-                  <button type="button" class="view-switch-btn active" id="btn-dist-unit-pct" onclick="setDistrictMode('pct')">% Share</button>
-                  <button type="button" class="view-switch-btn" id="btn-dist-unit-count" onclick="setDistrictMode('count')">Voters</button>
-                </div>
-              </div>
+        <div class="chart-container card-surface">
+          <div class="chart-header-row">
+            <h3>Turnout by Sex</h3>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="genderChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature: District Breakdown -->
+      <div class="full-width-feature-container card-surface" style="margin-bottom: 24px;">
+        <div class="chart-header-row header-flex-wrap">
+          <h3 class="major-feature-title">District Breakdown</h3>
+          <div class="feature-controls">
+            <div class="view-switch-group" role="group" aria-label="District Type Switch">
+              <button type="button" class="view-switch-btn active" id="btn-dist-commission" onclick="setDistrictView('commission')">Commission</button>
+              <button type="button" class="view-switch-btn" id="btn-dist-senate" onclick="setDistrictView('senate')">Senate</button>
+              <button type="button" class="view-switch-btn" id="btn-dist-house" onclick="setDistrictView('house')">House</button>
+              <button type="button" class="view-switch-btn" id="btn-dist-school" onclick="setDistrictView('school')">School</button>
+              <button type="button" class="view-switch-btn" id="btn-dist-city" onclick="setDistrictView('city')">City</button>
             </div>
-            <div class="chart-wrapper">
-              <canvas id="districtChart"></canvas>
+            <div class="view-switch-group" role="group" aria-label="District Unit Switch">
+              <button type="button" class="view-switch-btn active" id="btn-dist-unit-pct" onclick="setDistrictMode('pct')">% Share</button>
+              <button type="button" class="view-switch-btn" id="btn-dist-unit-count" onclick="setDistrictMode('count')">Voters</button>
             </div>
           </div>
+        </div>
+        <div class="chart-wrapper" style="height: 350px !important;">
+          <canvas id="districtChart"></canvas>
         </div>
       </div>
 

@@ -497,26 +497,18 @@ body {
 }
 
 /* Visualizations - Physical columns */
-.visualization-layout {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  align-items: flex-start !important;
+.visualization-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
   gap: 24px !important;
   margin-top: 16px !important;
+  margin-bottom: 24px !important;
 }
 
-.vis-column-left {
-  flex: 1 1 500px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 24px !important;
-}
-
-.vis-column-right {
-  flex: 1 1 500px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 24px !important;
+@media (max-width: 900px) {
+  .visualization-grid {
+    grid-template-columns: 1fr !important;
+  }
 }
 
 .card-surface {
@@ -534,32 +526,35 @@ body {
   font-weight: 600 !important;
 }
 
+.full-width-chart-section {
+  margin-top: 16px !important;
+  margin-bottom: 24px !important;
+  width: 100% !important;
+}
+
+.featured-chart-container h2 {
+  font-size: 20px !important;
+  color: var(--navy) !important;
+  font-weight: 700 !important;
+  margin: 0 0 16px 0 !important;
+}
+
+.cumulative-chart-wrapper {
+  position: relative !important;
+  width: 100% !important;
+  height: 520px !important;
+}
+
+@media (max-width: 768px) {
+  .cumulative-chart-wrapper {
+    height: 380px !important;
+  }
+}
+
 .chart-wrapper {
   position: relative !important;
   width: 100% !important;
   height: 320px !important;
-}
-
-.location-chart-wrapper {
-  height: 240px !important;
-  max-height: 240px !important;
-}
-
-.chart-grid-two-col {
-  display: flex !important;
-  gap: 16px !important;
-  flex-wrap: wrap !important;
-}
-
-.compact-card {
-  flex: 1 1 220px !important;
-  padding: 16px !important;
-}
-
-.compact-wrapper {
-  position: relative !important;
-  width: 100% !important;
-  height: 250px !important;
 }
 
 /* Demographic Section Header */

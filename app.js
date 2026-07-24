@@ -636,11 +636,12 @@ function renderCharts() {
       label: '2026 (Current)',
       data: curCumulative,
       borderColor: '#1B2A4A',
-      backgroundColor: 'rgba(27, 42, 74, 0.1)',
+      backgroundColor: 'rgba(27, 42, 74, 0.12)',
       borderWidth: 4,
-      pointRadius: 4,
+      pointRadius: 5,
+      pointHoverRadius: 8,
       pointBackgroundColor: '#1B2A4A',
-      tension: 0.1,
+      tension: 0.15,
       fill: false
     }
   ];
@@ -650,10 +651,12 @@ function renderCharts() {
       label: '2024 Election',
       data: y2024,
       borderColor: '#3B6FA0',
-      borderWidth: 2,
-      borderDash: [5, 5],
-      pointRadius: 2,
-      tension: 0.1,
+      borderWidth: 3,
+      borderDash: [6, 4],
+      pointRadius: 4,
+      pointHoverRadius: 7,
+      pointBackgroundColor: '#3B6FA0',
+      tension: 0.15,
       fill: false
     });
   }
@@ -663,10 +666,12 @@ function renderCharts() {
       label: '2022 Election',
       data: y2022,
       borderColor: '#C4483E',
-      borderWidth: 2,
-      borderDash: [3, 3],
-      pointRadius: 2,
-      tension: 0.1,
+      borderWidth: 3,
+      borderDash: [4, 4],
+      pointRadius: 4,
+      pointHoverRadius: 7,
+      pointBackgroundColor: '#C4483E',
+      tension: 0.15,
       fill: false
     });
   }
@@ -676,10 +681,12 @@ function renderCharts() {
       label: '2020 Election',
       data: y2020,
       borderColor: '#7E57C2',
-      borderWidth: 2,
-      borderDash: [4, 4],
-      pointRadius: 2,
-      tension: 0.1,
+      borderWidth: 3,
+      borderDash: [5, 5],
+      pointRadius: 4,
+      pointHoverRadius: 7,
+      pointBackgroundColor: '#7E57C2',
+      tension: 0.15,
       fill: false
     });
   }
@@ -689,10 +696,12 @@ function renderCharts() {
       label: '2018 Election',
       data: y2018,
       borderColor: '#D4A843',
-      borderWidth: 2,
-      borderDash: [1, 1],
-      pointRadius: 2,
-      tension: 0.1,
+      borderWidth: 3,
+      borderDash: [2, 2],
+      pointRadius: 4,
+      pointHoverRadius: 7,
+      pointBackgroundColor: '#D4A843',
+      tension: 0.15,
       fill: false
     });
   }
@@ -708,10 +717,36 @@ function renderCharts() {
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false
+        },
         plugins: {
           legend: {
             position: 'top',
-            labels: { boxWidth: 15, font: { size: 11 } }
+            labels: {
+              boxWidth: 22,
+              usePointStyle: true,
+              padding: 20,
+              font: { size: 14, weight: '600' }
+            }
+          },
+          tooltip: {
+            padding: 12,
+            titleFont: { size: 14, weight: 'bold' },
+            bodyFont: { size: 13 },
+            callbacks: {
+              label: function(context) {
+                var label = context.dataset.label || '';
+                if (label) {
+                  label += ': ';
+                }
+                if (context.parsed.y !== null) {
+                  label += context.parsed.y.toLocaleString() + ' votes';
+                }
+                return label;
+              }
+            }
           },
           datalabels: {
             display: false
@@ -721,11 +756,26 @@ function renderCharts() {
           y: {
             beginAtZero: true,
             grid: { color: '#E2E8F0' },
-            title: { display: true, text: 'Total Votes Cast' }
+            ticks: {
+              font: { size: 12 },
+              callback: function(value) { return value.toLocaleString(); }
+            },
+            title: {
+              display: true,
+              text: 'Total Cumulative Votes Cast',
+              font: { size: 14, weight: 'bold' },
+              padding: { bottom: 10 }
+            }
           },
           x: {
-            grid: { display: false },
-            title: { display: true, text: 'Early Voting Day timeline' }
+            grid: { color: '#F1F5F9' },
+            ticks: { font: { size: 12 } },
+            title: {
+              display: true,
+              text: 'Early Voting Day Timeline',
+              font: { size: 14, weight: 'bold' },
+              padding: { top: 10 }
+            }
           }
         }
       }
