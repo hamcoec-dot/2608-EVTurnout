@@ -194,10 +194,15 @@
         </div>
       </div>
       
-      <div class="vis-column-right">
         <div class="chart-container card-surface">
-          <h3>Turnout by Location</h3>
-          <div class="chart-wrapper">
+          <div class="chart-header-row">
+            <h3>Turnout by Location</h3>
+            <div class="view-switch-group" role="group" aria-label="Location View Switch">
+              <button type="button" class="view-switch-btn active" id="btn-loc-pct" onclick="setLocationMode('pct')">% Share</button>
+              <button type="button" class="view-switch-btn" id="btn-loc-count" onclick="setLocationMode('count')">Voters</button>
+            </div>
+          </div>
+          <div class="chart-wrapper location-chart-wrapper">
             <canvas id="locationChart"></canvas>
           </div>
         </div>
@@ -215,11 +220,109 @@
           </div>
         </div>
         
-        <div class="chart-container card-surface">
-          <h3>Primary Election Distribution</h3>
-          <div class="chart-wrapper">
-            <canvas id="partyDistributionChart"></canvas>
+        <div class="chart-grid-two-col">
+          <div class="chart-container card-surface compact-card">
+            <h3>Primary Election Distribution</h3>
+            <div class="chart-wrapper compact-wrapper">
+              <canvas id="partyDistributionChart"></canvas>
+            </div>
           </div>
+
+          <div class="chart-container card-surface compact-card">
+            <h3>Turnout by Sex</h3>
+            <div class="chart-wrapper compact-wrapper">
+              <canvas id="genderChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Demographic Analytics Section -->
+    <section class="demographics-section" aria-label="Demographic Analytics">
+      <div class="section-title-container">
+        <h2>Voter Demographic Breakdown</h2>
+      </div>
+
+      <div class="visualization-layout">
+        <div class="vis-column-left">
+          <div class="chart-container card-surface">
+            <div class="chart-header-row">
+              <h3>Turnout by Age Brackets</h3>
+              <div class="view-switch-group" role="group" aria-label="Age View Switch">
+                <button type="button" class="view-switch-btn active" id="btn-age-pct" onclick="setAgeMode('pct')">% Share</button>
+                <button type="button" class="view-switch-btn" id="btn-age-count" onclick="setAgeMode('count')">Voters</button>
+              </div>
+            </div>
+            <div class="chart-wrapper">
+              <canvas id="ageChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="vis-column-right">
+          <div class="chart-container card-surface">
+            <div class="chart-header-row header-flex-wrap">
+              <h3>District Breakdown</h3>
+              <div class="feature-controls">
+                <div class="view-switch-group" role="group" aria-label="District Type Switch">
+                  <button type="button" class="view-switch-btn active" id="btn-dist-commission" onclick="setDistrictView('commission')">Commission</button>
+                  <button type="button" class="view-switch-btn" id="btn-dist-senate" onclick="setDistrictView('senate')">Senate</button>
+                  <button type="button" class="view-switch-btn" id="btn-dist-house" onclick="setDistrictView('house')">House</button>
+                  <button type="button" class="view-switch-btn" id="btn-dist-school" onclick="setDistrictView('school')">School</button>
+                  <button type="button" class="view-switch-btn" id="btn-dist-city" onclick="setDistrictView('city')">City</button>
+                </div>
+                <div class="view-switch-group" role="group" aria-label="District Unit Switch">
+                  <button type="button" class="view-switch-btn active" id="btn-dist-unit-pct" onclick="setDistrictMode('pct')">% Share</button>
+                  <button type="button" class="view-switch-btn" id="btn-dist-unit-count" onclick="setDistrictMode('count')">Voters</button>
+                </div>
+              </div>
+            </div>
+            <div class="chart-wrapper">
+              <canvas id="districtChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature: Top 10 Precincts by Turnout -->
+      <div class="full-width-feature-container card-surface" style="margin-bottom: 24px;">
+        <div class="chart-header-row header-flex-wrap">
+          <div>
+            <h3 class="major-feature-title">Top 10 Precincts by Turnout</h3>
+            <p class="feature-subtitle">Highest volume precincts ranked by total early voting participation and partisan distribution.</p>
+          </div>
+          <div class="view-switch-group" role="group" aria-label="Top 10 Precinct View Switch">
+            <button type="button" class="view-switch-btn active" id="btn-top10-count" onclick="setTop10PrecinctMode('count')">Voters</button>
+            <button type="button" class="view-switch-btn" id="btn-top10-pct" onclick="setTop10PrecinctMode('pct')">% Share</button>
+          </div>
+        </div>
+        <div class="chart-wrapper" style="height: 420px !important;">
+          <canvas id="top10PrecinctChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Major Feature: All Precincts Turnout & Party Distribution -->
+      <div class="full-width-feature-container card-surface">
+        <div class="chart-header-row header-flex-wrap">
+          <div>
+            <h3 class="major-feature-title">All Precincts Turnout &amp; Party Distribution</h3>
+            <p class="feature-subtitle">Interactive breakdown of turnout and partisan primary participation across all precincts in Hamilton County.</p>
+          </div>
+          <div class="feature-controls">
+            <div class="search-input-wrapper">
+              <label for="precinct-search-input" class="visually-hidden">Search precincts</label>
+              <input type="text" id="precinct-search-input" class="precinct-search-field" placeholder="Search precinct name..." oninput="onPrecinctSearch(this.value)">
+            </div>
+            <div class="view-switch-group" role="group" aria-label="Precinct View Switch">
+              <button type="button" class="view-switch-btn active" id="btn-precinct-count" onclick="setPrecinctMode('count')">Voters</button>
+              <button type="button" class="view-switch-btn" id="btn-precinct-pct" onclick="setPrecinctMode('pct')">% Share</button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="major-chart-scroll-wrapper" id="precinctChartWrapper">
+          <canvas id="precinctChart"></canvas>
         </div>
       </div>
     </section>

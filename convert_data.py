@@ -233,6 +233,13 @@ def main():
             
     # Location mapping from CSV to Excel
     LOCATION_MAP = {
+        "AB": "By Mail/NH Voters",
+        "BR": "Brainerd",
+        "CD": "Collegedale",
+        "EC": "Election Comm.",
+        "HR": "Harrison",
+        "HS": "Hixson",
+        "SD": "Soddy Daisy",
         "ABSENTEE/BY MAIL": "By Mail/NH Voters",
         "BRAINERD REC CTR": "Brainerd",
         "COLLEGEDALE": "Collegedale",
@@ -241,62 +248,125 @@ def main():
         "HIXSON": "Hixson",
         "SODDY DAISY": "Soddy Daisy"
     }
-    
-    # Scan for CSV files in current directory and Current_Election_Results
-    csv_data = {}
+
+    PARTY_MAP = {
+        "R": "republican",
+        "REP": "republican",
+        "REPUBLICAN": "republican",
+        "D": "democrat",
+        "DEM": "democrat",
+        "DEMOCRAT": "democrat",
+        "G": "general",
+        "GEN": "general",
+        "GENERAL": "general"
+    }
+
+    # Scan for voter CSV files in current directory and Current_Election_Results
+    voter_records = []
+    seen_registrations = set()
     csv_directories = ['.', 'Current_Election_Results']
-    
+
     for folder in csv_directories:
         if not os.path.exists(folder):
             continue
         for filename in os.listdir(folder):
             if filename.endswith('.csv'):
-                date_match = re.match(r'^(\d{4}-\d{2}-\d{2})\.csv$', filename)
-                target_date = None
-                if date_match:
-                    target_date = date_match.group(1)
-                elif filename == 'testcsv1.csv':
-                    target_date = '2026-07-17'
-                    
-                if target_date:
-                    filepath = os.path.join(folder, filename)
-                    with open(filepath, 'r', encoding='utf-8') as f:
+                filepath = os.path.join(folder, filename)
+                try:
+                    with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
                         reader = csv.DictReader(f)
-                        day_breakdown = {}
+                        fieldnames = reader.fieldnames or []
+                        if 'DateBallotReceived' not in fieldnames:
+                            continue
+                        
                         for row in reader:
-                            csv_loc = row.get('Location', '').strip()
-                            mapped_loc = LOCATION_MAP.get(csv_loc, csv_loc)
-                            
-                            total = clean_num(row.get('TotalVoters', 0))
-                            dem = clean_num(row.get('DEMOCRAT', 0))
-                            rep = clean_num(row.get('REPUBLICAN', 0))
-                            gen = clean_num(row.get('GENERAL', 0))
-                            
-                            day_breakdown[mapped_loc] = {
-                                "total": total,
-                                "democrat": dem,
-                                "republican": rep,
-                                "general": gen
-                            }
-                        csv_data[target_date] = day_breakdown
+                            reg_num = row.get('RegistrationNum', '').strip()
+                            if reg_num and reg_num in seen_registrations:
+                                continue
+                            if reg_num:
+                                seen_registrations.add(reg_num)
+
+                            raw_date = row.get('DateBallotReceived', '').strip()
+                            if not raw_date:
+                                continue
+
+                            parsed_date_str = None
+                            for fmt in ('%m/%d/%Y', '%Y-%m-%d', '%m/%d/%y', '%m-%d-%Y'):
+                                try:
+                                    dt = datetime.strptime(raw_date, fmt)
+                                    parsed_date_str = dt.strftime('%Y-%m-%d')
+                                    break
+                                except ValueError:
+                                    pass
+
+                            if not parsed_date_str:
+                                continue
+
+                            loc_raw = row.get('EarlyVoterLocation', '').strip()
+                            mapped_loc = LOCATION_MAP.get(loc_raw, loc_raw)
+
+                            party_raw = row.get('Party', '').strip().upper()
+                            mapped_party = PARTY_MAP.get(party_raw, 'general')
+
+                            age_val = None
+                            try:
+                                age_val = int(row.get('AGE', '').strip())
+                            except ValueError:
+                                pass
+
+                            sex_val = row.get('Sex', '').strip().upper()
+                            if sex_val not in ('F', 'M'):
+                                sex_val = 'Other/Unknown'
+
+                            voter_records.append({
+                                "date": parsed_date_str,
+                                "location": mapped_loc,
+                                "party": mapped_party,
+                                "age": age_val,
+                                "sex": sex_val,
+                                "precinct": row.get('PrecinctName', '').strip(),
+                                "commission": row.get('Commission', '').strip(),
+                                "senate": row.get('Senate', '').strip(),
+                                "house": row.get('House', '').strip(),
+                                "school": row.get('School', '').strip(),
+                                "city": row.get('City', '').strip(),
+                                "municipality": row.get('Municipality', '').strip()
+                            })
+                except Exception as e:
+                    print(f"Warning: Failed to parse CSV file {filepath}: {e}")
+
+    # Build csv_data daily breakdown from voter records
+    csv_data = {}
+    for record in voter_records:
+        d = record['date']
+        loc = record['location']
+        party = record['party']
+
+        if d not in csv_data:
+            csv_data[d] = {}
+        if loc not in csv_data[d]:
+            csv_data[d][loc] = {"total": 0, "democrat": 0, "republican": 0, "general": 0}
+
+        csv_data[d][loc]["total"] += 1
+        csv_data[d][loc][party] += 1
 
     # 3. Generate the daily timeline based on configuration dates
     daily_turnout = []
     early_voting_start = config.get("earlyVotingStartDate", "2026-07-17")
     early_voting_end = config.get("earlyVotingEndDate", "2026-08-01")
     holidays = set(config.get("holidays", []))
-    
+
     timeline_dates = []
-    
+
     # Generate timeline
     start_dt = datetime.strptime(early_voting_start, "%Y-%m-%d")
     end_dt = datetime.strptime(early_voting_end, "%Y-%m-%d")
-    
+
     # Day 0: Pre-voting Mail-in block
-    # Match date format from Excel: M/D/YYYY of start date minus 1 day (7/16/2026)
     pre_ev_date = start_dt - timedelta(days=1)
-    timeline_dates.append(f"Thru {pre_ev_date.strftime('%m/%d/%Y').replace('/0', '/')}")
-    
+    pre_ev_label = f"Thru {pre_ev_date.strftime('%m/%d/%Y').replace('/0', '/')}"
+    timeline_dates.append(pre_ev_label)
+
     curr_dt = start_dt
     while curr_dt <= end_dt:
         if curr_dt.weekday() != 6:
@@ -304,9 +374,8 @@ def main():
             if date_str not in holidays:
                 timeline_dates.append(date_str)
         curr_dt += timedelta(days=1)
-        
-    # Day 15: Election Day
-    # Match short format: e.g. 8/2/26-Election Day (Election Day is next day after EV end in Hamilton TN 2026 sheet)
+
+    # Election Day
     election_day_dt = end_dt + timedelta(days=1)
     short_date = f"{election_day_dt.month}/{election_day_dt.day}/{str(election_day_dt.year)[2:]}"
     timeline_dates.append(f"{short_date}-Election Day")
@@ -315,8 +384,7 @@ def main():
     for d_str in timeline_dates:
         is_mail_only = True
         values = {}
-        
-        # Load baseline values from Excel if loaded
+
         if d_str in excel_days:
             values = excel_days[d_str]["values"]
             total_val = excel_days[d_str]["total"]
@@ -326,22 +394,37 @@ def main():
                     is_mail_only = False
         else:
             total_val = 0
-            # If start row ("Thru") or end row ("Election Day")
             if "Thru" in d_str or "Election Day" in d_str:
                 is_mail_only = True
                 values = {loc: (0 if c_idx == 2 else None) for c_idx, loc in enumerate(locations, 2)}
             else:
                 is_mail_only = False
                 values = {loc: 0 for loc in locations}
-                
-        # Find matching CSV party breakdown using flexible date matching
-        party_breakdown = None
+
+        # Aggregate CSV records for this timeline date
+        party_breakdown = {}
         for csv_date, breakdown in csv_data.items():
-            if dates_match(csv_date, d_str):
-                party_breakdown = breakdown
-                break
-        
-        # Override Excel with CSV values if present
+            # Check if csv_date matches pre-EV, exact EV date, or election day
+            is_match = False
+            if "Thru" in d_str:
+                if csv_date < early_voting_start:
+                    is_match = True
+            elif "Election Day" in d_str:
+                if csv_date > early_voting_end:
+                    is_match = True
+            else:
+                if csv_date == d_str:
+                    is_match = True
+
+            if is_match:
+                for loc, counts in breakdown.items():
+                    if loc not in party_breakdown:
+                        party_breakdown[loc] = {"total": 0, "democrat": 0, "republican": 0, "general": 0}
+                    party_breakdown[loc]["total"] += counts["total"]
+                    party_breakdown[loc]["democrat"] += counts["democrat"]
+                    party_breakdown[loc]["republican"] += counts["republican"]
+                    party_breakdown[loc]["general"] += counts["general"]
+
         if party_breakdown:
             total_val = 0
             is_mail_only = True
@@ -356,19 +439,19 @@ def main():
                 else:
                     if values.get(loc) is None:
                         values[loc] = None
-        
+
         daily_turnout.append({
             "date": d_str,
             "isMailOnly": is_mail_only,
             "values": values,
             "total": total_val,
-            "partyBreakdown": party_breakdown
+            "partyBreakdown": party_breakdown if party_breakdown else None
         })
-        
+
     # Re-calculate totals row and columns
     totals = {loc: 0 for loc in locations}
     totals["total"] = 0
-    
+
     for entry in daily_turnout:
         is_election_day_row = "Election Day" in entry["date"]
         for c_idx, loc in enumerate(locations, 2):
@@ -378,17 +461,17 @@ def main():
                     totals[loc] += val
         if isinstance(entry["total"], int):
             totals["total"] += entry["total"]
-            
+
     early_voting_sum = sum(totals[loc] for c_idx, loc in enumerate(locations, 2) if c_idx > 2)
     absentee_sum = totals[locations[0]]
     grand_total_calc = totals["total"]
-    
+
     # Recalculate party totals from all daily CSVs
     republican_sum = 0
     democrat_sum = 0
     general_sum = 0
     has_any_breakdown = False
-    
+
     for entry in daily_turnout:
         pb = entry["partyBreakdown"]
         if pb:
@@ -397,7 +480,7 @@ def main():
                 republican_sum += pb[loc].get("republican", 0)
                 democrat_sum += pb[loc].get("democrat", 0)
                 general_sum += pb[loc].get("general", 0)
-                
+
     if has_any_breakdown:
         republican_total = republican_sum
         democrat_total = democrat_sum
@@ -408,10 +491,70 @@ def main():
         democrat_total = 0
         general_total = 0
         party_total_sum = 0
-        
+
     turnout_percent_calc = 0.0
     if total_registered and total_registered > 0:
         turnout_percent_calc = grand_total_calc / total_registered
+
+    # Helper for demographic grouping
+    def init_party_dict():
+        return {"total": 0, "republican": 0, "democrat": 0, "general": 0}
+
+    def add_voter(d_dict, key, party):
+        if key not in d_dict:
+            d_dict[key] = init_party_dict()
+        d_dict[key]["total"] += 1
+        if party in d_dict[key]:
+            d_dict[key][party] += 1
+        else:
+            d_dict[key]["general"] += 1
+
+    def get_age_bracket(age):
+        if age is None:
+            return "Unknown"
+        if age < 18:
+            return "<18"
+        elif age <= 29:
+            return "18-29"
+        elif age <= 49:
+            return "30-49"
+        elif age <= 64:
+            return "50-64"
+        else:
+            return "65+"
+
+    age_groups = {}
+    sex_dist = {}
+    commission_dist = {}
+    senate_dist = {}
+    house_dist = {}
+    school_dist = {}
+    city_dist = {}
+    precinct_dist = {}
+
+    for v in voter_records:
+        p = v["party"]
+        add_voter(age_groups, get_age_bracket(v["age"]), p)
+        add_voter(sex_dist, v["sex"], p)
+        if v["commission"]: add_voter(commission_dist, v["commission"], p)
+        if v["senate"]: add_voter(senate_dist, v["senate"], p)
+        if v["house"]: add_voter(house_dist, v["house"], p)
+        if v["school"]: add_voter(school_dist, v["school"], p)
+        if v["city"]: add_voter(city_dist, v["city"], p)
+        if v["precinct"]: add_voter(precinct_dist, v["precinct"], p)
+
+    demographics = {
+        "ageGroups": age_groups,
+        "sex": sex_dist,
+        "districts": {
+            "commission": commission_dist,
+            "senate": senate_dist,
+            "house": house_dist,
+            "school": school_dist,
+            "city": city_dist
+        },
+        "precincts": precinct_dist
+    }
         
     # 4. Parse historical election results PDFs
     historical = {}
@@ -490,6 +633,7 @@ def main():
             "total": party_total_sum
         },
         "historical": historical,
+        "demographics": demographics,
         "disclaimer": disclaimer
     }
     

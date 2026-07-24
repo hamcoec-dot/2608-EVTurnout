@@ -10,6 +10,18 @@ var partyDistributionChartRef = null;
 var historicalPartyChartRef = null;
 var partisanLocationChartRef = null;
 var currentPartisanLocationMode = 'pct';
+var ageChartRef = null;
+var genderChartRef = null;
+var districtChartRef = null;
+var precinctChartRef = null;
+var top10PrecinctChartRef = null;
+var currentDistrictType = 'commission';
+var currentPrecinctMode = 'count';
+var currentTop10PrecinctMode = 'count';
+var currentPrecinctSearchQuery = '';
+var currentLocationMode = 'pct';
+var currentAgeMode = 'pct';
+var currentDistrictMode = 'pct';
 
 // Initialization function run on body load
 function initApp() {
@@ -572,6 +584,13 @@ function renderCharts() {
   if (partyDistributionChartRef) partyDistributionChartRef.destroy();
   if (historicalPartyChartRef) historicalPartyChartRef.destroy();
   if (partisanLocationChartRef) partisanLocationChartRef.destroy();
+  if (ageChartRef) ageChartRef.destroy();
+  if (genderChartRef) genderChartRef.destroy();
+  if (districtChartRef) districtChartRef.destroy();
+  if (precinctChartRef) precinctChartRef.destroy();
+  if (top10PrecinctChartRef) top10PrecinctChartRef.destroy();
+
+  renderDemographicCharts();
   
   var daily = TURNOUT_DATA.dailyTurnout;
   
@@ -716,10 +735,18 @@ function renderCharts() {
   // 2. Turnout by location horizontal bar chart
   var locLabels = [];
   var locValues = [];
+  var isLocPct = (currentLocationMode === 'pct');
+  var grandTot = TURNOUT_DATA.summary.grandTotal || 1;
+
   for (var j = 0; j < TURNOUT_DATA.locations.length; j++) {
     var lName = TURNOUT_DATA.locations[j];
     locLabels.push(lName);
-    locValues.push(TURNOUT_DATA.totals[lName] || 0);
+    var cnt = TURNOUT_DATA.totals[lName] || 0;
+    if (isLocPct) {
+      locValues.push(parseFloat(((cnt / grandTot) * 100).toFixed(1)));
+    } else {
+      locValues.push(cnt);
+    }
   }
   
   var ctx2 = document.getElementById('locationChart');
@@ -729,10 +756,12 @@ function renderCharts() {
       data: {
         labels: locLabels,
         datasets: [{
-          label: 'Total Voters',
+          label: isLocPct ? '% Share of Total Turnout' : 'Total Voters',
           data: locValues,
           backgroundColor: '#D4A843',
-          borderRadius: 6
+          borderRadius: 6,
+          barPercentage: 0.75,
+          categoryPercentage: 0.85
         }]
       },
       options: {
@@ -741,25 +770,39 @@ function renderCharts() {
         maintainAspectRatio: false,
         plugins: {
           legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                var val = context.parsed.x;
+                return isLocPct ? ('% Share: ' + val + '%') : ('Voters: ' + formatNumber(val));
+              }
+            }
+          },
           datalabels: {
             display: true,
             anchor: 'end',
             align: 'end',
             color: '#1B2A4A',
-            font: { weight: 'bold', size: 10 },
+            font: { weight: 'bold', size: 11 },
             formatter: function(value) {
-              return value > 0 ? formatNumber(value) : '';
+              if (isLocPct) {
+                return value > 0 ? value.toFixed(1) + '%' : '';
+              } else {
+                return value > 0 ? formatNumber(value) : '';
+              }
             }
           }
         },
         scales: {
           x: {
-            grace: '10%',
+            grace: '15%',
             beginAtZero: true,
-            grid: { color: '#E2E8F0' }
+            grid: { color: '#E2E8F0' },
+            title: { display: true, text: isLocPct ? '% Share of Total Turnout' : 'Voter Count', font: { size: 12, weight: 'bold' } }
           },
           y: {
-            grid: { display: false }
+            grid: { display: false },
+            ticks: { font: { size: 12, weight: '600' }, color: '#1B2A4A' }
           }
         }
       }
@@ -1152,6 +1195,604 @@ function renderPartisanLocationChart() {
             } else {
               return formatNumber(value);
             }
+          }
+        }
+      }
+    }
+  });
+}
+
+// District View Switcher Handler
+function setDistrictView(districtType) {
+  currentDistrictType = districtType;
+
+  var types = ['commission', 'senate', 'house', 'school', 'city'];
+  for (var i = 0; i < types.length; i++) {
+    var btn = document.getElementById('btn-dist-' + types[i]);
+    if (btn) {
+      if (types[i] === districtType) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    }
+  }
+
+  renderDistrictChart();
+}
+
+function renderDemographicCharts() {
+  if (!TURNOUT_DATA || !TURNOUT_DATA.demographics) return;
+
+  renderAgeChart();
+  renderGenderChart();
+  renderDistrictChart();
+  renderTop10PrecinctChart();
+  renderPrecinctChart();
+}
+
+function setAgeMode(mode) {
+  currentAgeMode = mode;
+  var btnPct = document.getElementById('btn-age-pct');
+  var btnCount = document.getElementById('btn-age-count');
+  if (btnPct && btnCount) {
+    if (mode === 'pct') {
+      btnPct.classList.add('active');
+      btnCount.classList.remove('active');
+    } else {
+      btnCount.classList.add('active');
+      btnPct.classList.remove('active');
+    }
+  }
+  renderAgeChart();
+}
+
+function setDistrictMode(mode) {
+  currentDistrictMode = mode;
+  var btnPct = document.getElementById('btn-dist-unit-pct');
+  var btnCount = document.getElementById('btn-dist-unit-count');
+  if (btnPct && btnCount) {
+    if (mode === 'pct') {
+      btnPct.classList.add('active');
+      btnCount.classList.remove('active');
+    } else {
+      btnCount.classList.add('active');
+      btnPct.classList.remove('active');
+    }
+  }
+  renderDistrictChart();
+}
+
+function setPrecinctMode(mode) {
+  currentPrecinctMode = mode;
+  var btnCount = document.getElementById('btn-precinct-count');
+  var btnPct = document.getElementById('btn-precinct-pct');
+  if (btnCount && btnPct) {
+    if (mode === 'pct') {
+      btnPct.classList.add('active');
+      btnCount.classList.remove('active');
+    } else {
+      btnCount.classList.add('active');
+      btnPct.classList.remove('active');
+    }
+  }
+  renderPrecinctChart();
+}
+
+function onPrecinctSearch(query) {
+  currentPrecinctSearchQuery = (query || '').toLowerCase().trim();
+  renderPrecinctChart();
+}
+
+function renderAgeChart() {
+  if (ageChartRef) ageChartRef.destroy();
+  var ctx = document.getElementById('ageChart');
+  if (!ctx) return;
+
+  var demo = TURNOUT_DATA.demographics.ageGroups || {};
+  var labels = ['18-29', '30-49', '50-64', '65+'];
+  if (demo['Unknown']) labels.push('Unknown');
+  if (demo['<18']) labels.unshift('<18');
+
+  var repData = [];
+  var demData = [];
+  var genData = [];
+  var isPctMode = (currentAgeMode === 'pct');
+
+  for (var i = 0; i < labels.length; i++) {
+    var group = demo[labels[i]] || { republican: 0, democrat: 0, general: 0, total: 0 };
+    var tot = group.total || (group.republican + group.democrat + group.general) || 1;
+
+    if (isPctMode) {
+      repData.push(parseFloat(((group.republican / tot) * 100).toFixed(1)));
+      demData.push(parseFloat(((group.democrat / tot) * 100).toFixed(1)));
+      genData.push(parseFloat(((group.general / tot) * 100).toFixed(1)));
+    } else {
+      repData.push(group.republican || 0);
+      demData.push(group.democrat || 0);
+      genData.push(group.general || 0);
+    }
+  }
+
+  ageChartRef = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: isPctMode ? 'Republican %' : 'Republican Voters', data: repData, backgroundColor: '#D32F2F' },
+        { label: isPctMode ? 'Democrat %' : 'Democrat Voters', data: demData, backgroundColor: '#1976D2' },
+        { label: isPctMode ? 'General %' : 'General/Other', data: genData, backgroundColor: '#F57C00' }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { stacked: true, grid: { display: false } },
+        y: {
+          stacked: true,
+          max: isPctMode ? 100 : undefined,
+          grid: { color: '#E2E8F0' },
+          title: { display: true, text: isPctMode ? 'Partisan Share (%)' : 'Voter Count' }
+        }
+      },
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              var val = context.parsed.y;
+              var label = context.dataset.label || '';
+              return isPctMode ? (label + ': ' + val + '%') : (label + ': ' + formatNumber(val) + ' voters');
+            }
+          }
+        },
+        datalabels: {
+          display: function(context) {
+            var val = context.dataset.data[context.dataIndex];
+            return isPctMode ? (val > 4) : (val > 30);
+          },
+          color: function(context) {
+            return context.datasetIndex === 2 ? '#1B2A4A' : '#FFFFFF';
+          },
+          font: { weight: 'bold', size: 10 },
+          formatter: function(val) {
+            return isPctMode ? val.toFixed(1) + '%' : formatNumber(val);
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderGenderChart() {
+  if (genderChartRef) genderChartRef.destroy();
+  var ctx = document.getElementById('genderChart');
+  if (!ctx) return;
+
+  var demo = TURNOUT_DATA.demographics.sex || {};
+  var keys = ['F', 'M'];
+  if (demo['Other/Unknown']) keys.push('Other/Unknown');
+
+  var labels = [];
+  var totals = [];
+  var bgColors = ['#E91E63', '#0288D1', '#757575'];
+
+  for (var i = 0; i < keys.length; i++) {
+    var key = keys[i];
+    var displayLabel = key === 'F' ? 'Female' : (key === 'M' ? 'Male' : 'Other/Unknown');
+    var group = demo[key] || { total: 0 };
+    labels.push(displayLabel);
+    totals.push(group.total || 0);
+  }
+
+  genderChartRef = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: totals,
+        backgroundColor: bgColors,
+        borderWidth: 2,
+        borderColor: '#FFFFFF'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 12 } } },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              var label = context.label || '';
+              var val = context.parsed;
+              var key = keys[context.dataIndex];
+              var group = demo[key] || {};
+              var rep = group.republican || 0;
+              var dem = group.democrat || 0;
+              var gen = group.general || 0;
+              return label + ': ' + formatNumber(val) + ' (REP: ' + formatNumber(rep) + ', DEM: ' + formatNumber(dem) + ', GEN: ' + formatNumber(gen) + ')';
+            }
+          }
+        },
+        datalabels: {
+          display: true,
+          color: '#FFFFFF',
+          font: { weight: 'bold', size: 11 },
+          formatter: function(value, ctx) {
+            var sum = 0;
+            var dataArr = ctx.chart.data.datasets[0].data;
+            dataArr.map(function(data) { sum += data; });
+            var percentage = (value * 100 / sum).toFixed(1) + "%";
+            return value > 0 ? percentage : '';
+          }
+        }
+      },
+      cutout: '65%'
+    }
+  });
+}
+
+function renderDistrictChart() {
+  if (districtChartRef) districtChartRef.destroy();
+  var ctx = document.getElementById('districtChart');
+  if (!ctx) return;
+
+  var districtsObj = (TURNOUT_DATA.demographics && TURNOUT_DATA.demographics.districts) ? TURNOUT_DATA.demographics.districts : {};
+  var currentObj = districtsObj[currentDistrictType] || {};
+
+  var districtKeys = Object.keys(currentObj);
+  districtKeys.sort(function(a, b) {
+    var numA = parseInt(a, 10);
+    var numB = parseInt(b, 10);
+    if (!isNaN(numA) && !isNaN(numB)) return numA - numB;
+    return a.localeCompare(b);
+  });
+
+  var labels = [];
+  var repData = [];
+  var demData = [];
+  var genData = [];
+  var isPctMode = (currentDistrictMode === 'pct');
+
+  var prefix = currentDistrictType.charAt(0).toUpperCase() + currentDistrictType.slice(1) + ' ';
+  if (currentDistrictType === 'city') prefix = '';
+
+  for (var i = 0; i < districtKeys.length; i++) {
+    var key = districtKeys[i];
+    var group = currentObj[key] || { republican: 0, democrat: 0, general: 0, total: 0 };
+    var tot = group.total || (group.republican + group.democrat + group.general) || 1;
+
+    labels.push(prefix + key);
+
+    if (isPctMode) {
+      repData.push(parseFloat(((group.republican / tot) * 100).toFixed(1)));
+      demData.push(parseFloat(((group.democrat / tot) * 100).toFixed(1)));
+      genData.push(parseFloat(((group.general / tot) * 100).toFixed(1)));
+    } else {
+      repData.push(group.republican || 0);
+      demData.push(group.democrat || 0);
+      genData.push(group.general || 0);
+    }
+  }
+
+  districtChartRef = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: isPctMode ? 'Republican %' : 'Republican Voters', data: repData, backgroundColor: '#D32F2F' },
+        { label: isPctMode ? 'Democrat %' : 'Democrat Voters', data: demData, backgroundColor: '#1976D2' },
+        { label: isPctMode ? 'General %' : 'General/Other', data: genData, backgroundColor: '#F57C00' }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { stacked: true, grid: { display: false } },
+        y: {
+          stacked: true,
+          max: isPctMode ? 100 : undefined,
+          grid: { color: '#E2E8F0' },
+          title: { display: true, text: isPctMode ? 'Partisan Share (%)' : 'Voter Count' }
+        }
+      },
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11 } } },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              var val = context.parsed.y;
+              var label = context.dataset.label || '';
+              return isPctMode ? (label + ': ' + val + '%') : (label + ': ' + formatNumber(val) + ' voters');
+            }
+          }
+        },
+        datalabels: {
+          display: function(context) {
+            var val = context.dataset.data[context.dataIndex];
+            return isPctMode ? (val > 4) : (val > 25);
+          },
+          color: function(context) {
+            return context.datasetIndex === 2 ? '#1B2A4A' : '#FFFFFF';
+          },
+          font: { weight: 'bold', size: 10 },
+          formatter: function(val) {
+            return isPctMode ? val.toFixed(1) + '%' : formatNumber(val);
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderPrecinctChart() {
+  if (precinctChartRef) precinctChartRef.destroy();
+  var ctx = document.getElementById('precinctChart');
+  if (!ctx) return;
+
+  var precinctsObj = (TURNOUT_DATA.demographics && TURNOUT_DATA.demographics.precincts) ? TURNOUT_DATA.demographics.precincts : {};
+
+  var items = [];
+  for (var name in precinctsObj) {
+    if (precinctsObj.hasOwnProperty(name)) {
+      if (!currentPrecinctSearchQuery || name.toLowerCase().includes(currentPrecinctSearchQuery)) {
+        items.push({ name: name, data: precinctsObj[name] });
+      }
+    }
+  }
+
+  // Sort precincts strictly in alphabetical order (A to Z)
+  items.sort(function(a, b) {
+    return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' });
+  });
+
+  var allItems = items; // A to Z order (AIRPORT A at index 0 = top of chart)
+
+  var isPctMode = (currentPrecinctMode === 'pct');
+
+  // Prominent vertical height: 60px per precinct bar for maximum visibility and room to breathe
+  var calculatedHeight = Math.max(500, allItems.length * 60);
+  ctx.style.height = calculatedHeight + 'px';
+  if (ctx.parentNode) {
+    ctx.parentNode.style.height = calculatedHeight + 'px';
+  }
+
+  var labels = [];
+  var repData = [];
+  var demData = [];
+  var genData = [];
+
+  for (var i = 0; i < allItems.length; i++) {
+    var item = allItems[i];
+    var group = item.data;
+    var tot = group.total || (group.republican + group.democrat + group.general) || 1;
+
+    labels.push(item.name);
+
+    if (isPctMode) {
+      repData.push(parseFloat(((group.republican / tot) * 100).toFixed(1)));
+      demData.push(parseFloat(((group.democrat / tot) * 100).toFixed(1)));
+      genData.push(parseFloat(((group.general / tot) * 100).toFixed(1)));
+    } else {
+      repData.push(group.republican || 0);
+      demData.push(group.democrat || 0);
+      genData.push(group.general || 0);
+    }
+  }
+
+  precinctChartRef = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: isPctMode ? 'Republican %' : 'Republican Voters',
+          data: repData,
+          backgroundColor: '#D32F2F',
+          barPercentage: 0.85,
+          categoryPercentage: 0.9
+        },
+        {
+          label: isPctMode ? 'Democrat %' : 'Democrat Voters',
+          data: demData,
+          backgroundColor: '#1976D2',
+          barPercentage: 0.85,
+          categoryPercentage: 0.9
+        },
+        {
+          label: isPctMode ? 'General %' : 'General/Other',
+          data: genData,
+          backgroundColor: '#F57C00',
+          barPercentage: 0.85,
+          categoryPercentage: 0.9
+        }
+      ]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          stacked: true,
+          max: isPctMode ? 100 : undefined,
+          grid: { color: '#E2E8F0' },
+          title: { display: true, text: isPctMode ? 'Partisan Primary Share (%)' : 'Voter Count', font: { size: 13, weight: 'bold' } }
+        },
+        y: {
+          stacked: true,
+          grid: { display: false },
+          ticks: { font: { size: 13, weight: '700' }, color: '#1B2A4A' }
+        }
+      },
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 16, font: { size: 13, weight: '700' } } },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              var val = context.parsed.x;
+              var label = context.dataset.label || '';
+              if (isPctMode) {
+                return label + ': ' + val + '%';
+              } else {
+                return label + ': ' + formatNumber(val) + ' voters';
+              }
+            }
+          }
+        },
+        datalabels: {
+          display: function(context) {
+            var val = context.dataset.data[context.dataIndex];
+            return isPctMode ? (val > 3) : (val > 10);
+          },
+          color: function(context) {
+            return context.datasetIndex === 2 ? '#1B2A4A' : '#FFFFFF';
+          },
+          font: { weight: 'bold', size: 12 },
+          formatter: function(val) {
+            return isPctMode ? val.toFixed(1) + '%' : formatNumber(val);
+          }
+        }
+      }
+    }
+  });
+}
+
+function setTop10PrecinctMode(mode) {
+  currentTop10PrecinctMode = mode;
+  var btnCount = document.getElementById('btn-top10-count');
+  var btnPct = document.getElementById('btn-top10-pct');
+  if (btnCount && btnPct) {
+    if (mode === 'pct') {
+      btnPct.classList.add('active');
+      btnCount.classList.remove('active');
+    } else {
+      btnCount.classList.add('active');
+      btnPct.classList.remove('active');
+    }
+  }
+  renderTop10PrecinctChart();
+}
+
+function renderTop10PrecinctChart() {
+  if (top10PrecinctChartRef) top10PrecinctChartRef.destroy();
+  var ctx = document.getElementById('top10PrecinctChart');
+  if (!ctx) return;
+
+  var precinctsObj = (TURNOUT_DATA.demographics && TURNOUT_DATA.demographics.precincts) ? TURNOUT_DATA.demographics.precincts : {};
+
+  var items = [];
+  for (var name in precinctsObj) {
+    if (precinctsObj.hasOwnProperty(name)) {
+      items.push({ name: name, data: precinctsObj[name] });
+    }
+  }
+
+  // Sort descending by total turnout and select top 10
+  items.sort(function(a, b) {
+    return (b.data.total || 0) - (a.data.total || 0);
+  });
+  var top10 = items.slice(0, 10);
+
+  var isPctMode = (currentTop10PrecinctMode === 'pct');
+
+  var labels = [];
+  var repData = [];
+  var demData = [];
+  var genData = [];
+
+  for (var i = 0; i < top10.length; i++) {
+    var item = top10[i];
+    var group = item.data;
+    var tot = group.total || (group.republican + group.democrat + group.general) || 1;
+
+    labels.push((i + 1) + ". " + item.name);
+
+    if (isPctMode) {
+      repData.push(parseFloat(((group.republican / tot) * 100).toFixed(1)));
+      demData.push(parseFloat(((group.democrat / tot) * 100).toFixed(1)));
+      genData.push(parseFloat(((group.general / tot) * 100).toFixed(1)));
+    } else {
+      repData.push(group.republican || 0);
+      demData.push(group.democrat || 0);
+      genData.push(group.general || 0);
+    }
+  }
+
+  top10PrecinctChartRef = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: isPctMode ? 'Republican %' : 'Republican Voters',
+          data: repData,
+          backgroundColor: '#D32F2F',
+          barPercentage: 0.75,
+          categoryPercentage: 0.85
+        },
+        {
+          label: isPctMode ? 'Democrat %' : 'Democrat Voters',
+          data: demData,
+          backgroundColor: '#1976D2',
+          barPercentage: 0.75,
+          categoryPercentage: 0.85
+        },
+        {
+          label: isPctMode ? 'General %' : 'General/Other',
+          data: genData,
+          backgroundColor: '#F57C00',
+          barPercentage: 0.75,
+          categoryPercentage: 0.85
+        }
+      ]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          stacked: true,
+          max: isPctMode ? 100 : undefined,
+          grid: { color: '#E2E8F0' },
+          title: { display: true, text: isPctMode ? 'Partisan Primary Share (%)' : 'Voter Count', font: { size: 12, weight: 'bold' } }
+        },
+        y: {
+          stacked: true,
+          grid: { display: false },
+          ticks: { font: { size: 12, weight: '700' }, color: '#1B2A4A' }
+        }
+      },
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 14, font: { size: 12, weight: '600' } } },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              var val = context.parsed.x;
+              var label = context.dataset.label || '';
+              if (isPctMode) {
+                return label + ': ' + val + '%';
+              } else {
+                return label + ': ' + formatNumber(val) + ' voters';
+              }
+            }
+          }
+        },
+        datalabels: {
+          display: function(context) {
+            var val = context.dataset.data[context.dataIndex];
+            return isPctMode ? (val > 4) : (val > 15);
+          },
+          color: function(context) {
+            return context.datasetIndex === 2 ? '#1B2A4A' : '#FFFFFF';
+          },
+          font: { weight: 'bold', size: 11 },
+          formatter: function(val) {
+            return isPctMode ? val.toFixed(1) + '%' : formatNumber(val);
           }
         }
       }

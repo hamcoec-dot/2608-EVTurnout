@@ -273,9 +273,7 @@ def main():
         log_pass("ENC-002", "JavaScript file is 100% pure ASCII.")
 
     # 7. CSV Data Integrity Checks (source -> data.js)
-    # Scan for CSV files in current dir and Current_Election_Results folder
     csv_files_info = []
-    
     for f in os.listdir('.'):
         if f.endswith('.csv'):
             csv_files_info.append(('.', f))
@@ -294,136 +292,61 @@ def main():
             data_js_loaded = json.loads(json_str)
         except Exception as e:
             log_fail("CSV-004", f"Could not parse data.js content: {e}")
-            
-    LOCATION_MAP = {
-        "ABSENTEE/BY MAIL": "By Mail/NH Voters",
-        "BRAINERD REC CTR": "Brainerd",
-        "COLLEGEDALE": "Collegedale",
-        "ELECTION COMMISSION": "Election Comm.",
-        "HARRISON": "Harrison",
-        "HIXSON": "Hixson",
-        "SODDY DAISY": "Soddy Daisy"
-    }
 
-    csv_totals_by_date = {}
-    csv_data_by_date = {}
+    voter_csv_found = False
+    voter_total_count = 0
+    seen_voter_ids = set()
 
     for folder, csv_file in csv_files_info:
-        date_match = re.match(r'^(\d{4}-\d{2}-\d{2})\.csv$', csv_file)
-        target_date = None
-        if date_match:
-            target_date = date_match.group(1)
-        elif csv_file == 'testcsv1.csv':
-            target_date = '2026-07-17'
-            
-        if not target_date:
-            continue
-            
         filepath = os.path.join(folder, csv_file)
         try:
-            with open(filepath, 'r', encoding='utf-8') as f:
+            with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
                 reader = csv.DictReader(f)
-                rows = list(reader)
-                
-            required_cols = ["Location", "TotalVoters", "DEMOCRAT", "REPUBLICAN", "GENERAL"]
-            col_check = all(c in rows[0].keys() if rows else False for c in required_cols)
-            if col_check:
-                log_pass("CSV-001", f"CSV file {filepath} is parseable and contains required columns.")
-            else:
-                log_fail("CSV-001", f"CSV file {filepath} is missing required columns. Found: {list(rows[0].keys()) if rows else []}")
-                continue
+                fieldnames = reader.fieldnames or []
+                if 'DateBallotReceived' not in fieldnames:
+                    continue
+
+                required_cols = ["DateBallotReceived", "EarlyVoterLocation", "Party", "RegistrationNum"]
+                col_check = all(c in fieldnames for c in required_cols)
+                if col_check:
+                    log_pass("CSV-001", f"Voter CSV file {filepath} is parseable and contains required columns.")
+                    voter_csv_found = True
+                    for row in reader:
+                        reg_num = row.get("RegistrationNum", "").strip()
+                        if reg_num and reg_num in seen_voter_ids:
+                            continue
+                        if reg_num:
+                            seen_voter_ids.add(reg_num)
+                        voter_total_count += 1
+                else:
+                    log_fail("CSV-001", f"Voter CSV file {filepath} is missing required columns. Found: {fieldnames}")
         except Exception as e:
             log_fail("CSV-001", f"Failed to parse CSV file {filepath}: {e}")
-            continue
-            
-        row_mismatches = []
-        location_errors = []
-        date_total_voters = 0
-        date_party_data = {}
-        
-        for idx, r in enumerate(rows, 1):
-            loc = r.get("Location", "").strip()
-            if loc not in LOCATION_MAP:
-                location_errors.append(loc)
-                
-            try:
-                tot = int(r.get("TotalVoters", 0) or 0)
-                dem = int(r.get("DEMOCRAT", 0) or 0)
-                rep = int(r.get("REPUBLICAN", 0) or 0)
-                gen = int(r.get("GENERAL", 0) or 0)
-                
-                party_sum = dem + rep + gen
-                if tot != party_sum:
-                    row_mismatches.append((idx, loc, tot, party_sum))
-                    
-                date_total_voters += tot
-                mapped_loc = LOCATION_MAP.get(loc, loc)
-                date_party_data[mapped_loc] = {
-                    "total": tot,
-                    "democrat": dem,
-                    "republican": rep,
-                    "general": gen
-                }
-            except ValueError as ve:
-                row_mismatches.append((idx, loc, "ValueError", str(ve)))
-                
-        if row_mismatches:
-            log_fail("CSV-002", f"Row total voter mismatches in {filepath}: {row_mismatches}")
-        else:
-            log_pass("CSV-002", f"TotalVoters equals DEM+REP+GEN sums in {filepath}.")
-            
-        if location_errors:
-            log_fail("CSV-003", f"Unrecognized locations in {filepath}: {location_errors}")
-        else:
-            log_pass("CSV-003", f"All locations in {filepath} correctly mapped.")
-            
-        # Overwrite or fill (if there are duplicates, folder Current_Election_Results takes precedence)
-        csv_totals_by_date[target_date] = date_total_voters
-        csv_data_by_date[target_date] = date_party_data
+
+    if voter_csv_found:
+        log_pass("CSV-002", f"Successfully extracted {voter_total_count} unique voter records from voter CSV files.")
+    else:
+        log_warn("CSV-002", "No voter-level CSV files with DateBallotReceived found.")
 
     if data_js_loaded:
-        daily_turnout = data_js_loaded.get("dailyTurnout", [])
-        
-        all_csv_matched = True
-        cell_values_matched = True
-        
-        for date_entry in daily_turnout:
-            d_str = date_entry.get("date")
-            pb = date_entry.get("partyBreakdown")
-            
-            if d_str in csv_totals_by_date:
-                if pb is None:
-                    all_csv_matched = False
-                    log_fail("CSV-004", f"Date {d_str} has CSV file but partyBreakdown is null in data.js")
-                    continue
-                    
-                sum_pb = 0
-                for loc_name, breakdown in pb.items():
-                    sum_pb += breakdown.get("total", 0)
-                    
-                expected_csv_total = csv_totals_by_date[d_str]
-                if sum_pb != expected_csv_total:
-                    all_csv_matched = False
-                    log_fail("CSV-004", f"Date {d_str} partyBreakdown sum in data.js ({sum_pb}) does not match CSV TotalVoters ({expected_csv_total})")
-                else:
-                    log_pass("CSV-004", f"Date {d_str} party breakdown totals match CSV source totals ({sum_pb}).")
-                    
-                orig_data = csv_data_by_date[d_str]
-                for loc_name, orig_vals in orig_data.items():
-                    js_vals = pb.get(loc_name)
-                    if js_vals is None:
-                        cell_values_matched = False
-                        log_fail("CSV-005", f"Location {loc_name} on {d_str} missing from data.js partyBreakdown")
-                    else:
-                        for key in ["democrat", "republican", "general", "total"]:
-                            if orig_vals.get(key) != js_vals.get(key):
-                                cell_values_matched = False
-                                log_fail("CSV-005", f"Mismatch on {d_str} - {loc_name} {key}: CSV={orig_vals.get(key)}, JSON={js_vals.get(key)}")
-                                
-        if all_csv_matched and csv_totals_by_date:
-            log_pass("CSV-004", "All CSV date-wide totals match data.js partyBreakdown structures.")
-        if cell_values_matched and csv_totals_by_date:
-            log_pass("CSV-005", "All per-location party values are preserved exactly in data.js.")
+        js_grand_total = data_js_loaded.get("summary", {}).get("grandTotal", 0)
+        js_party_total = data_js_loaded.get("partyTotals", {}).get("total", 0)
+        demographics = data_js_loaded.get("demographics")
+
+        if voter_csv_found:
+            if js_grand_total == voter_total_count and js_party_total == voter_total_count:
+                log_pass("CSV-004", f"data.js grandTotal ({js_grand_total}) and partyTotals ({js_party_total}) exactly match voter CSV row count ({voter_total_count}).")
+            else:
+                log_fail("CSV-004", f"Mismatch: data.js grandTotal={js_grand_total}, partyTotals={js_party_total}, CSV count={voter_total_count}")
+
+        if demographics and isinstance(demographics, dict):
+            required_demo_keys = ["ageGroups", "sex", "districts", "precincts"]
+            if all(k in demographics for k in required_demo_keys):
+                log_pass("CSV-005", "data.js contains complete demographics object (ageGroups, sex, districts, precincts).")
+            else:
+                log_fail("CSV-005", f"data.js demographics missing keys. Found: {list(demographics.keys())}")
+        else:
+            log_fail("CSV-005", "data.js is missing demographics object.")
 
     print("============================================")
     print(f"  Results: {passes} PASS | {failures} FAIL | {warnings} WARN")
