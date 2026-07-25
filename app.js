@@ -783,81 +783,7 @@ function renderCharts() {
   }
   
   // 2. Turnout by location horizontal bar chart
-  var locLabels = [];
-  var locValues = [];
-  var isLocPct = (currentLocationMode === 'pct');
-  var grandTot = TURNOUT_DATA.summary.grandTotal || 1;
-
-  for (var j = 0; j < TURNOUT_DATA.locations.length; j++) {
-    var lName = TURNOUT_DATA.locations[j];
-    locLabels.push(lName);
-    var cnt = TURNOUT_DATA.totals[lName] || 0;
-    if (isLocPct) {
-      locValues.push(parseFloat(((cnt / grandTot) * 100).toFixed(1)));
-    } else {
-      locValues.push(cnt);
-    }
-  }
-  
-  var ctx2 = document.getElementById('locationChart');
-  if (ctx2) {
-    locationChartRef = new Chart(ctx2, {
-      type: 'bar',
-      data: {
-        labels: locLabels,
-        datasets: [{
-          label: isLocPct ? '% Share of Total Turnout' : 'Total Voters',
-          data: locValues,
-          backgroundColor: '#D4A843',
-          borderRadius: 6,
-          barPercentage: 0.75,
-          categoryPercentage: 0.85
-        }]
-      },
-      options: {
-        indexAxis: 'y',
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            callbacks: {
-              label: function(context) {
-                var val = context.parsed.x;
-                return isLocPct ? ('% Share: ' + val + '%') : ('Voters: ' + formatNumber(val));
-              }
-            }
-          },
-          datalabels: {
-            display: true,
-            anchor: 'end',
-            align: 'end',
-            color: '#1B2A4A',
-            font: { weight: 'bold', size: 11 },
-            formatter: function(value) {
-              if (isLocPct) {
-                return value > 0 ? value.toFixed(1) + '%' : '';
-              } else {
-                return value > 0 ? formatNumber(value) : '';
-              }
-            }
-          }
-        },
-        scales: {
-          x: {
-            grace: '15%',
-            beginAtZero: true,
-            grid: { color: '#E2E8F0' },
-            title: { display: true, text: isLocPct ? '% Share of Total Turnout' : 'Voter Count', font: { size: 12, weight: 'bold' } }
-          },
-          y: {
-            grid: { display: false },
-            ticks: { font: { size: 12, weight: '600' }, color: '#1B2A4A' }
-          }
-        }
-      }
-    });
-  }
+  renderLocationChart();
   
   // 3. Primary election distribution donut chart
   var pt = TURNOUT_DATA.partyTotals;
@@ -1084,6 +1010,108 @@ function renderHistoricalPartyTrendChart() {
           formatter: function(value) {
             return value > 4 ? value + '%' : ''; // Only show text if label space permits
           }
+        }
+      }
+    }
+  });
+}
+
+// Toggle view mode between Percentage Share and Vote Count for Turnout by Location chart
+function setLocationMode(mode) {
+  currentLocationMode = mode;
+  var btnPct = document.getElementById('btn-loc-pct');
+  var btnCount = document.getElementById('btn-loc-count');
+  if (btnPct && btnCount) {
+    if (mode === 'pct') {
+      btnPct.classList.add('active');
+      btnCount.classList.remove('active');
+    } else {
+      btnCount.classList.add('active');
+      btnPct.classList.remove('active');
+    }
+  }
+  renderLocationChart();
+}
+
+// Render Turnout by Location horizontal bar chart
+function renderLocationChart() {
+  if (locationChartRef) {
+    locationChartRef.destroy();
+    locationChartRef = null;
+  }
+  
+  var ctx2 = document.getElementById('locationChart');
+  if (!ctx2) return;
+
+  var locLabels = [];
+  var locValues = [];
+  var isLocPct = (currentLocationMode === 'pct');
+  var grandTot = (TURNOUT_DATA.summary && TURNOUT_DATA.summary.grandTotal) ? TURNOUT_DATA.summary.grandTotal : 1;
+
+  var locations = TURNOUT_DATA.locations || [];
+  for (var j = 0; j < locations.length; j++) {
+    var lName = locations[j];
+    locLabels.push(lName);
+    var cnt = (TURNOUT_DATA.totals && TURNOUT_DATA.totals[lName]) ? TURNOUT_DATA.totals[lName] : 0;
+    if (isLocPct) {
+      locValues.push(parseFloat(((cnt / grandTot) * 100).toFixed(1)));
+    } else {
+      locValues.push(cnt);
+    }
+  }
+  
+  locationChartRef = new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels: locLabels,
+      datasets: [{
+        label: isLocPct ? '% Share of Total Turnout' : 'Total Voters',
+        data: locValues,
+        backgroundColor: '#D4A843',
+        borderRadius: 6,
+        barPercentage: 0.75,
+        categoryPercentage: 0.85
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              var val = context.parsed.x;
+              return isLocPct ? ('% Share: ' + val + '%') : ('Voters: ' + formatNumber(val));
+            }
+          }
+        },
+        datalabels: {
+          display: true,
+          anchor: 'end',
+          align: 'end',
+          color: '#1B2A4A',
+          font: { weight: 'bold', size: 11 },
+          formatter: function(value) {
+            if (isLocPct) {
+              return value > 0 ? value.toFixed(1) + '%' : '';
+            } else {
+              return value > 0 ? formatNumber(value) : '';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grace: '15%',
+          beginAtZero: true,
+          grid: { color: '#E2E8F0' },
+          title: { display: true, text: isLocPct ? '% Share of Total Turnout' : 'Voter Count', font: { size: 12, weight: 'bold' } }
+        },
+        y: {
+          grid: { display: false },
+          ticks: { font: { size: 12, weight: '600' }, color: '#1B2A4A' }
         }
       }
     }
