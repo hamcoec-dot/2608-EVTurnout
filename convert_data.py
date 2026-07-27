@@ -322,12 +322,15 @@ def main():
                             if sex_val not in ('F', 'M'):
                                 sex_val = 'Other/Unknown'
 
+                            is_ft_voter = (row.get('FirstTimeVoter', '').strip().upper() == 'YES')
+
                             voter_records.append({
                                 "date": parsed_date_str,
                                 "location": mapped_loc,
                                 "party": mapped_party,
                                 "age": age_val,
                                 "sex": sex_val,
+                                "isFirstTime": is_ft_voter,
                                 "precinct": row.get('PrecinctName', '').strip(),
                                 "commission": row.get('Commission', '').strip(),
                                 "senate": row.get('Senate', '').strip(),
@@ -559,6 +562,60 @@ def main():
         },
         "precincts": precinct_dist
     }
+
+    # Aggregate First-Time Hamilton County Voters statistics
+    ft_records = [v for v in voter_records if v.get("isFirstTime")]
+    ft_total = len(ft_records)
+    ft_pct_of_turnout = (ft_total / grand_total_calc * 100) if grand_total_calc > 0 else 0.0
+
+    ft_party_breakdown = {"republican": 0, "democrat": 0, "general": 0}
+    ft_age_groups = {}
+    ft_sex_dist = {}
+    ft_location_dist = {}
+    ft_daily_trend = {}
+    ft_commission_dist = {}
+    ft_senate_dist = {}
+    ft_house_dist = {}
+    ft_school_dist = {}
+    ft_city_dist = {}
+    ft_precinct_dist = {}
+
+    for v in ft_records:
+        p = v["party"]
+        ft_party_breakdown[p] = ft_party_breakdown.get(p, 0) + 1
+        add_voter(ft_age_groups, get_age_bracket(v["age"]), p)
+        add_voter(ft_sex_dist, v["sex"], p)
+        
+        loc = v["location"]
+        ft_location_dist[loc] = ft_location_dist.get(loc, 0) + 1
+        
+        d = v["date"]
+        ft_daily_trend[d] = ft_daily_trend.get(d, 0) + 1
+        
+        if v["commission"]: add_voter(ft_commission_dist, v["commission"], p)
+        if v["senate"]: add_voter(ft_senate_dist, v["senate"], p)
+        if v["house"]: add_voter(ft_house_dist, v["house"], p)
+        if v["school"]: add_voter(ft_school_dist, v["school"], p)
+        if v["city"]: add_voter(ft_city_dist, v["city"], p)
+        if v["precinct"]: add_voter(ft_precinct_dist, v["precinct"], p)
+
+    first_time_voters = {
+        "total": ft_total,
+        "turnoutPercent": round(ft_pct_of_turnout, 2),
+        "partyBreakdown": ft_party_breakdown,
+        "ageGroups": ft_age_groups,
+        "sex": ft_sex_dist,
+        "locations": ft_location_dist,
+        "dailyTrend": ft_daily_trend,
+        "districts": {
+            "commission": ft_commission_dist,
+            "senate": ft_senate_dist,
+            "house": ft_house_dist,
+            "school": ft_school_dist,
+            "city": ft_city_dist
+        },
+        "precincts": ft_precinct_dist
+    }
         
     # 4. Parse historical election results PDFs
     historical = {}
@@ -638,6 +695,7 @@ def main():
         },
         "historical": historical,
         "demographics": demographics,
+        "firstTimeVoters": first_time_voters,
         "disclaimer": disclaimer
     }
     

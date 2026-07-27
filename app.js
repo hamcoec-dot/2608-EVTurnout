@@ -23,6 +23,19 @@ var currentLocationMode = 'pct';
 var currentAgeMode = 'pct';
 var currentDistrictMode = 'pct';
 
+// First-Time Hamilton County Voters Chart Refs & Modes
+var ftPartyChartRef = null;
+var ftAgeChartRef = null;
+var ftDailyTrendChartRef = null;
+var ftLocationChartRef = null;
+var ftDistrictChartRef = null;
+
+var currentFTPartyMode = 'pct';
+var currentFTAgeMode = 'pct';
+var currentFTLocationMode = 'pct';
+var currentFTDistrictView = 'commission';
+var currentFTDistrictMode = 'pct';
+
 // Initialization function run on body load
 function initApp() {
   if (typeof TURNOUT_DATA === 'undefined') {
@@ -46,6 +59,9 @@ function initApp() {
   
   // Render Party breakdown cards
   renderPartyCards();
+
+  // Render First-Time Voters KPIs
+  renderFirstTimeKpis();
   
   // Render Turnout Table
   renderTurnoutTable();
@@ -164,6 +180,94 @@ function renderMetricStats() {
   
   var daysLeft = getDaysOfEarlyVotingRemaining();
   animateValue("stat-days-left", 0, daysLeft, 800, false);
+
+  if (TURNOUT_DATA.firstTimeVoters) {
+    var ft = TURNOUT_DATA.firstTimeVoters;
+    animateValue("stat-first-time-total", 0, ft.total, 1000, false);
+    var ftPctEl = document.getElementById("stat-first-time-pct");
+    if (ftPctEl) {
+      ftPctEl.innerText = ft.turnoutPercent.toFixed(2) + "% of turnout";
+    }
+  }
+}
+
+// Render First-Time Hamilton County Voters KPI section cards
+function renderFirstTimeKpis() {
+  if (!TURNOUT_DATA.firstTimeVoters) return;
+  var ft = TURNOUT_DATA.firstTimeVoters;
+
+  // KPI 1: Total & % Turnout Share
+  animateValue("ft-kpi-total", 0, ft.total, 1000, false);
+  var turnoutShareEl = document.getElementById("ft-kpi-turnout-share");
+  if (turnoutShareEl) {
+    turnoutShareEl.innerText = ft.turnoutPercent.toFixed(2) + "% of total turnout";
+  }
+
+  // KPI 2: Partisan Split
+  var pb = ft.partyBreakdown || {};
+  var demCount = pb.democrat || 0;
+  var repCount = pb.republican || 0;
+  var totalParty = demCount + repCount + (pb.general || 0);
+  var demPct = totalParty > 0 ? (demCount / totalParty * 100).toFixed(1) : "0.0";
+  var repPct = totalParty > 0 ? (repCount / totalParty * 100).toFixed(1) : "0.0";
+
+  var splitEl = document.getElementById("ft-kpi-party-split");
+  if (splitEl) {
+    splitEl.innerText = demPct + "% D / " + repPct + "% R";
+  }
+  var leadEl = document.getElementById("ft-kpi-leading-party");
+  if (leadEl) {
+    var diff = demCount - repCount;
+    if (diff > 0) {
+      leadEl.innerText = "Democrat Lead (+" + diff + " voters)";
+      leadEl.style.color = "#1976D2";
+    } else if (diff < 0) {
+      leadEl.innerText = "Republican Lead (+" + Math.abs(diff) + " voters)";
+      leadEl.style.color = "#D32F2F";
+    } else {
+      leadEl.innerText = "Tied Partisan Participation";
+      leadEl.style.color = "var(--text-secondary)";
+    }
+  }
+
+  // KPI 3: Top Age Cohort
+  var ageGroups = ft.ageGroups || {};
+  var topAgeBracket = "";
+  var maxAgeCount = 0;
+  for (var bracket in ageGroups) {
+    if (ageGroups[bracket].total > maxAgeCount) {
+      maxAgeCount = ageGroups[bracket].total;
+      topAgeBracket = bracket;
+    }
+  }
+  var topAgeEl = document.getElementById("ft-kpi-top-age");
+  if (topAgeEl) {
+    topAgeEl.innerText = topAgeBracket || "18-29";
+  }
+  var youthShareEl = document.getElementById("ft-kpi-youth-share");
+  if (youthShareEl && ft.total > 0) {
+    var youthPct = (maxAgeCount / ft.total * 100).toFixed(1);
+    youthShareEl.innerText = youthPct + "% of first-time voters";
+  }
+
+  // KPI 4: Top Location
+  var locs = ft.locations || {};
+  var topLocName = "";
+  var maxLocCount = 0;
+  for (var locName in locs) {
+    if (locs[locName] > maxLocCount) {
+      maxLocCount = locs[locName];
+      topLocName = locName;
+    }
+  }
+  var topLocEl = document.getElementById("ft-kpi-top-location");
+  if (topLocEl) {
+    topLocEl.innerText = topLocName || "Election Comm.";
+  }
+  var locCountEl = document.getElementById("ft-kpi-location-count");
+  if (locCountEl) {
+    locCountEl.innerText = formatNumber(maxLocCount) + " voters";
+  }
 }
 
 // Render Party overview cards
@@ -590,6 +694,7 @@ function renderCharts() {
   if (precinctChartRef) precinctChartRef.destroy();
   if (top10PrecinctChartRef) top10PrecinctChartRef.destroy();
 
+  renderFirstTimeCharts();
   renderDemographicCharts();
   
   var daily = TURNOUT_DATA.dailyTurnout;
@@ -1871,6 +1976,419 @@ function renderTop10PrecinctChart() {
           font: { weight: 'bold', size: 11 },
           formatter: function(val) {
             return isPctMode ? val.toFixed(1) + '%' : formatNumber(val);
+          }
+        }
+      }
+    }
+  });
+}
+
+/* ==========================================================================
+   First-Time Hamilton County Voters Visualizations & Interactive Handlers
+   ========================================================================== */
+
+function renderFirstTimeCharts() {
+  if (ftPartyChartRef) ftPartyChartRef.destroy();
+  if (ftAgeChartRef) ftAgeChartRef.destroy();
+  if (ftDailyTrendChartRef) ftDailyTrendChartRef.destroy();
+  if (ftLocationChartRef) ftLocationChartRef.destroy();
+  if (ftDistrictChartRef) ftDistrictChartRef.destroy();
+
+  renderFTPartyChart();
+  renderFTAgeChart();
+  renderFTDailyTrendChart();
+  renderFTLocationChart();
+  renderFTDistrictChart();
+}
+
+function setFTPartyMode(mode) {
+  currentFTPartyMode = mode;
+  var pctBtn = document.getElementById('btn-ft-party-pct');
+  var cntBtn = document.getElementById('btn-ft-party-count');
+  if (pctBtn) pctBtn.classList.toggle('active', mode === 'pct');
+  if (cntBtn) cntBtn.classList.toggle('active', mode === 'count');
+  renderFTPartyChart();
+}
+
+function setFTAgeMode(mode) {
+  currentFTAgeMode = mode;
+  var pctBtn = document.getElementById('btn-ft-age-pct');
+  var cntBtn = document.getElementById('btn-ft-age-count');
+  if (pctBtn) pctBtn.classList.toggle('active', mode === 'pct');
+  if (cntBtn) cntBtn.classList.toggle('active', mode === 'count');
+  renderFTAgeChart();
+}
+
+function setFTLocationMode(mode) {
+  currentFTLocationMode = mode;
+  var pctBtn = document.getElementById('btn-ft-loc-pct');
+  var cntBtn = document.getElementById('btn-ft-loc-count');
+  if (pctBtn) pctBtn.classList.toggle('active', mode === 'pct');
+  if (cntBtn) cntBtn.classList.toggle('active', mode === 'count');
+  renderFTLocationChart();
+}
+
+function setFTDistrictView(view) {
+  currentFTDistrictView = view;
+  var views = ['commission', 'senate', 'house', 'school', 'city'];
+  views.forEach(function(v) {
+    var btn = document.getElementById('btn-ft-dist-' + v);
+    if (btn) btn.classList.toggle('active', v === view);
+  });
+  renderFTDistrictChart();
+}
+
+function setFTDistrictMode(mode) {
+  currentFTDistrictMode = mode;
+  var pctBtn = document.getElementById('btn-ft-dist-unit-pct');
+  var cntBtn = document.getElementById('btn-ft-dist-unit-count');
+  if (pctBtn) pctBtn.classList.toggle('active', mode === 'pct');
+  if (cntBtn) cntBtn.classList.toggle('active', mode === 'count');
+  renderFTDistrictChart();
+}
+
+// 1. First-Time Voters Partisan Split Chart
+function renderFTPartyChart() {
+  if (ftPartyChartRef) ftPartyChartRef.destroy();
+  var ctx = document.getElementById('ftPartyChart');
+  if (!ctx || !TURNOUT_DATA.firstTimeVoters) return;
+
+  var ft = TURNOUT_DATA.firstTimeVoters;
+  var pb = ft.partyBreakdown || {};
+  var isPctMode = currentFTPartyMode === 'pct';
+
+  var dem = pb.democrat || 0;
+  var rep = pb.republican || 0;
+  var gen = pb.general || 0;
+  var total = dem + rep + gen || 1;
+
+  var dataVals = isPctMode 
+    ? [parseFloat((dem / total * 100).toFixed(1)), parseFloat((rep / total * 100).toFixed(1)), parseFloat((gen / total * 100).toFixed(1))]
+    : [dem, rep, gen];
+
+  ftPartyChartRef = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Democrat Primary', 'Republican Primary', 'General Election'],
+      datasets: [{
+        data: dataVals,
+        backgroundColor: ['#1976D2', '#D32F2F', '#F57C00'],
+        borderWidth: 2,
+        borderColor: '#FFFFFF'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { font: { size: 12, weight: '600' } }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              var val = context.parsed;
+              if (isPctMode) {
+                var rawCount = [dem, rep, gen][context.dataIndex];
+                return context.label + ': ' + val + '% (' + formatNumber(rawCount) + ' voters)';
+              } else {
+                var pct = ((val / total) * 100).toFixed(1);
+                return context.label + ': ' + formatNumber(val) + ' voters (' + pct + '%)';
+              }
+            }
+          }
+        },
+        datalabels: {
+          color: '#FFFFFF',
+          font: { weight: 'bold', size: 13 },
+          formatter: function(val) {
+            return isPctMode ? val.toFixed(1) + '%' : formatNumber(val);
+          }
+        }
+      }
+    }
+  });
+}
+
+// 2. First-Time Voters Age Distribution Chart
+function renderFTAgeChart() {
+  if (ftAgeChartRef) ftAgeChartRef.destroy();
+  var ctx = document.getElementById('ftAgeChart');
+  if (!ctx || !TURNOUT_DATA.firstTimeVoters) return;
+
+  var ft = TURNOUT_DATA.firstTimeVoters;
+  var ageGroups = ft.ageGroups || {};
+  var isPctMode = currentFTAgeMode === 'pct';
+
+  var brackets = ['18-29', '30-49', '50-64', '65+'];
+  var repData = [];
+  var demData = [];
+  var genData = [];
+
+  brackets.forEach(function(b) {
+    var item = ageGroups[b] || { total: 0, republican: 0, democrat: 0, general: 0 };
+    var tot = item.total || 1;
+    if (isPctMode) {
+      repData.push(parseFloat(((item.republican / tot) * 100).toFixed(1)));
+      demData.push(parseFloat(((item.democrat / tot) * 100).toFixed(1)));
+      genData.push(parseFloat(((item.general / tot) * 100).toFixed(1)));
+    } else {
+      repData.push(item.republican);
+      demData.push(item.democrat);
+      genData.push(item.general);
+    }
+  });
+
+  ftAgeChartRef = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: brackets,
+      datasets: [
+        { label: 'Democrat', data: demData, backgroundColor: '#1976D2' },
+        { label: 'Republican', data: repData, backgroundColor: '#D32F2F' },
+        { label: 'General/Other', data: genData, backgroundColor: '#F57C00' }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { stacked: true, grid: { display: false } },
+        y: {
+          stacked: true,
+          max: isPctMode ? 100 : undefined,
+          grid: { color: '#E2E8F0' },
+          title: { display: true, text: isPctMode ? '% Share within Age Bracket' : 'Number of First-Time Voters' }
+        }
+      },
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              var val = context.parsed.y;
+              return context.dataset.label + ': ' + (isPctMode ? val + '%' : formatNumber(val) + ' voters');
+            }
+          }
+        },
+        datalabels: {
+          color: '#FFFFFF',
+          font: { weight: 'bold', size: 11 },
+          formatter: function(val) {
+            if (isPctMode) return val > 5 ? val.toFixed(0) + '%' : '';
+            return val > 3 ? formatNumber(val) : '';
+          }
+        }
+      }
+    }
+  });
+}
+
+// 3. Daily First-Time Co. Voter Trend
+function renderFTDailyTrendChart() {
+  if (ftDailyTrendChartRef) ftDailyTrendChartRef.destroy();
+  var ctx = document.getElementById('ftDailyTrendChart');
+  if (!ctx || !TURNOUT_DATA.firstTimeVoters) return;
+
+  var ft = TURNOUT_DATA.firstTimeVoters;
+  var trend = ft.dailyTrend || {};
+
+  var sortedDates = Object.keys(trend).sort();
+  var counts = sortedDates.map(function(d) { return trend[d]; });
+
+  var labels = sortedDates.map(function(d) {
+    var parts = d.split('-');
+    if (parts.length === 3) return parseInt(parts[1], 10) + '/' + parseInt(parts[2], 10);
+    return d;
+  });
+
+  ftDailyTrendChartRef = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'First-Time Co. Voters per Day',
+        data: counts,
+        borderColor: '#D4A843',
+        backgroundColor: 'rgba(212, 168, 67, 0.15)',
+        borderWidth: 3,
+        fill: true,
+        tension: 0.3,
+        pointBackgroundColor: '#1B2A4A',
+        pointRadius: 5,
+        pointHoverRadius: 7
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { grid: { display: false } },
+        y: {
+          beginAtZero: true,
+          grid: { color: '#E2E8F0' },
+          title: { display: true, text: 'Daily First-Time Voters' }
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return 'First-Time Co. Voters: ' + formatNumber(context.parsed.y);
+            }
+          }
+        },
+        datalabels: {
+          align: 'top',
+          anchor: 'end',
+          color: '#1B2A4A',
+          font: { weight: 'bold', size: 11 },
+          formatter: function(val) {
+            return val > 0 ? formatNumber(val) : '';
+          }
+        }
+      }
+    }
+  });
+}
+
+// 4. First-Time Co. Voters by Location
+function renderFTLocationChart() {
+  if (ftLocationChartRef) ftLocationChartRef.destroy();
+  var ctx = document.getElementById('ftLocationChart');
+  if (!ctx || !TURNOUT_DATA.firstTimeVoters) return;
+
+  var ft = TURNOUT_DATA.firstTimeVoters;
+  var locs = ft.locations || {};
+  var isPctMode = currentFTLocationMode === 'pct';
+  var totalFT = ft.total || 1;
+
+  var sortedLocs = Object.keys(locs).sort(function(a, b) { return locs[b] - locs[a]; });
+  var dataVals = sortedLocs.map(function(loc) {
+    var cnt = locs[loc];
+    return isPctMode ? parseFloat(((cnt / totalFT) * 100).toFixed(1)) : cnt;
+  });
+
+  ftLocationChartRef = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: sortedLocs,
+      datasets: [{
+        label: isPctMode ? '% Share of First-Time Voters' : 'First-Time Voters',
+        data: dataVals,
+        backgroundColor: '#2A3F6B',
+        borderRadius: 4
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          max: isPctMode ? 100 : undefined,
+          grid: { color: '#E2E8F0' },
+          title: { display: true, text: isPctMode ? '% Share' : 'Voter Count' }
+        },
+        y: { grid: { display: false }, ticks: { font: { weight: '600' } } }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              var val = context.parsed.x;
+              return isPctMode ? val + '%' : formatNumber(val) + ' voters';
+            }
+          }
+        },
+        datalabels: {
+          anchor: 'end',
+          align: 'right',
+          color: '#1B2A4A',
+          font: { weight: 'bold', size: 11 },
+          formatter: function(val) {
+            return isPctMode ? val.toFixed(1) + '%' : formatNumber(val);
+          }
+        }
+      }
+    }
+  });
+}
+
+// 5. First-Time Co. Voters District Chart
+function renderFTDistrictChart() {
+  if (ftDistrictChartRef) ftDistrictChartRef.destroy();
+  var ctx = document.getElementById('ftDistrictChart');
+  if (!ctx || !TURNOUT_DATA.firstTimeVoters) return;
+
+  var ft = TURNOUT_DATA.firstTimeVoters;
+  var distObj = (ft.districts && ft.districts[currentFTDistrictView]) || {};
+  var isPctMode = currentFTDistrictMode === 'pct';
+
+  var keys = Object.keys(distObj).sort(function(a, b) {
+    var na = parseInt(a, 10), nb = parseInt(b, 10);
+    if (!isNaN(na) && !isNaN(nb)) return na - nb;
+    return a.localeCompare(b);
+  });
+
+  var labels = keys.map(function(k) { return 'District ' + k; });
+  var repData = [], demData = [], genData = [];
+
+  keys.forEach(function(k) {
+    var item = distObj[k] || { total: 0, republican: 0, democrat: 0, general: 0 };
+    var tot = item.total || 1;
+    if (isPctMode) {
+      repData.push(parseFloat(((item.republican / tot) * 100).toFixed(1)));
+      demData.push(parseFloat(((item.democrat / tot) * 100).toFixed(1)));
+      genData.push(parseFloat(((item.general / tot) * 100).toFixed(1)));
+    } else {
+      repData.push(item.republican);
+      demData.push(item.democrat);
+      genData.push(item.general);
+    }
+  });
+
+  ftDistrictChartRef = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: 'Democrat', data: demData, backgroundColor: '#1976D2' },
+        { label: 'Republican', data: repData, backgroundColor: '#D32F2F' },
+        { label: 'General/Other', data: genData, backgroundColor: '#F57C00' }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { stacked: true, grid: { display: false } },
+        y: {
+          stacked: true,
+          max: isPctMode ? 100 : undefined,
+          grid: { color: '#E2E8F0' },
+          title: { display: true, text: isPctMode ? 'Partisan Share (%)' : 'First-Time Voter Count' }
+        }
+      },
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              var val = context.parsed.y;
+              return context.dataset.label + ': ' + (isPctMode ? val + '%' : formatNumber(val) + ' voters');
+            }
+          }
+        },
+        datalabels: {
+          color: '#FFFFFF',
+          font: { weight: 'bold', size: 10 },
+          formatter: function(val) {
+            if (isPctMode) return val > 8 ? val.toFixed(0) + '%' : '';
+            return val > 2 ? formatNumber(val) : '';
           }
         }
       }

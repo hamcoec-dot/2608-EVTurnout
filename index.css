@@ -825,3 +825,28 @@ body {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
 }
 
+/* First-Time Hamilton County Voters Accent & Styling */
+.accent-card {
+  border-left: 4px solid var(--gold) !important;
+  background: linear-gradient(135deg, rgba(212, 168, 67, 0.08) 0%, rgba(255, 255, 255, 0.95) 100%) !important;
+}
+
+.section-subtitle {
+  font-size: 14px !important;
+  color: var(--text-secondary) !important;
+  margin-top: 4px !important;
+  margin-bottom: 12px !important;
+  font-weight: 400 !important;
+}
+
+.ft-stat-grid .stat-card {
+  flex: 1 1 calc(25% - 16px) !important;
+  min-width: 220px !important;
+}
+
+.stat-value-compact {
+  font-size: 19px !important;
+  line-height: 1.3 !important;
+  letter-spacing: -0.5px !important;
+}
+

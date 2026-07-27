@@ -66,6 +66,15 @@
           <strong class="stat-value" id="stat-days-left">0</strong>
         </div>
       </div>
+
+      <div class="stat-card glass-card accent-card">
+        <div class="stat-icon" aria-hidden="true">&#x1F3F7;&#xFE0F;</div>
+        <div class="stat-info">
+          <span class="stat-label">First-Time Co. Voters</span>
+          <strong class="stat-value" id="stat-first-time-total">0</strong>
+          <span class="stat-sublabel" id="stat-first-time-pct">0.00% of turnout</span>
+        </div>
+      </div>
       
       <div class="stat-card glass-card" id="projection-card">
         <div class="stat-icon" aria-hidden="true">&#x1F52E;</div>
@@ -233,6 +242,130 @@
         </div>
         <div class="chart-wrapper">
           <canvas id="partyDistributionChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- First-Time Hamilton County Voters Insights Section -->
+    <section class="demographics-section" aria-label="First-Time Hamilton County Voters Analytics">
+      <div class="section-title-container">
+        <h2>First-Time Hamilton County Voters Analytics</h2>
+        <p class="section-subtitle">Insights on voters casting their first ballot in Hamilton County, TN during this election cycle.</p>
+      </div>
+
+      <!-- KPI Summary Cards for First-Time Voters -->
+      <div class="stat-grid ft-stat-grid" style="margin-bottom: 24px;">
+        <div class="stat-card glass-card accent-card">
+          <div class="stat-icon" aria-hidden="true">&#x1F3F7;&#xFE0F;</div>
+          <div class="stat-info">
+            <span class="stat-label">First-Time Co. Voters</span>
+            <strong class="stat-value" id="ft-kpi-total">0</strong>
+            <span class="stat-sublabel" id="ft-kpi-turnout-share">0% of total turnout</span>
+          </div>
+        </div>
+
+        <div class="stat-card glass-card">
+          <div class="stat-icon" aria-hidden="true">&#x1F5F3;&#xFE0F;</div>
+          <div class="stat-info">
+            <span class="stat-label">Partisan Split</span>
+            <strong class="stat-value text-nowrap stat-value-compact" id="ft-kpi-party-split">0% Dem / 0% Rep</strong>
+            <span class="stat-sublabel" id="ft-kpi-leading-party">Democrat Lead</span>
+          </div>
+        </div>
+
+        <div class="stat-card glass-card">
+          <div class="stat-icon" aria-hidden="true">&#x1F393;</div>
+          <div class="stat-info">
+            <span class="stat-label">Top Age Cohort</span>
+            <strong class="stat-value" id="ft-kpi-top-age">18-29</strong>
+            <span class="stat-sublabel" id="ft-kpi-youth-share">0% youth share</span>
+          </div>
+        </div>
+
+        <div class="stat-card glass-card">
+          <div class="stat-icon" aria-hidden="true">&#x1F4CD;</div>
+          <div class="stat-info">
+            <span class="stat-label">Top Location</span>
+            <strong class="stat-value" id="ft-kpi-top-location">Election Comm.</strong>
+            <span class="stat-sublabel" id="ft-kpi-location-count">0 voters</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 1: Partisan Breakdown & Age Group Distribution -->
+      <div class="visualization-grid">
+        <div class="chart-container card-surface">
+          <div class="chart-header-row">
+            <h3>Partisan Breakdown (First-Time Co. Voters)</h3>
+            <div class="view-switch-group" role="group" aria-label="First-Time Party Mode Switch">
+              <button type="button" class="view-switch-btn active" id="btn-ft-party-pct" onclick="setFTPartyMode('pct')">% Share</button>
+              <button type="button" class="view-switch-btn" id="btn-ft-party-count" onclick="setFTPartyMode('count')">Voters</button>
+            </div>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="ftPartyChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-container card-surface">
+          <div class="chart-header-row">
+            <h3>Age Distribution (First-Time Co. Voters)</h3>
+            <div class="view-switch-group" role="group" aria-label="First-Time Age Mode Switch">
+              <button type="button" class="view-switch-btn active" id="btn-ft-age-pct" onclick="setFTAgeMode('pct')">% Share</button>
+              <button type="button" class="view-switch-btn" id="btn-ft-age-count" onclick="setFTAgeMode('count')">Voters</button>
+            </div>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="ftAgeChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: Daily Trend & Location Breakdown -->
+      <div class="visualization-grid" style="margin-top: 24px;">
+        <div class="chart-container card-surface">
+          <div class="chart-header-row">
+            <h3>Daily First-Time Co. Voter Trend</h3>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="ftDailyTrendChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-container card-surface">
+          <div class="chart-header-row">
+            <h3>First-Time Co. Voters by Location</h3>
+            <div class="view-switch-group" role="group" aria-label="First-Time Location Mode Switch">
+              <button type="button" class="view-switch-btn active" id="btn-ft-loc-pct" onclick="setFTLocationMode('pct')">% Share</button>
+              <button type="button" class="view-switch-btn" id="btn-ft-loc-count" onclick="setFTLocationMode('count')">Voters</button>
+            </div>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="ftLocationChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature: First-Time Co. Voters District Breakdown -->
+      <div class="full-width-feature-container card-surface" style="margin-top: 24px; margin-bottom: 24px;">
+        <div class="chart-header-row header-flex-wrap">
+          <h3 class="major-feature-title">District Distribution of First-Time Co. Voters</h3>
+          <div class="feature-controls">
+            <div class="view-switch-group" role="group" aria-label="First-Time District Type Switch">
+              <button type="button" class="view-switch-btn active" id="btn-ft-dist-commission" onclick="setFTDistrictView('commission')">Commission</button>
+              <button type="button" class="view-switch-btn" id="btn-ft-dist-senate" onclick="setFTDistrictView('senate')">Senate</button>
+              <button type="button" class="view-switch-btn" id="btn-ft-dist-house" onclick="setFTDistrictView('house')">House</button>
+              <button type="button" class="view-switch-btn" id="btn-ft-dist-school" onclick="setFTDistrictView('school')">School</button>
+              <button type="button" class="view-switch-btn" id="btn-ft-dist-city" onclick="setFTDistrictView('city')">City</button>
+            </div>
+            <div class="view-switch-group" role="group" aria-label="First-Time District Mode Switch">
+              <button type="button" class="view-switch-btn active" id="btn-ft-dist-unit-pct" onclick="setFTDistrictMode('pct')">% Share</button>
+              <button type="button" class="view-switch-btn" id="btn-ft-dist-unit-count" onclick="setFTDistrictMode('count')">Voters</button>
+            </div>
+          </div>
+        </div>
+        <div class="chart-wrapper" style="height: 350px !important;">
+          <canvas id="ftDistrictChart"></canvas>
         </div>
       </div>
     </section>
