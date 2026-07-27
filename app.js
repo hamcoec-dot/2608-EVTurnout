@@ -71,6 +71,55 @@ function initApp() {
   
   // Render Charts
   renderCharts();
+
+  // Initialize active link highlight on scroll
+  initTopNavScroll();
+
+  // Initialize back to top floating button
+  initBackToTopButton();
+}
+
+// Scroll to top of page smoothly
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Show/hide floating back to top button on scroll
+function initBackToTopButton() {
+  var btn = document.getElementById('btn-back-to-top');
+  if (!btn) return;
+
+  window.addEventListener('scroll', function() {
+    if (window.scrollY > 300) {
+      btn.classList.add('visible');
+    } else {
+      btn.classList.remove('visible');
+    }
+  }, { passive: true });
+}
+
+// Scroll spy for sticky top navigation bar
+function initTopNavScroll() {
+  var links = document.querySelectorAll('.top-nav-link');
+  var sections = document.querySelectorAll('[id^="section-"]');
+  if (!links.length || !sections.length) return;
+
+  function onScroll() {
+    var scrollPos = window.scrollY + 120;
+    sections.forEach(function(sec) {
+      var top = sec.offsetTop;
+      var height = sec.offsetHeight;
+      var id = sec.getAttribute('id');
+      if (scrollPos >= top && scrollPos < top + height) {
+        links.forEach(function(link) {
+          var href = link.getAttribute('href');
+          link.classList.toggle('active', href === '#' + id);
+        });
+      }
+    });
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
 }
 
 // Utility to escape HTML and prevent XSS

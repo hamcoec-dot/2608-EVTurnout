@@ -31,10 +31,24 @@
     <div class="stripe stripe-blue"></div>
   </div>
 
+  <!-- Top Navigation Jump Menu Bar -->
+  <nav class="top-nav-bar" aria-label="Dashboard Section Navigation">
+    <div class="top-nav-container">
+      <a href="#section-overview" class="top-nav-link active">Overview</a>
+      <a href="#section-general-turnout" class="top-nav-link">Daily Turnout</a>
+      <a href="#section-comparison" class="top-nav-link">Historical Comparison</a>
+      <a href="#section-locations" class="top-nav-link">Locations</a>
+      <a href="#section-first-time-voters" class="top-nav-link">First-Time Co. Voters</a>
+      <a href="#section-demographics" class="top-nav-link">Demographics</a>
+      <a href="#section-districts" class="top-nav-link">Districts</a>
+      <a href="#section-precincts" class="top-nav-link">Precincts</a>
+    </div>
+  </nav>
+
   <main class="content-container">
 
     <!-- Hero Stat Cards (Flex Grid) -->
-    <section class="stat-grid" aria-label="Key Election Statistics">
+    <section class="stat-grid" id="section-overview" aria-label="Key Election Statistics">
       <div class="stat-card glass-card">
         <div class="stat-icon" aria-hidden="true">&#x1F5F3;&#xFE0F;</div>
         <div class="stat-info">
@@ -132,7 +146,7 @@
     </section>
 
     <!-- Turnout Details Table Section -->
-    <section class="table-section" aria-label="Daily Turnout Breakdown by Location">
+    <section class="table-section" id="section-general-turnout" aria-label="Daily Turnout Breakdown by Location">
       <div class="table-header-row">
         <h2>Daily Turnout Breakdown</h2>
         <!-- Accessible CSV Export Button -->
@@ -158,7 +172,7 @@
     </section>
 
     <!-- Historical Comparison Table Section -->
-    <section class="table-section" aria-label="Historical Turnout Comparison">
+    <section class="table-section" id="section-comparison" aria-label="Historical Turnout Comparison">
       <div class="table-header-row">
         <h2>Historical Turnout Comparison (August Elections)</h2>
       </div>
@@ -198,7 +212,7 @@
     </section>
 
     <!-- Symmetrical 2-Column Visualizations Grid -->
-    <section class="visualization-grid" aria-label="Turnout Visualizations">
+    <section class="visualization-grid" id="section-locations" aria-label="Turnout Visualizations">
       <!-- Row 1: Location Analytics -->
       <div class="chart-container card-surface">
         <div class="chart-header-row">
@@ -247,7 +261,7 @@
     </section>
 
     <!-- First-Time Hamilton County Voters Insights Section -->
-    <section class="demographics-section" aria-label="First-Time Hamilton County Voters Analytics">
+    <section class="demographics-section" id="section-first-time-voters" aria-label="First-Time Hamilton County Voters Analytics">
       <div class="section-title-container">
         <h2>First-Time Hamilton County Voters Analytics</h2>
         <p class="section-subtitle">Insights on voters casting their first ballot in Hamilton County, TN during this election cycle.</p>
@@ -371,7 +385,7 @@
     </section>
 
     <!-- Demographic Analytics Section -->
-    <section class="demographics-section" aria-label="Demographic Analytics">
+    <section class="demographics-section" id="section-demographics" aria-label="Demographic Analytics">
       <div class="section-title-container">
         <h2>Voter Demographic Breakdown</h2>
       </div>
@@ -401,7 +415,7 @@
       </div>
 
       <!-- Feature: District Breakdown -->
-      <div class="full-width-feature-container card-surface" style="margin-bottom: 24px;">
+      <div class="full-width-feature-container card-surface" id="section-districts" style="margin-bottom: 24px;">
         <div class="chart-header-row header-flex-wrap">
           <h3 class="major-feature-title">District Breakdown</h3>
           <div class="feature-controls">
@@ -424,7 +438,7 @@
       </div>
 
       <!-- Feature: Top 10 Precincts by Turnout -->
-      <div class="full-width-feature-container card-surface" style="margin-bottom: 24px;">
+      <div class="full-width-feature-container card-surface" id="section-precincts" style="margin-bottom: 24px;">
         <div class="chart-header-row header-flex-wrap">
           <div>
             <h3 class="major-feature-title">Top 10 Precincts by Turnout</h3>
@@ -466,6 +480,11 @@
     </section>
 
   </main>
+
+  <!-- Floating Back to Top Button -->
+  <button type="button" id="btn-back-to-top" class="back-to-top-btn" onclick="scrollToTop()" aria-label="Return to top of page">
+    <span aria-hidden="true">&#x25B2;</span> Top
+  </button>
 
   <!-- Footer Disclaimer -->
   <footer class="patriotic-footer">
