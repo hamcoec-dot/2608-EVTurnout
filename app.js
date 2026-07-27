@@ -25,12 +25,14 @@ var currentDistrictMode = 'pct';
 
 // First-Time Hamilton County Voters Chart Refs & Modes
 var ftPartyChartRef = null;
+var ftSexChartRef = null;
 var ftAgeChartRef = null;
 var ftDailyTrendChartRef = null;
 var ftLocationChartRef = null;
 var ftDistrictChartRef = null;
 
 var currentFTPartyMode = 'pct';
+var currentFTSexMode = 'pct';
 var currentFTAgeMode = 'pct';
 var currentFTLocationMode = 'pct';
 var currentFTDistrictView = 'commission';
@@ -2038,12 +2040,14 @@ function renderTop10PrecinctChart() {
 
 function renderFirstTimeCharts() {
   if (ftPartyChartRef) ftPartyChartRef.destroy();
+  if (ftSexChartRef) ftSexChartRef.destroy();
   if (ftAgeChartRef) ftAgeChartRef.destroy();
   if (ftDailyTrendChartRef) ftDailyTrendChartRef.destroy();
   if (ftLocationChartRef) ftLocationChartRef.destroy();
   if (ftDistrictChartRef) ftDistrictChartRef.destroy();
 
   renderFTPartyChart();
+  renderFTSexChart();
   renderFTAgeChart();
   renderFTDailyTrendChart();
   renderFTLocationChart();
@@ -2057,6 +2061,15 @@ function setFTPartyMode(mode) {
   if (pctBtn) pctBtn.classList.toggle('active', mode === 'pct');
   if (cntBtn) cntBtn.classList.toggle('active', mode === 'count');
   renderFTPartyChart();
+}
+
+function setFTSexMode(mode) {
+  currentFTSexMode = mode;
+  var pctBtn = document.getElementById('btn-ft-sex-pct');
+  var cntBtn = document.getElementById('btn-ft-sex-count');
+  if (pctBtn) pctBtn.classList.toggle('active', mode === 'pct');
+  if (cntBtn) cntBtn.classList.toggle('active', mode === 'count');
+  renderFTSexChart();
 }
 
 function setFTAgeMode(mode) {
@@ -2153,6 +2166,90 @@ function renderFTPartyChart() {
           font: { weight: 'bold', size: 13 },
           formatter: function(val) {
             return isPctMode ? val.toFixed(1) + '%' : formatNumber(val);
+          }
+        }
+      }
+    }
+  });
+}
+
+// 1b. First-Time Voters Turnout by Sex Chart
+function renderFTSexChart() {
+  if (ftSexChartRef) ftSexChartRef.destroy();
+  var ctx = document.getElementById('ftSexChart');
+  if (!ctx || !TURNOUT_DATA.firstTimeVoters) return;
+
+  var ft = TURNOUT_DATA.firstTimeVoters;
+  var sexData = ft.sex || {};
+  var isPctMode = currentFTSexMode === 'pct';
+
+  var keys = ['F', 'M'];
+  if (sexData['U'] || sexData['Unknown'] || sexData['Other/Unknown']) {
+    keys.push(sexData['U'] ? 'U' : (sexData['Unknown'] ? 'Unknown' : 'Other/Unknown'));
+  }
+
+  var labels = keys.map(function(k) {
+    if (k === 'F') return 'Female';
+    if (k === 'M') return 'Male';
+    return 'Other/Unknown';
+  });
+
+  var repData = [];
+  var demData = [];
+  var genData = [];
+
+  keys.forEach(function(k) {
+    var item = sexData[k] || { total: 0, republican: 0, democrat: 0, general: 0 };
+    var tot = item.total || 1;
+    if (isPctMode) {
+      repData.push(parseFloat(((item.republican / tot) * 100).toFixed(1)));
+      demData.push(parseFloat(((item.democrat / tot) * 100).toFixed(1)));
+      genData.push(parseFloat(((item.general / tot) * 100).toFixed(1)));
+    } else {
+      repData.push(item.republican);
+      demData.push(item.democrat);
+      genData.push(item.general);
+    }
+  });
+
+  ftSexChartRef = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: 'Democrat', data: demData, backgroundColor: '#1976D2' },
+        { label: 'Republican', data: repData, backgroundColor: '#D32F2F' },
+        { label: 'General/Other', data: genData, backgroundColor: '#F57C00' }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { stacked: true, grid: { display: false } },
+        y: {
+          stacked: true,
+          max: isPctMode ? 100 : undefined,
+          grid: { color: '#E2E8F0' },
+          title: { display: true, text: isPctMode ? '% Share within Group' : 'First-Time Voter Count' }
+        }
+      },
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              var val = context.parsed.y;
+              return context.dataset.label + ': ' + (isPctMode ? val + '%' : formatNumber(val) + ' voters');
+            }
+          }
+        },
+        datalabels: {
+          color: '#FFFFFF',
+          font: { weight: 'bold', size: 11 },
+          formatter: function(val) {
+            if (isPctMode) return val > 5 ? val.toFixed(0) + '%' : '';
+            return val > 3 ? formatNumber(val) : '';
           }
         }
       }

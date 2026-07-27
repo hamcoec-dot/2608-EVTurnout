@@ -306,7 +306,7 @@
         </div>
       </div>
 
-      <!-- Row 1: Partisan Breakdown & Age Group Distribution -->
+      <!-- Row 1: Partisan Breakdown & Sex Breakdown -->
       <div class="visualization-grid">
         <div class="chart-container card-surface">
           <div class="chart-header-row">
@@ -323,6 +323,22 @@
 
         <div class="chart-container card-surface">
           <div class="chart-header-row">
+            <h3>Turnout by Sex (First-Time Co. Voters)</h3>
+            <div class="view-switch-group" role="group" aria-label="First-Time Sex Mode Switch">
+              <button type="button" class="view-switch-btn active" id="btn-ft-sex-pct" onclick="setFTSexMode('pct')">% Share</button>
+              <button type="button" class="view-switch-btn" id="btn-ft-sex-count" onclick="setFTSexMode('count')">Voters</button>
+            </div>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="ftSexChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row 2: Age Distribution & Location Breakdown -->
+      <div class="visualization-grid" style="margin-top: 24px;">
+        <div class="chart-container card-surface">
+          <div class="chart-header-row">
             <h3>Age Distribution (First-Time Co. Voters)</h3>
             <div class="view-switch-group" role="group" aria-label="First-Time Age Mode Switch">
               <button type="button" class="view-switch-btn active" id="btn-ft-age-pct" onclick="setFTAgeMode('pct')">% Share</button>
@@ -331,18 +347,6 @@
           </div>
           <div class="chart-wrapper">
             <canvas id="ftAgeChart"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <!-- Row 2: Daily Trend & Location Breakdown -->
-      <div class="visualization-grid" style="margin-top: 24px;">
-        <div class="chart-container card-surface">
-          <div class="chart-header-row">
-            <h3>Daily First-Time Co. Voter Trend</h3>
-          </div>
-          <div class="chart-wrapper">
-            <canvas id="ftDailyTrendChart"></canvas>
           </div>
         </div>
 
@@ -357,6 +361,16 @@
           <div class="chart-wrapper">
             <canvas id="ftLocationChart"></canvas>
           </div>
+        </div>
+      </div>
+
+      <!-- Row 3: Daily Trend -->
+      <div class="full-width-feature-container card-surface" style="margin-top: 24px;">
+        <div class="chart-header-row">
+          <h3>Daily First-Time Co. Voter Trend</h3>
+        </div>
+        <div class="chart-wrapper" style="height: 320px !important;">
+          <canvas id="ftDailyTrendChart"></canvas>
         </div>
       </div>
 
