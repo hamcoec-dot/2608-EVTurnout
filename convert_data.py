@@ -676,6 +676,7 @@ def main():
         "reportTitle": report_title,
         "electionName": election_name,
         "electionDate": election_date,
+        "earlyVotingStartDate": early_voting_start,
         "earlyVotingEndDate": early_voting_end,
         "locations": locations,
         "dailyTurnout": daily_turnout,

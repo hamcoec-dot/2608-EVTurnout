@@ -153,18 +153,24 @@ function getDaysOfEarlyVotingRemaining() {
   
   // Parse earlyVotingEndDate as a local date (avoiding UTC conversion shifts)
   var parts = TURNOUT_DATA.earlyVotingEndDate.split('-');
-  var year = parseInt(parts[0], 10);
-  var month = parseInt(parts[1], 10) - 1; // JavaScript months are 0-indexed
-  var day = parseInt(parts[2], 10);
+  var endDate = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
   
-  var endDate = new Date(year, month, day);
   var now = new Date();
-  
-  // Get today's date at midnight
   var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   
-  var diffTime = endDate - today;
-  var diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+  // If today is before early voting starts, calculate from earlyVotingStartDate
+  var startDate = today;
+  if (TURNOUT_DATA.earlyVotingStartDate) {
+    var sParts = TURNOUT_DATA.earlyVotingStartDate.split('-');
+    var evStartDate = new Date(parseInt(sParts[0], 10), parseInt(sParts[1], 10) - 1, parseInt(sParts[2], 10));
+    if (today < evStartDate) {
+      startDate = evStartDate;
+    }
+  }
+  
+  // Calculate inclusive day count from startDate through endDate
+  var diffTime = endDate - startDate;
+  var diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24)) + 1;
   
   // Format today's date to YYYY-MM-DD
   var curY = now.getFullYear();

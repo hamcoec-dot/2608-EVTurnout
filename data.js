@@ -2,6 +2,7 @@ var TURNOUT_DATA = {
   "reportTitle": "Hamilton TN Early Voting & Absentee Daily Turnout Report",
   "electionName": "State & Federal Primary and County General",
   "electionDate": "August 6th, 2026",
+  "earlyVotingStartDate": "2026-07-17",
   "earlyVotingEndDate": "2026-08-01",
   "locations": [
     "By Mail/NH Voters",
