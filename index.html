@@ -604,9 +604,21 @@
             <h3 class="major-feature-title">Competitive Battleground Precincts</h3>
             <p class="feature-subtitle">Ranked by closest primary split margin between Republican and Democrat participation (50/50 Index).</p>
           </div>
-          <div class="view-switch-group" role="group" aria-label="Competitive Precinct View Switch">
-            <button type="button" class="view-switch-btn active" id="btn-comp-close" onclick="setCompetitivePrecinctMode('close')">Closest Split (50/50)</button>
-            <button type="button" class="view-switch-btn" id="btn-comp-wide" onclick="setCompetitivePrecinctMode('wide')">Widest Margin</button>
+          <div class="feature-controls">
+            <div class="view-switch-group" role="group" aria-label="Competitive District Type Switch">
+              <button type="button" class="view-switch-btn active" id="btn-comp-dist-commission" onclick="setCompDistrictType('commission')">Commission</button>
+              <button type="button" class="view-switch-btn" id="btn-comp-dist-senate" onclick="setCompDistrictType('senate')">Senate</button>
+              <button type="button" class="view-switch-btn" id="btn-comp-dist-house" onclick="setCompDistrictType('house')">House</button>
+              <button type="button" class="view-switch-btn" id="btn-comp-dist-school" onclick="setCompDistrictType('school')">School</button>
+              <button type="button" class="view-switch-btn" id="btn-comp-dist-city" onclick="setCompDistrictType('city')">City</button>
+            </div>
+            <select id="comp-dist-select" class="location-select-field" onchange="setCompDistrictName(this.value)">
+              <option value="ALL">All Districts Combined</option>
+            </select>
+            <div class="view-switch-group" role="group" aria-label="Competitive Precinct View Switch">
+              <button type="button" class="view-switch-btn active" id="btn-comp-close" onclick="setCompetitivePrecinctMode('close')">Closest Split (50/50)</button>
+              <button type="button" class="view-switch-btn" id="btn-comp-wide" onclick="setCompetitivePrecinctMode('wide')">Widest Margin</button>
+            </div>
           </div>
         </div>
         <div class="chart-wrapper" style="height: 420px !important;">

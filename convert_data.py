@@ -553,6 +553,7 @@ def main():
         "school": {},
         "city": {}
     }
+    precinct_to_districts = {}
 
     for v in voter_records:
         p = v["party"]
@@ -577,6 +578,19 @@ def main():
             if v["house"]: add_nested_voter(precincts_by_district["house"], v["house"], prec, p)
             if v["school"]: add_nested_voter(precincts_by_district["school"], v["school"], prec, p)
             if v["city"]: add_nested_voter(precincts_by_district["city"], v["city"], prec, p)
+
+            if prec not in precinct_to_districts:
+                precinct_to_districts[prec] = {
+                    "commission": v.get("commission") or "",
+                    "senate": v.get("senate") or "",
+                    "house": v.get("house") or "",
+                    "school": v.get("school") or "",
+                    "city": v.get("city") or ""
+                }
+            else:
+                for d_key in ["commission", "senate", "house", "school", "city"]:
+                    if not precinct_to_districts[prec][d_key] and v.get(d_key):
+                        precinct_to_districts[prec][d_key] = v[d_key]
 
     demographics = {
         "ageGroups": age_groups,
@@ -705,17 +719,18 @@ def main():
                     
     # Calculate Daily Acceleration Pace & Velocity
     daily_pace = []
-    prev_cnt = 0
+    prev_cnt = None
     for entry in daily_turnout:
         cnt = entry.get("total", 0)
         d_lbl = entry.get("date", "")
-        delta = cnt - prev_cnt if prev_cnt > 0 else cnt
-        prev_cnt = cnt
-        daily_pace.append({
-            "date": d_lbl,
-            "count": cnt,
-            "delta": delta
-        })
+        if cnt > 0:
+            delta = cnt if prev_cnt is None else (cnt - prev_cnt)
+            prev_cnt = cnt
+            daily_pace.append({
+                "date": d_lbl,
+                "count": cnt,
+                "delta": delta
+            })
 
     # Calculate Competitive / Battleground Precincts (ranked by closest primary split margin)
     competitive_precincts = []
@@ -724,19 +739,31 @@ def main():
         rep = p_data.get("republican", 0)
         dem = p_data.get("democrat", 0)
         gen = p_data.get("general", 0)
-        if tot >= 10:
-            margin = abs(rep - dem)
+        primary_tot = rep + dem
+        if tot >= 5:
+            if primary_tot > 0:
+                rep_pct = round((rep / primary_tot * 100), 1)
+                dem_pct = round((dem / primary_tot * 100), 1)
+                pct_margin = round(abs(rep_pct - dem_pct), 1)
+            else:
+                rep_pct = 0.0
+                dem_pct = 0.0
+                pct_margin = 0.0
+
             competitive_precincts.append({
                 "name": prec_name,
                 "total": tot,
+                "primaryTotal": primary_tot,
                 "republican": rep,
                 "democrat": dem,
                 "general": gen,
-                "margin": margin,
-                "repPct": round((rep / tot * 100), 1) if tot > 0 else 0.0,
-                "demPct": round((dem / tot * 100), 1) if tot > 0 else 0.0
+                "margin": abs(rep - dem),
+                "pctMargin": pct_margin,
+                "repPct": rep_pct,
+                "demPct": dem_pct,
+                "districts": precinct_to_districts.get(prec_name, {})
             })
-    competitive_precincts.sort(key=lambda x: (x["margin"], -x["total"]))
+    competitive_precincts.sort(key=lambda x: (x["pctMargin"], -x["primaryTotal"]))
 
     # Calculate District Share of Total County Ballots
     district_shares = {}

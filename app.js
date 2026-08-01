@@ -59,6 +59,8 @@ var currentDistrictShareMode = 'pct';
 
 var competitivePrecinctChartRef = null;
 var currentCompetitivePrecinctMode = 'close';
+var currentCompDistType = 'commission';
+var currentCompDistName = 'ALL';
 
 var currentFTPartyMode = 'pct';
 var currentFTSexMode = 'pct';
@@ -103,6 +105,7 @@ function initApp() {
   // Populate Top 5 precinct select dropdowns
   populateTop5LocationSelectOptions();
   populateTop5DistrictSelectOptions();
+  populateCompDistrictSelectOptions();
 
   // Render Charts
   renderCharts();
@@ -2945,6 +2948,10 @@ function renderDailyPaceChart() {
   var values = paceData.map(function(d) { return currentDailyPaceMode === 'delta' ? d.delta : d.count; });
 
   var isDelta = (currentDailyPaceMode === 'delta');
+  var barColors = values.map(function(val) {
+    if (!isDelta) return '#1976D2';
+    return val >= 0 ? '#1976D2' : '#D32F2F';
+  });
 
   dailyPaceChartRef = new Chart(ctx, {
     type: 'bar',
@@ -2953,7 +2960,7 @@ function renderDailyPaceChart() {
       datasets: [{
         label: isDelta ? 'Daily Velocity (Change in Turnout)' : 'Cumulative Turnout Volume',
         data: values,
-        backgroundColor: '#1976D2',
+        backgroundColor: barColors,
         borderRadius: 4,
         barPercentage: 0.7
       }]
@@ -2975,17 +2982,25 @@ function renderDailyPaceChart() {
           callbacks: {
             label: function(context) {
               var val = context.parsed.y;
-              return (isDelta ? 'Daily Velocity: +' : 'Total: ') + formatNumber(val) + ' voters';
+              var prefix = isDelta ? (val >= 0 ? 'Daily Velocity: +' : 'Daily Velocity: ') : 'Total: ';
+              return prefix + formatNumber(val) + ' voters';
             }
           }
         },
         datalabels: {
-          anchor: 'end',
-          align: 'top',
+          anchor: function(ctx) {
+            var val = ctx.dataset.data[ctx.dataIndex];
+            return val < 0 ? 'start' : 'end';
+          },
+          align: function(ctx) {
+            var val = ctx.dataset.data[ctx.dataIndex];
+            return val < 0 ? 'bottom' : 'top';
+          },
           color: '#1B2A4A',
           font: { weight: 'bold', size: 10 },
           formatter: function(val) {
-            return val > 0 ? (isDelta ? '+' : '') + formatNumber(val) : '';
+            if (val === 0) return '';
+            return isDelta ? (val > 0 ? '+' + formatNumber(val) : formatNumber(val)) : formatNumber(val);
           }
         }
       }
@@ -3025,6 +3040,7 @@ function renderDistrictShareChart() {
   });
 
   var isPctMode = (currentDistrictShareMode === 'pct');
+  var isPartisan = hasPartisanData();
 
   var labels = keys;
   var repData = [];
@@ -3046,15 +3062,24 @@ function renderDistrictShareChart() {
     }
   });
 
+  var datasets = [];
+  if (isPartisan) {
+    datasets = [
+      { label: isPctMode ? 'Republican Share %' : 'Republican', data: repData, backgroundColor: '#D32F2F', barPercentage: 0.75 },
+      { label: isPctMode ? 'Democrat Share %' : 'Democrat', data: demData, backgroundColor: '#1976D2', barPercentage: 0.75 },
+      { label: isPctMode ? 'General Share %' : 'General/Other', data: genData, backgroundColor: '#F57C00', barPercentage: 0.75 }
+    ];
+  } else {
+    datasets = [
+      { label: isPctMode ? 'County Share %' : 'General Voters', data: genData, backgroundColor: '#1B2A4A', barPercentage: 0.75 }
+    ];
+  }
+
   districtShareChartRef = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: labels,
-      datasets: [
-        { label: isPctMode ? 'Republican Share %' : 'Republican', data: repData, backgroundColor: '#D32F2F', barPercentage: 0.75 },
-        { label: isPctMode ? 'Democrat Share %' : 'Democrat', data: demData, backgroundColor: '#1976D2', barPercentage: 0.75 },
-        { label: isPctMode ? 'General Share %' : 'General/Other', data: genData, backgroundColor: '#F57C00', barPercentage: 0.75 }
-      ]
+      datasets: datasets
     },
     options: {
       responsive: true,
@@ -3100,6 +3125,50 @@ function setCompetitivePrecinctMode(mode) {
   renderCompetitivePrecinctChart();
 }
 
+function populateCompDistrictSelectOptions() {
+  var sel = document.getElementById('comp-dist-select');
+  if (!sel || !TURNOUT_DATA || !TURNOUT_DATA.districtShares) return;
+
+  var distDict = TURNOUT_DATA.districtShares[currentCompDistType] || {};
+  var distNames = Object.keys(distDict).sort(function(a, b) {
+    var numA = parseInt(a.replace(/\D/g, '')) || 0;
+    var numB = parseInt(b.replace(/\D/g, '')) || 0;
+    if (numA !== numB) return numA - numB;
+    return a.localeCompare(b);
+  });
+
+  var currVal = sel.value || 'ALL';
+  sel.innerHTML = '<option value="ALL">All Districts Combined</option>';
+
+  distNames.forEach(function(dName) {
+    var opt = document.createElement('option');
+    opt.value = dName;
+    opt.textContent = dName;
+    sel.appendChild(opt);
+  });
+  if (distNames.indexOf(currVal) !== -1) {
+    sel.value = currVal;
+  } else {
+    sel.value = 'ALL';
+  }
+  currentCompDistName = sel.value;
+}
+
+function setCompDistrictType(type) {
+  currentCompDistType = type;
+  ['commission', 'senate', 'house', 'school', 'city'].forEach(function(t) {
+    var btn = document.getElementById('btn-comp-dist-' + t);
+    if (btn) btn.classList.toggle('active', t === type);
+  });
+  populateCompDistrictSelectOptions();
+  renderCompetitivePrecinctChart();
+}
+
+function setCompDistrictName(name) {
+  currentCompDistName = name;
+  renderCompetitivePrecinctChart();
+}
+
 function renderCompetitivePrecinctChart() {
   if (competitivePrecinctChartRef) competitivePrecinctChartRef.destroy();
   var ctx = document.getElementById('competitivePrecinctChart');
@@ -3107,6 +3176,12 @@ function renderCompetitivePrecinctChart() {
 
   var isPartisan = hasPartisanData();
   var precincts = TURNOUT_DATA.competitivePrecincts.slice();
+
+  if (currentCompDistName !== 'ALL') {
+    precincts = precincts.filter(function(item) {
+      return item.districts && item.districts[currentCompDistType] === currentCompDistName;
+    });
+  }
 
   if (!isPartisan) {
     precincts.sort(function(a, b) { return b.total - a.total; });
@@ -3152,9 +3227,19 @@ function renderCompetitivePrecinctChart() {
   }
 
   if (currentCompetitivePrecinctMode === 'wide') {
-    precincts.sort(function(a, b) { return b.margin - a.margin; });
+    precincts.sort(function(a, b) {
+      var mA = (typeof a.pctMargin !== 'undefined') ? a.pctMargin : Math.abs(a.repPct - a.demPct);
+      var mB = (typeof b.pctMargin !== 'undefined') ? b.pctMargin : Math.abs(b.repPct - b.demPct);
+      if (mB !== mA) return mB - mA;
+      return (b.primaryTotal || b.total) - (a.primaryTotal || a.total);
+    });
   } else {
-    precincts.sort(function(a, b) { return a.margin - b.margin; });
+    precincts.sort(function(a, b) {
+      var mA = (typeof a.pctMargin !== 'undefined') ? a.pctMargin : Math.abs(a.repPct - a.demPct);
+      var mB = (typeof b.pctMargin !== 'undefined') ? b.pctMargin : Math.abs(b.repPct - b.demPct);
+      if (mA !== mB) return mA - mB;
+      return (b.primaryTotal || b.total) - (a.primaryTotal || a.total);
+    });
   }
 
   var top10 = precincts.slice(0, 10);

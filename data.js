@@ -879,938 +879,1756 @@ var TURNOUT_DATA = {
       "date": "2026-07-31",
       "count": 3773,
       "delta": 1211
-    },
-    {
-      "date": "2026-08-01",
-      "count": 0,
-      "delta": -3773
-    },
-    {
-      "date": "8/2/26-Election Day",
-      "count": 0,
-      "delta": 0
     }
   ],
   "competitivePrecincts": [
     {
       "name": "PLEASANT GROVE B",
       "total": 27,
+      "primaryTotal": 26,
       "republican": 13,
       "democrat": 13,
       "general": 1,
       "margin": 0,
-      "repPct": 48.1,
-      "demPct": 48.1
+      "pctMargin": 0.0,
+      "repPct": 50.0,
+      "demPct": 50.0,
+      "districts": {
+        "commission": "1",
+        "senate": "11",
+        "house": "26",
+        "school": "1",
+        "city": ""
+      }
     },
     {
       "name": "MOUNTAIN CREEK B",
       "total": 169,
+      "primaryTotal": 167,
       "republican": 84,
       "democrat": 83,
       "general": 2,
       "margin": 1,
-      "repPct": 49.7,
-      "demPct": 49.1
-    },
-    {
-      "name": "RIDGESIDE",
-      "total": 25,
-      "republican": 13,
-      "democrat": 11,
-      "general": 1,
-      "margin": 2,
-      "repPct": 52.0,
-      "demPct": 44.0
-    },
-    {
-      "name": "MOUNTAIN CREEK C",
-      "total": 18,
-      "republican": 8,
-      "democrat": 10,
-      "general": 0,
-      "margin": 2,
-      "repPct": 44.4,
-      "demPct": 55.6
-    },
-    {
-      "name": "SILVERDALE",
-      "total": 144,
-      "republican": 73,
-      "democrat": 70,
-      "general": 1,
-      "margin": 3,
-      "repPct": 50.7,
-      "demPct": 48.6
+      "pctMargin": 0.6,
+      "repPct": 50.3,
+      "demPct": 49.7,
+      "districts": {
+        "commission": "2",
+        "senate": "11",
+        "house": "27",
+        "school": "2",
+        "city": "1"
+      }
     },
     {
       "name": "NORTHWOODS",
       "total": 566,
+      "primaryTotal": 549,
       "republican": 277,
       "democrat": 272,
       "general": 17,
       "margin": 5,
-      "repPct": 48.9,
-      "demPct": 48.1
+      "pctMargin": 1.0,
+      "repPct": 50.5,
+      "demPct": 49.5,
+      "districts": {
+        "commission": "2",
+        "senate": "11",
+        "house": "27",
+        "school": "2",
+        "city": "3"
+      }
     },
     {
       "name": "EAST RIDGE A",
       "total": 346,
+      "primaryTotal": 339,
       "republican": 173,
       "democrat": 166,
       "general": 7,
       "margin": 7,
-      "repPct": 50.0,
-      "demPct": 48.0
+      "pctMargin": 2.0,
+      "repPct": 51.0,
+      "demPct": 49.0,
+      "districts": {
+        "commission": "8",
+        "senate": "10",
+        "house": "30",
+        "school": "8",
+        "city": ""
+      }
+    },
+    {
+      "name": "SILVERDALE",
+      "total": 144,
+      "primaryTotal": 143,
+      "republican": 73,
+      "democrat": 70,
+      "general": 1,
+      "margin": 3,
+      "pctMargin": 2.0,
+      "repPct": 51.0,
+      "demPct": 49.0,
+      "districts": {
+        "commission": "10",
+        "senate": "10",
+        "house": "29",
+        "school": "10",
+        "city": "6"
+      }
     },
     {
       "name": "EAST BRAINERD A",
       "total": 326,
+      "primaryTotal": 323,
       "republican": 165,
       "democrat": 158,
       "general": 3,
       "margin": 7,
-      "repPct": 50.6,
-      "demPct": 48.5
-    },
-    {
-      "name": "TYNER",
-      "total": 267,
-      "republican": 127,
-      "democrat": 139,
-      "general": 1,
-      "margin": 12,
-      "repPct": 47.6,
-      "demPct": 52.1
+      "pctMargin": 2.2,
+      "repPct": 51.1,
+      "demPct": 48.9,
+      "districts": {
+        "commission": "7",
+        "senate": "10",
+        "house": "30",
+        "school": "7",
+        "city": "4"
+      }
     },
     {
       "name": "CONCORD B",
       "total": 329,
+      "primaryTotal": 321,
       "republican": 167,
       "democrat": 154,
       "general": 8,
       "margin": 13,
-      "repPct": 50.8,
-      "demPct": 46.8
+      "pctMargin": 4.0,
+      "repPct": 52.0,
+      "demPct": 48.0,
+      "districts": {
+        "commission": "8",
+        "senate": "10",
+        "house": "29",
+        "school": "8",
+        "city": "4"
+      }
     },
     {
-      "name": "MOWBRAY A",
-      "total": 31,
-      "republican": 23,
-      "democrat": 8,
-      "general": 0,
-      "margin": 15,
-      "repPct": 74.2,
-      "demPct": 25.8
-    },
-    {
-      "name": "AIRPORT B",
-      "total": 157,
-      "republican": 70,
-      "democrat": 86,
+      "name": "TYNER",
+      "total": 267,
+      "primaryTotal": 266,
+      "republican": 127,
+      "democrat": 139,
       "general": 1,
-      "margin": 16,
-      "repPct": 44.6,
-      "demPct": 54.8
-    },
-    {
-      "name": "AIRPORT A",
-      "total": 36,
-      "republican": 10,
-      "democrat": 26,
-      "general": 0,
-      "margin": 16,
-      "repPct": 27.8,
-      "demPct": 72.2
-    },
-    {
-      "name": "NORTH CHATTANOOGA B",
-      "total": 116,
-      "republican": 46,
-      "democrat": 64,
-      "general": 6,
-      "margin": 18,
-      "repPct": 39.7,
-      "demPct": 55.2
+      "margin": 12,
+      "pctMargin": 4.6,
+      "repPct": 47.7,
+      "demPct": 52.3,
+      "districts": {
+        "commission": "5",
+        "senate": "10",
+        "house": "29",
+        "school": "5",
+        "city": "6"
+      }
     },
     {
       "name": "SUMMIT",
       "total": 388,
+      "primaryTotal": 383,
       "republican": 201,
       "democrat": 182,
       "general": 5,
       "margin": 19,
-      "repPct": 51.8,
-      "demPct": 46.9
-    },
-    {
-      "name": "CONCORD A",
-      "total": 142,
-      "republican": 59,
-      "democrat": 78,
-      "general": 5,
-      "margin": 19,
-      "repPct": 41.5,
-      "demPct": 54.9
+      "pctMargin": 5.0,
+      "repPct": 52.5,
+      "demPct": 47.5,
+      "districts": {
+        "commission": "10",
+        "senate": "11",
+        "house": "29",
+        "school": "10",
+        "city": "6"
+      }
     },
     {
       "name": "STUART HEIGHTS",
       "total": 460,
+      "primaryTotal": 455,
       "republican": 215,
       "democrat": 240,
       "general": 5,
       "margin": 25,
-      "repPct": 46.7,
-      "demPct": 52.2
+      "pctMargin": 5.4,
+      "repPct": 47.3,
+      "demPct": 52.7,
+      "districts": {
+        "commission": "6",
+        "senate": "11",
+        "house": "26",
+        "school": "6",
+        "city": "2"
+      }
     },
     {
-      "name": "RED BANK C",
-      "total": 237,
-      "republican": 104,
-      "democrat": 130,
-      "general": 3,
-      "margin": 26,
-      "repPct": 43.9,
-      "demPct": 54.9
-    },
-    {
-      "name": "EAST RIDGE C",
-      "total": 108,
-      "republican": 39,
-      "democrat": 67,
-      "general": 2,
-      "margin": 28,
-      "repPct": 36.1,
-      "demPct": 62.0
-    },
-    {
-      "name": "EAST RIDGE D",
-      "total": 221,
-      "republican": 127,
-      "democrat": 94,
-      "general": 0,
-      "margin": 33,
-      "repPct": 57.5,
-      "demPct": 42.5
-    },
-    {
-      "name": "MISSIONARY RIDGE",
-      "total": 167,
-      "republican": 64,
-      "democrat": 97,
-      "general": 6,
-      "margin": 33,
-      "repPct": 38.3,
-      "demPct": 58.1
+      "name": "RIDGESIDE",
+      "total": 25,
+      "primaryTotal": 24,
+      "republican": 13,
+      "democrat": 11,
+      "general": 1,
+      "margin": 2,
+      "pctMargin": 8.4,
+      "repPct": 54.2,
+      "demPct": 45.8,
+      "districts": {
+        "commission": "5",
+        "senate": "11",
+        "house": "30",
+        "school": "5",
+        "city": ""
+      }
     },
     {
       "name": "HIXSON",
       "total": 410,
+      "primaryTotal": 403,
       "republican": 219,
       "democrat": 184,
       "general": 7,
       "margin": 35,
-      "repPct": 53.4,
-      "demPct": 44.9
-    },
-    {
-      "name": "FLAT TOP MOUNTAIN",
-      "total": 60,
-      "republican": 47,
-      "democrat": 12,
-      "general": 1,
-      "margin": 35,
-      "repPct": 78.3,
-      "demPct": 20.0
-    },
-    {
-      "name": "EAST LAKE",
-      "total": 72,
-      "republican": 17,
-      "democrat": 53,
-      "general": 2,
-      "margin": 36,
-      "repPct": 23.6,
-      "demPct": 73.6
-    },
-    {
-      "name": "FALLING WATER A",
-      "total": 77,
-      "republican": 58,
-      "democrat": 18,
-      "general": 1,
-      "margin": 40,
-      "repPct": 75.3,
-      "demPct": 23.4
-    },
-    {
-      "name": "COLLEGEDALE A",
-      "total": 181,
-      "republican": 111,
-      "democrat": 68,
-      "general": 2,
-      "margin": 43,
-      "repPct": 61.3,
-      "demPct": 37.6
-    },
-    {
-      "name": "BRAINERD HILLS",
-      "total": 131,
-      "republican": 43,
-      "democrat": 87,
-      "general": 1,
-      "margin": 44,
-      "repPct": 32.8,
-      "demPct": 66.4
-    },
-    {
-      "name": "FALLING WATER B",
-      "total": 126,
-      "republican": 85,
-      "democrat": 41,
-      "general": 0,
-      "margin": 44,
-      "repPct": 67.5,
-      "demPct": 32.5
-    },
-    {
-      "name": "LUPTON CITY",
-      "total": 336,
-      "republican": 139,
-      "democrat": 186,
-      "general": 11,
-      "margin": 47,
-      "repPct": 41.4,
-      "demPct": 55.4
-    },
-    {
-      "name": "RED BANK B",
-      "total": 321,
-      "republican": 180,
-      "democrat": 131,
-      "general": 10,
-      "margin": 49,
-      "repPct": 56.1,
-      "demPct": 40.8
-    },
-    {
-      "name": "EAST RIDGE B",
-      "total": 366,
-      "republican": 157,
-      "democrat": 207,
-      "general": 2,
-      "margin": 50,
-      "repPct": 42.9,
-      "demPct": 56.6
-    },
-    {
-      "name": "MIDDLE VALLEY",
-      "total": 194,
-      "republican": 121,
-      "democrat": 69,
-      "general": 4,
-      "margin": 52,
-      "repPct": 62.4,
-      "demPct": 35.6
-    },
-    {
-      "name": "WESTVIEW A",
-      "total": 187,
-      "republican": 119,
-      "democrat": 67,
-      "general": 1,
-      "margin": 52,
-      "repPct": 63.6,
-      "demPct": 35.8
+      "pctMargin": 8.6,
+      "repPct": 54.3,
+      "demPct": 45.7,
+      "districts": {
+        "commission": "3",
+        "senate": "11",
+        "house": "26",
+        "school": "3",
+        "city": "3"
+      }
     },
     {
       "name": "MOUNTAIN CREEK A",
       "total": 532,
+      "primaryTotal": 517,
       "republican": 285,
       "democrat": 232,
       "general": 15,
       "margin": 53,
-      "repPct": 53.6,
-      "demPct": 43.6
+      "pctMargin": 10.2,
+      "repPct": 55.1,
+      "demPct": 44.9,
+      "districts": {
+        "commission": "2",
+        "senate": "11",
+        "house": "27",
+        "school": "2",
+        "city": "1"
+      }
     },
     {
-      "name": "LAKESITE",
-      "total": 104,
-      "republican": 76,
-      "democrat": 23,
-      "general": 5,
-      "margin": 53,
-      "repPct": 73.1,
-      "demPct": 22.1
-    },
-    {
-      "name": "NORTH CHATTANOOGA A",
-      "total": 178,
-      "republican": 58,
-      "democrat": 113,
-      "general": 7,
-      "margin": 55,
-      "repPct": 32.6,
-      "demPct": 63.5
-    },
-    {
-      "name": "DOWNTOWN",
-      "total": 216,
-      "republican": 74,
-      "democrat": 132,
-      "general": 10,
-      "margin": 58,
-      "repPct": 34.3,
-      "demPct": 61.1
-    },
-    {
-      "name": "MOWBRAY B",
-      "total": 94,
-      "republican": 76,
-      "democrat": 18,
-      "general": 0,
-      "margin": 58,
-      "repPct": 80.9,
-      "demPct": 19.1
-    },
-    {
-      "name": "COURTHOUSE",
-      "total": 94,
-      "republican": 16,
-      "democrat": 77,
+      "name": "AIRPORT B",
+      "total": 157,
+      "primaryTotal": 156,
+      "republican": 70,
+      "democrat": 86,
       "general": 1,
-      "margin": 61,
-      "repPct": 17.0,
-      "demPct": 81.9
+      "margin": 16,
+      "pctMargin": 10.2,
+      "repPct": 44.9,
+      "demPct": 55.1,
+      "districts": {
+        "commission": "5",
+        "senate": "10",
+        "house": "28",
+        "school": "5",
+        "city": "6"
+      }
     },
     {
-      "name": "LOOKOUT MOUNTAIN",
-      "total": 145,
-      "republican": 106,
-      "democrat": 37,
-      "general": 2,
-      "margin": 69,
-      "repPct": 73.1,
-      "demPct": 25.5
+      "name": "RED BANK C",
+      "total": 237,
+      "primaryTotal": 234,
+      "republican": 104,
+      "democrat": 130,
+      "general": 3,
+      "margin": 26,
+      "pctMargin": 11.2,
+      "repPct": 44.4,
+      "demPct": 55.6,
+      "districts": {
+        "commission": "6",
+        "senate": "11",
+        "house": "27",
+        "school": "6",
+        "city": ""
+      }
     },
     {
-      "name": "RIVERVIEW",
-      "total": 259,
-      "republican": 92,
-      "democrat": 165,
-      "general": 2,
-      "margin": 73,
-      "repPct": 35.5,
-      "demPct": 63.7
+      "name": "MOUNTAIN CREEK C",
+      "total": 18,
+      "primaryTotal": 18,
+      "republican": 8,
+      "democrat": 10,
+      "general": 0,
+      "margin": 2,
+      "pctMargin": 11.2,
+      "repPct": 44.4,
+      "demPct": 55.6,
+      "districts": {
+        "commission": "2",
+        "senate": "10",
+        "house": "27",
+        "school": "2",
+        "city": "1"
+      }
     },
     {
       "name": "WOLFTEVER",
       "total": 604,
+      "primaryTotal": 593,
       "republican": 337,
       "democrat": 256,
       "general": 11,
       "margin": 81,
-      "repPct": 55.8,
-      "demPct": 42.4
+      "pctMargin": 13.6,
+      "repPct": 56.8,
+      "demPct": 43.2,
+      "districts": {
+        "commission": "9",
+        "senate": "11",
+        "house": "29",
+        "school": "9",
+        "city": "5"
+      }
     },
     {
-      "name": "MURRAY HILLS",
-      "total": 206,
+      "name": "EAST RIDGE B",
+      "total": 366,
+      "primaryTotal": 364,
+      "republican": 157,
+      "democrat": 207,
+      "general": 2,
+      "margin": 50,
+      "pctMargin": 13.8,
+      "repPct": 43.1,
+      "demPct": 56.9,
+      "districts": {
+        "commission": "8",
+        "senate": "10",
+        "house": "30",
+        "school": "8",
+        "city": "9"
+      }
+    },
+    {
+      "name": "CONCORD A",
+      "total": 142,
+      "primaryTotal": 137,
       "republican": 59,
-      "democrat": 142,
+      "democrat": 78,
       "general": 5,
-      "margin": 83,
-      "repPct": 28.6,
-      "demPct": 68.9
+      "margin": 19,
+      "pctMargin": 13.8,
+      "repPct": 43.1,
+      "demPct": 56.9,
+      "districts": {
+        "commission": "8",
+        "senate": "10",
+        "house": "30",
+        "school": "8",
+        "city": "6"
+      }
+    },
+    {
+      "name": "LUPTON CITY",
+      "total": 336,
+      "primaryTotal": 325,
+      "republican": 139,
+      "democrat": 186,
+      "general": 11,
+      "margin": 47,
+      "pctMargin": 14.4,
+      "repPct": 42.8,
+      "demPct": 57.2,
+      "districts": {
+        "commission": "6",
+        "senate": "11",
+        "house": "26",
+        "school": "6",
+        "city": "2"
+      }
+    },
+    {
+      "name": "EAST RIDGE D",
+      "total": 221,
+      "primaryTotal": 221,
+      "republican": 127,
+      "democrat": 94,
+      "general": 0,
+      "margin": 33,
+      "pctMargin": 15.0,
+      "repPct": 57.5,
+      "demPct": 42.5,
+      "districts": {
+        "commission": "8",
+        "senate": "10",
+        "house": "30",
+        "school": "8",
+        "city": ""
+      }
+    },
+    {
+      "name": "RED BANK B",
+      "total": 321,
+      "primaryTotal": 311,
+      "republican": 180,
+      "democrat": 131,
+      "general": 10,
+      "margin": 49,
+      "pctMargin": 15.8,
+      "repPct": 57.9,
+      "demPct": 42.1,
+      "districts": {
+        "commission": "6",
+        "senate": "11",
+        "house": "27",
+        "school": "6",
+        "city": ""
+      }
+    },
+    {
+      "name": "NORTH CHATTANOOGA B",
+      "total": 116,
+      "primaryTotal": 110,
+      "republican": 46,
+      "democrat": 64,
+      "general": 6,
+      "margin": 18,
+      "pctMargin": 16.4,
+      "repPct": 41.8,
+      "demPct": 58.2,
+      "districts": {
+        "commission": "6",
+        "senate": "10",
+        "house": "28",
+        "school": "6",
+        "city": "2"
+      }
     },
     {
       "name": "HARRISON",
       "total": 499,
+      "primaryTotal": 490,
       "republican": 289,
       "democrat": 201,
       "general": 9,
       "margin": 88,
-      "repPct": 57.9,
-      "demPct": 40.3
-    },
-    {
-      "name": "AVONDALE",
-      "total": 105,
-      "republican": 6,
-      "democrat": 97,
-      "general": 2,
-      "margin": 91,
-      "repPct": 5.7,
-      "demPct": 92.4
-    },
-    {
-      "name": "BRAINERD",
-      "total": 268,
-      "republican": 83,
-      "democrat": 180,
-      "general": 5,
-      "margin": 97,
-      "repPct": 31.0,
-      "demPct": 67.2
-    },
-    {
-      "name": "DUPONT",
-      "total": 453,
-      "republican": 271,
-      "democrat": 172,
-      "general": 10,
-      "margin": 99,
-      "repPct": 59.8,
-      "demPct": 38.0
-    },
-    {
-      "name": "NORTHGATE",
-      "total": 421,
-      "republican": 255,
-      "democrat": 155,
-      "general": 11,
-      "margin": 100,
-      "repPct": 60.6,
-      "demPct": 36.8
-    },
-    {
-      "name": "WESTVIEW B",
-      "total": 358,
-      "republican": 229,
-      "democrat": 126,
-      "general": 3,
-      "margin": 103,
-      "repPct": 64.0,
-      "demPct": 35.2
-    },
-    {
-      "name": "RED BANK A",
-      "total": 352,
-      "republican": 117,
-      "democrat": 220,
-      "general": 15,
-      "margin": 103,
-      "repPct": 33.2,
-      "demPct": 62.5
+      "pctMargin": 18.0,
+      "repPct": 59.0,
+      "demPct": 41.0,
+      "districts": {
+        "commission": "9",
+        "senate": "11",
+        "house": "28",
+        "school": "9",
+        "city": "5"
+      }
     },
     {
       "name": "EAST BRAINERD B",
       "total": 553,
+      "primaryTotal": 541,
       "republican": 325,
       "democrat": 216,
       "general": 12,
       "margin": 109,
-      "repPct": 58.8,
-      "demPct": 39.1
+      "pctMargin": 20.2,
+      "repPct": 60.1,
+      "demPct": 39.9,
+      "districts": {
+        "commission": "7",
+        "senate": "10",
+        "house": "30",
+        "school": "7",
+        "city": "4"
+      }
     },
     {
-      "name": "WALDEN",
-      "total": 152,
-      "republican": 133,
-      "democrat": 18,
-      "general": 1,
-      "margin": 115,
-      "repPct": 87.5,
-      "demPct": 11.8
+      "name": "MISSIONARY RIDGE",
+      "total": 167,
+      "primaryTotal": 161,
+      "republican": 64,
+      "democrat": 97,
+      "general": 6,
+      "margin": 33,
+      "pctMargin": 20.4,
+      "repPct": 39.8,
+      "demPct": 60.2,
+      "districts": {
+        "commission": "11",
+        "senate": "10",
+        "house": "30",
+        "school": "11",
+        "city": "9"
+      }
     },
     {
-      "name": "APISON B",
-      "total": 276,
-      "republican": 194,
-      "democrat": 75,
-      "general": 7,
-      "margin": 119,
-      "repPct": 70.3,
-      "demPct": 27.2
+      "name": "DUPONT",
+      "total": 453,
+      "primaryTotal": 443,
+      "republican": 271,
+      "democrat": 172,
+      "general": 10,
+      "margin": 99,
+      "pctMargin": 22.4,
+      "repPct": 61.2,
+      "demPct": 38.8,
+      "districts": {
+        "commission": "3",
+        "senate": "11",
+        "house": "26",
+        "school": "3",
+        "city": "3"
+      }
     },
     {
-      "name": "ALTON PARK",
-      "total": 164,
-      "republican": 14,
-      "democrat": 142,
-      "general": 8,
-      "margin": 128,
-      "repPct": 8.5,
-      "demPct": 86.6
-    },
-    {
-      "name": "LAKE HILLS",
-      "total": 173,
-      "republican": 19,
-      "democrat": 150,
-      "general": 4,
-      "margin": 131,
-      "repPct": 11.0,
-      "demPct": 86.7
-    },
-    {
-      "name": "KINGSPOINT",
-      "total": 222,
-      "republican": 43,
-      "democrat": 177,
+      "name": "COLLEGEDALE A",
+      "total": 181,
+      "primaryTotal": 179,
+      "republican": 111,
+      "democrat": 68,
       "general": 2,
-      "margin": 134,
-      "repPct": 19.4,
-      "demPct": 79.7
+      "margin": 43,
+      "pctMargin": 24.0,
+      "repPct": 62.0,
+      "demPct": 38.0,
+      "districts": {
+        "commission": "10",
+        "senate": "11",
+        "house": "29",
+        "school": "10",
+        "city": ""
+      }
     },
     {
-      "name": "APISON A",
-      "total": 199,
-      "republican": 165,
-      "democrat": 31,
-      "general": 3,
-      "margin": 134,
-      "repPct": 82.9,
-      "demPct": 15.6
+      "name": "NORTHGATE",
+      "total": 421,
+      "primaryTotal": 410,
+      "republican": 255,
+      "democrat": 155,
+      "general": 11,
+      "margin": 100,
+      "pctMargin": 24.4,
+      "repPct": 62.2,
+      "demPct": 37.8,
+      "districts": {
+        "commission": "3",
+        "senate": "11",
+        "house": "26",
+        "school": "3",
+        "city": "3"
+      }
     },
     {
-      "name": "FAIRMOUNT",
-      "total": 275,
-      "republican": 201,
-      "democrat": 66,
-      "general": 8,
-      "margin": 135,
-      "repPct": 73.1,
-      "demPct": 24.0
+      "name": "EAST RIDGE C",
+      "total": 108,
+      "primaryTotal": 106,
+      "republican": 39,
+      "democrat": 67,
+      "general": 2,
+      "margin": 28,
+      "pctMargin": 26.4,
+      "repPct": 36.8,
+      "demPct": 63.2,
+      "districts": {
+        "commission": "8",
+        "senate": "10",
+        "house": "30",
+        "school": "8",
+        "city": ""
+      }
     },
     {
-      "name": "BIRCHWOOD",
-      "total": 195,
-      "republican": 165,
-      "democrat": 27,
-      "general": 3,
-      "margin": 138,
-      "repPct": 84.6,
-      "demPct": 13.8
-    },
-    {
-      "name": "SALE CREEK",
-      "total": 250,
-      "republican": 193,
-      "democrat": 52,
-      "general": 5,
-      "margin": 141,
-      "repPct": 77.2,
-      "demPct": 20.8
-    },
-    {
-      "name": "COLLEGEDALE B",
-      "total": 237,
-      "republican": 189,
-      "democrat": 47,
-      "general": 1,
-      "margin": 142,
-      "repPct": 79.7,
-      "demPct": 19.8
-    },
-    {
-      "name": "PLEASANT GROVE A",
-      "total": 471,
-      "republican": 300,
-      "democrat": 157,
-      "general": 14,
-      "margin": 143,
+      "name": "MIDDLE VALLEY",
+      "total": 194,
+      "primaryTotal": 190,
+      "republican": 121,
+      "democrat": 69,
+      "general": 4,
+      "margin": 52,
+      "pctMargin": 27.4,
       "repPct": 63.7,
-      "demPct": 33.3
+      "demPct": 36.3,
+      "districts": {
+        "commission": "3",
+        "senate": "11",
+        "house": "26",
+        "school": "3",
+        "city": ""
+      }
+    },
+    {
+      "name": "WESTVIEW A",
+      "total": 187,
+      "primaryTotal": 186,
+      "republican": 119,
+      "democrat": 67,
+      "general": 1,
+      "margin": 52,
+      "pctMargin": 28.0,
+      "repPct": 64.0,
+      "demPct": 36.0,
+      "districts": {
+        "commission": "7",
+        "senate": "10",
+        "house": "30",
+        "school": "7",
+        "city": "4"
+      }
+    },
+    {
+      "name": "DOWNTOWN",
+      "total": 216,
+      "primaryTotal": 206,
+      "republican": 74,
+      "democrat": 132,
+      "general": 10,
+      "margin": 58,
+      "pctMargin": 28.2,
+      "repPct": 35.9,
+      "demPct": 64.1,
+      "districts": {
+        "commission": "4",
+        "senate": "10",
+        "house": "28",
+        "school": "4",
+        "city": "7"
+      }
     },
     {
       "name": "NORTHSHORE",
       "total": 538,
+      "primaryTotal": 522,
       "republican": 187,
       "democrat": 335,
       "general": 16,
       "margin": 148,
-      "repPct": 34.8,
-      "demPct": 62.3
+      "pctMargin": 28.4,
+      "repPct": 35.8,
+      "demPct": 64.2,
+      "districts": {
+        "commission": "6",
+        "senate": "11",
+        "house": "26",
+        "school": "6",
+        "city": "2"
+      }
     },
     {
-      "name": "ST ELMO",
-      "total": 329,
-      "republican": 83,
-      "democrat": 235,
-      "general": 11,
-      "margin": 152,
-      "repPct": 25.2,
-      "demPct": 71.4
+      "name": "RIVERVIEW",
+      "total": 259,
+      "primaryTotal": 257,
+      "republican": 92,
+      "democrat": 165,
+      "general": 2,
+      "margin": 73,
+      "pctMargin": 28.4,
+      "repPct": 35.8,
+      "demPct": 64.2,
+      "districts": {
+        "commission": "6",
+        "senate": "11",
+        "house": "26",
+        "school": "6",
+        "city": "2"
+      }
     },
     {
-      "name": "SIGNAL MOUNTAIN A",
-      "total": 338,
-      "republican": 242,
-      "democrat": 88,
-      "general": 8,
-      "margin": 154,
-      "repPct": 71.6,
-      "demPct": 26.0
-    },
-    {
-      "name": "OOLTEWAH GEORGETOWN",
-      "total": 260,
-      "republican": 208,
-      "democrat": 47,
-      "general": 5,
-      "margin": 161,
-      "repPct": 80.0,
-      "demPct": 18.1
-    },
-    {
-      "name": "EASTSIDE",
-      "total": 277,
-      "republican": 50,
-      "democrat": 218,
-      "general": 9,
-      "margin": 168,
-      "repPct": 18.1,
-      "demPct": 78.7
-    },
-    {
-      "name": "LOOKOUT VALLEY",
-      "total": 481,
-      "republican": 321,
-      "democrat": 146,
-      "general": 14,
-      "margin": 175,
-      "repPct": 66.7,
-      "demPct": 30.4
-    },
-    {
-      "name": "GLENWOOD",
-      "total": 278,
-      "republican": 48,
-      "democrat": 227,
+      "name": "WESTVIEW B",
+      "total": 358,
+      "primaryTotal": 355,
+      "republican": 229,
+      "democrat": 126,
       "general": 3,
-      "margin": 179,
-      "repPct": 17.3,
-      "demPct": 81.7
+      "margin": 103,
+      "pctMargin": 29.0,
+      "repPct": 64.5,
+      "demPct": 35.5,
+      "districts": {
+        "commission": "7",
+        "senate": "10",
+        "house": "30",
+        "school": "7",
+        "city": ""
+      }
     },
     {
-      "name": "RIDGEDALE",
-      "total": 250,
-      "republican": 29,
-      "democrat": 213,
-      "general": 8,
-      "margin": 184,
-      "repPct": 11.6,
-      "demPct": 85.2
+      "name": "RED BANK A",
+      "total": 352,
+      "primaryTotal": 337,
+      "republican": 117,
+      "democrat": 220,
+      "general": 15,
+      "margin": 103,
+      "pctMargin": 30.6,
+      "repPct": 34.7,
+      "demPct": 65.3,
+      "districts": {
+        "commission": "6",
+        "senate": "10",
+        "house": "27",
+        "school": "6",
+        "city": "2"
+      }
     },
     {
-      "name": "BUSHTOWN",
-      "total": 239,
-      "republican": 24,
-      "democrat": 211,
-      "general": 4,
-      "margin": 187,
-      "repPct": 10.0,
-      "demPct": 88.3
+      "name": "PLEASANT GROVE A",
+      "total": 471,
+      "primaryTotal": 457,
+      "republican": 300,
+      "democrat": 157,
+      "general": 14,
+      "margin": 143,
+      "pctMargin": 31.2,
+      "repPct": 65.6,
+      "demPct": 34.4,
+      "districts": {
+        "commission": "3",
+        "senate": "11",
+        "house": "26",
+        "school": "3",
+        "city": ""
+      }
     },
     {
       "name": "HURRICANE CREEK",
       "total": 607,
+      "primaryTotal": 594,
       "republican": 392,
       "democrat": 202,
       "general": 13,
       "margin": 190,
-      "repPct": 64.6,
-      "demPct": 33.3
+      "pctMargin": 32.0,
+      "repPct": 66.0,
+      "demPct": 34.0,
+      "districts": {
+        "commission": "7",
+        "senate": "10",
+        "house": "30",
+        "school": "7",
+        "city": "4"
+      }
     },
     {
-      "name": "EAST CHATTANOOGA",
-      "total": 235,
-      "republican": 18,
-      "democrat": 209,
-      "general": 8,
-      "margin": 191,
-      "repPct": 7.7,
-      "demPct": 88.9
+      "name": "NORTH CHATTANOOGA A",
+      "total": 178,
+      "primaryTotal": 171,
+      "republican": 58,
+      "democrat": 113,
+      "general": 7,
+      "margin": 55,
+      "pctMargin": 32.2,
+      "repPct": 33.9,
+      "demPct": 66.1,
+      "districts": {
+        "commission": "6",
+        "senate": "11",
+        "house": "27",
+        "school": "6",
+        "city": "2"
+      }
     },
     {
-      "name": "SEQUOYAH",
-      "total": 335,
-      "republican": 261,
-      "democrat": 65,
-      "general": 9,
-      "margin": 196,
-      "repPct": 77.9,
-      "demPct": 19.4
+      "name": "BRAINERD HILLS",
+      "total": 131,
+      "primaryTotal": 130,
+      "republican": 43,
+      "democrat": 87,
+      "general": 1,
+      "margin": 44,
+      "pctMargin": 33.8,
+      "repPct": 33.1,
+      "demPct": 66.9,
+      "districts": {
+        "commission": "8",
+        "senate": "10",
+        "house": "29",
+        "school": "8",
+        "city": "6"
+      }
     },
     {
-      "name": "DALLAS",
-      "total": 435,
-      "republican": 316,
-      "democrat": 114,
-      "general": 5,
-      "margin": 202,
-      "repPct": 72.6,
-      "demPct": 26.2
-    },
-    {
-      "name": "SODDY DAISY C",
-      "total": 322,
-      "republican": 260,
-      "democrat": 50,
-      "general": 12,
-      "margin": 210,
-      "repPct": 80.7,
-      "demPct": 15.5
+      "name": "FALLING WATER B",
+      "total": 126,
+      "primaryTotal": 126,
+      "republican": 85,
+      "democrat": 41,
+      "general": 0,
+      "margin": 44,
+      "pctMargin": 35.0,
+      "repPct": 67.5,
+      "demPct": 32.5,
+      "districts": {
+        "commission": "2",
+        "senate": "11",
+        "house": "27",
+        "school": "2",
+        "city": ""
+      }
     },
     {
       "name": "SIGNAL MOUNTAIN B",
       "total": 598,
+      "primaryTotal": 586,
       "republican": 400,
       "democrat": 186,
       "general": 12,
       "margin": 214,
-      "repPct": 66.9,
-      "demPct": 31.1
+      "pctMargin": 36.6,
+      "repPct": 68.3,
+      "demPct": 31.7,
+      "districts": {
+        "commission": "2",
+        "senate": "11",
+        "house": "27",
+        "school": "2",
+        "city": ""
+      }
     },
     {
-      "name": "SAVANNAH BAY",
-      "total": 424,
-      "republican": 318,
-      "democrat": 101,
+      "name": "BRAINERD",
+      "total": 268,
+      "primaryTotal": 263,
+      "republican": 83,
+      "democrat": 180,
       "general": 5,
-      "margin": 217,
-      "repPct": 75.0,
-      "demPct": 23.8
+      "margin": 97,
+      "pctMargin": 36.8,
+      "repPct": 31.6,
+      "demPct": 68.4,
+      "districts": {
+        "commission": "5",
+        "senate": "10",
+        "house": "30",
+        "school": "5",
+        "city": "9"
+      }
     },
     {
-      "name": "SODDY DAISY B",
-      "total": 389,
-      "republican": 303,
-      "democrat": 81,
-      "general": 5,
-      "margin": 222,
-      "repPct": 77.9,
-      "demPct": 20.8
-    },
-    {
-      "name": "EASTGATE",
-      "total": 295,
-      "republican": 32,
-      "democrat": 260,
-      "general": 3,
-      "margin": 228,
-      "repPct": 10.8,
-      "demPct": 88.1
-    },
-    {
-      "name": "BONNY OAKS",
-      "total": 294,
-      "republican": 31,
-      "democrat": 260,
-      "general": 3,
-      "margin": 229,
-      "repPct": 10.5,
-      "demPct": 88.4
-    },
-    {
-      "name": "HUNTER",
-      "total": 566,
-      "republican": 407,
-      "democrat": 155,
-      "general": 4,
-      "margin": 252,
-      "repPct": 71.9,
-      "demPct": 27.4
-    },
-    {
-      "name": "OOLTEWAH",
-      "total": 543,
-      "republican": 397,
-      "democrat": 139,
-      "general": 7,
-      "margin": 258,
-      "repPct": 73.1,
-      "demPct": 25.6
-    },
-    {
-      "name": "MEADOWVIEW",
-      "total": 388,
-      "republican": 325,
-      "democrat": 59,
-      "general": 4,
-      "margin": 266,
-      "repPct": 83.8,
-      "demPct": 15.2
-    },
-    {
-      "name": "SODDY DAISY A",
-      "total": 444,
-      "republican": 358,
-      "democrat": 81,
-      "general": 5,
-      "margin": 277,
-      "repPct": 80.6,
-      "demPct": 18.2
-    },
-    {
-      "name": "OOLTEWAH RINGGOLD",
-      "total": 671,
-      "republican": 471,
-      "democrat": 188,
-      "general": 12,
-      "margin": 283,
-      "repPct": 70.2,
-      "demPct": 28.0
-    },
-    {
-      "name": "WOODMORE",
-      "total": 323,
-      "republican": 13,
-      "democrat": 307,
-      "general": 3,
-      "margin": 294,
-      "repPct": 4.0,
-      "demPct": 95.0
-    },
-    {
-      "name": "GANNS",
-      "total": 631,
-      "republican": 460,
-      "democrat": 158,
-      "general": 13,
-      "margin": 302,
-      "repPct": 72.9,
-      "demPct": 25.0
-    },
-    {
-      "name": "DALEWOOD",
-      "total": 350,
-      "republican": 21,
-      "democrat": 326,
-      "general": 3,
-      "margin": 305,
-      "repPct": 6.0,
-      "demPct": 93.1
-    },
-    {
-      "name": "HARRISON BAY",
-      "total": 619,
-      "republican": 469,
-      "democrat": 137,
-      "general": 13,
-      "margin": 332,
-      "repPct": 75.8,
-      "demPct": 22.1
-    },
-    {
-      "name": "POSSUM CREEK",
-      "total": 564,
-      "republican": 458,
-      "democrat": 104,
-      "general": 2,
-      "margin": 354,
-      "repPct": 81.2,
-      "demPct": 18.4
+      "name": "LOOKOUT VALLEY",
+      "total": 481,
+      "primaryTotal": 467,
+      "republican": 321,
+      "democrat": 146,
+      "general": 14,
+      "margin": 175,
+      "pctMargin": 37.4,
+      "repPct": 68.7,
+      "demPct": 31.3,
+      "districts": {
+        "commission": "11",
+        "senate": "10",
+        "house": "27",
+        "school": "11",
+        "city": "1"
+      }
     },
     {
       "name": "VALLEYBROOK",
       "total": 898,
+      "primaryTotal": 875,
       "republican": 616,
       "democrat": 259,
       "general": 23,
       "margin": 357,
-      "repPct": 68.6,
-      "demPct": 28.8
+      "pctMargin": 40.8,
+      "repPct": 70.4,
+      "demPct": 29.6,
+      "districts": {
+        "commission": "3",
+        "senate": "11",
+        "house": "26",
+        "school": "3",
+        "city": "3"
+      }
+    },
+    {
+      "name": "MURRAY HILLS",
+      "total": 206,
+      "primaryTotal": 201,
+      "republican": 59,
+      "democrat": 142,
+      "general": 5,
+      "margin": 83,
+      "pctMargin": 41.2,
+      "repPct": 29.4,
+      "demPct": 70.6,
+      "districts": {
+        "commission": "4",
+        "senate": "11",
+        "house": "28",
+        "school": "4",
+        "city": "5"
+      }
+    },
+    {
+      "name": "OOLTEWAH RINGGOLD",
+      "total": 671,
+      "primaryTotal": 659,
+      "republican": 471,
+      "democrat": 188,
+      "general": 12,
+      "margin": 283,
+      "pctMargin": 43.0,
+      "repPct": 71.5,
+      "demPct": 28.5,
+      "districts": {
+        "commission": "7",
+        "senate": "10",
+        "house": "29",
+        "school": "7",
+        "city": ""
+      }
+    },
+    {
+      "name": "APISON B",
+      "total": 276,
+      "primaryTotal": 269,
+      "republican": 194,
+      "democrat": 75,
+      "general": 7,
+      "margin": 119,
+      "pctMargin": 44.2,
+      "repPct": 72.1,
+      "demPct": 27.9,
+      "districts": {
+        "commission": "10",
+        "senate": "10",
+        "house": "30",
+        "school": "10",
+        "city": ""
+      }
+    },
+    {
+      "name": "AIRPORT A",
+      "total": 36,
+      "primaryTotal": 36,
+      "republican": 10,
+      "democrat": 26,
+      "general": 0,
+      "margin": 16,
+      "pctMargin": 44.4,
+      "repPct": 27.8,
+      "demPct": 72.2,
+      "districts": {
+        "commission": "5",
+        "senate": "11",
+        "house": "28",
+        "school": "5",
+        "city": "6"
+      }
+    },
+    {
+      "name": "HUNTER",
+      "total": 566,
+      "primaryTotal": 562,
+      "republican": 407,
+      "democrat": 155,
+      "general": 4,
+      "margin": 252,
+      "pctMargin": 44.8,
+      "repPct": 72.4,
+      "demPct": 27.6,
+      "districts": {
+        "commission": "9",
+        "senate": "11",
+        "house": "29",
+        "school": "9",
+        "city": "6"
+      }
+    },
+    {
+      "name": "SIGNAL MOUNTAIN A",
+      "total": 338,
+      "primaryTotal": 330,
+      "republican": 242,
+      "democrat": 88,
+      "general": 8,
+      "margin": 154,
+      "pctMargin": 46.6,
+      "repPct": 73.3,
+      "demPct": 26.7,
+      "districts": {
+        "commission": "2",
+        "senate": "11",
+        "house": "27",
+        "school": "2",
+        "city": ""
+      }
+    },
+    {
+      "name": "DALLAS",
+      "total": 435,
+      "primaryTotal": 430,
+      "republican": 316,
+      "democrat": 114,
+      "general": 5,
+      "margin": 202,
+      "pctMargin": 47.0,
+      "repPct": 73.5,
+      "demPct": 26.5,
+      "districts": {
+        "commission": "1",
+        "senate": "11",
+        "house": "26",
+        "school": "1",
+        "city": ""
+      }
+    },
+    {
+      "name": "ST ELMO",
+      "total": 329,
+      "primaryTotal": 318,
+      "republican": 83,
+      "democrat": 235,
+      "general": 11,
+      "margin": 152,
+      "pctMargin": 47.8,
+      "repPct": 26.1,
+      "demPct": 73.9,
+      "districts": {
+        "commission": "11",
+        "senate": "10",
+        "house": "27",
+        "school": "11",
+        "city": "7"
+      }
+    },
+    {
+      "name": "OOLTEWAH",
+      "total": 543,
+      "primaryTotal": 536,
+      "republican": 397,
+      "democrat": 139,
+      "general": 7,
+      "margin": 258,
+      "pctMargin": 48.2,
+      "repPct": 74.1,
+      "demPct": 25.9,
+      "districts": {
+        "commission": "10",
+        "senate": "11",
+        "house": "29",
+        "school": "10",
+        "city": ""
+      }
+    },
+    {
+      "name": "LOOKOUT MOUNTAIN",
+      "total": 145,
+      "primaryTotal": 143,
+      "republican": 106,
+      "democrat": 37,
+      "general": 2,
+      "margin": 69,
+      "pctMargin": 48.2,
+      "repPct": 74.1,
+      "demPct": 25.9,
+      "districts": {
+        "commission": "11",
+        "senate": "10",
+        "house": "27",
+        "school": "11",
+        "city": ""
+      }
+    },
+    {
+      "name": "MOWBRAY A",
+      "total": 31,
+      "primaryTotal": 31,
+      "republican": 23,
+      "democrat": 8,
+      "general": 0,
+      "margin": 15,
+      "pctMargin": 48.4,
+      "repPct": 74.2,
+      "demPct": 25.8,
+      "districts": {
+        "commission": "2",
+        "senate": "11",
+        "house": "27",
+        "school": "2",
+        "city": ""
+      }
+    },
+    {
+      "name": "GANNS",
+      "total": 631,
+      "primaryTotal": 618,
+      "republican": 460,
+      "democrat": 158,
+      "general": 13,
+      "margin": 302,
+      "pctMargin": 48.8,
+      "repPct": 74.4,
+      "demPct": 25.6,
+      "districts": {
+        "commission": "3",
+        "senate": "11",
+        "house": "26",
+        "school": "3",
+        "city": ""
+      }
+    },
+    {
+      "name": "FAIRMOUNT",
+      "total": 275,
+      "primaryTotal": 267,
+      "republican": 201,
+      "democrat": 66,
+      "general": 8,
+      "margin": 135,
+      "pctMargin": 50.6,
+      "repPct": 75.3,
+      "demPct": 24.7,
+      "districts": {
+        "commission": "2",
+        "senate": "11",
+        "house": "27",
+        "school": "2",
+        "city": ""
+      }
+    },
+    {
+      "name": "EAST LAKE",
+      "total": 72,
+      "primaryTotal": 70,
+      "republican": 17,
+      "democrat": 53,
+      "general": 2,
+      "margin": 36,
+      "pctMargin": 51.4,
+      "repPct": 24.3,
+      "demPct": 75.7,
+      "districts": {
+        "commission": "11",
+        "senate": "10",
+        "house": "30",
+        "school": "11",
+        "city": "8"
+      }
+    },
+    {
+      "name": "SAVANNAH BAY",
+      "total": 424,
+      "primaryTotal": 419,
+      "republican": 318,
+      "democrat": 101,
+      "general": 5,
+      "margin": 217,
+      "pctMargin": 51.8,
+      "repPct": 75.9,
+      "demPct": 24.1,
+      "districts": {
+        "commission": "10",
+        "senate": "11",
+        "house": "29",
+        "school": "10",
+        "city": ""
+      }
+    },
+    {
+      "name": "FALLING WATER A",
+      "total": 77,
+      "primaryTotal": 76,
+      "republican": 58,
+      "democrat": 18,
+      "general": 1,
+      "margin": 40,
+      "pctMargin": 52.6,
+      "repPct": 76.3,
+      "demPct": 23.7,
+      "districts": {
+        "commission": "1",
+        "senate": "11",
+        "house": "27",
+        "school": "1",
+        "city": "1"
+      }
+    },
+    {
+      "name": "LAKESITE",
+      "total": 104,
+      "primaryTotal": 99,
+      "republican": 76,
+      "democrat": 23,
+      "general": 5,
+      "margin": 53,
+      "pctMargin": 53.6,
+      "repPct": 76.8,
+      "demPct": 23.2,
+      "districts": {
+        "commission": "3",
+        "senate": "11",
+        "house": "26",
+        "school": "3",
+        "city": ""
+      }
+    },
+    {
+      "name": "HARRISON BAY",
+      "total": 619,
+      "primaryTotal": 606,
+      "republican": 469,
+      "democrat": 137,
+      "general": 13,
+      "margin": 332,
+      "pctMargin": 54.8,
+      "repPct": 77.4,
+      "demPct": 22.6,
+      "districts": {
+        "commission": "9",
+        "senate": "11",
+        "house": "29",
+        "school": "9",
+        "city": ""
+      }
+    },
+    {
+      "name": "SALE CREEK",
+      "total": 250,
+      "primaryTotal": 245,
+      "republican": 193,
+      "democrat": 52,
+      "general": 5,
+      "margin": 141,
+      "pctMargin": 57.6,
+      "repPct": 78.8,
+      "demPct": 21.2,
+      "districts": {
+        "commission": "1",
+        "senate": "11",
+        "house": "26",
+        "school": "1",
+        "city": ""
+      }
+    },
+    {
+      "name": "SODDY DAISY B",
+      "total": 389,
+      "primaryTotal": 384,
+      "republican": 303,
+      "democrat": 81,
+      "general": 5,
+      "margin": 222,
+      "pctMargin": 57.8,
+      "repPct": 78.9,
+      "demPct": 21.1,
+      "districts": {
+        "commission": "1",
+        "senate": "11",
+        "house": "27",
+        "school": "1",
+        "city": ""
+      }
+    },
+    {
+      "name": "FLAT TOP MOUNTAIN",
+      "total": 60,
+      "primaryTotal": 59,
+      "republican": 47,
+      "democrat": 12,
+      "general": 1,
+      "margin": 35,
+      "pctMargin": 59.4,
+      "repPct": 79.7,
+      "demPct": 20.3,
+      "districts": {
+        "commission": "1",
+        "senate": "11",
+        "house": "27",
+        "school": "1",
+        "city": ""
+      }
+    },
+    {
+      "name": "SEQUOYAH",
+      "total": 335,
+      "primaryTotal": 326,
+      "republican": 261,
+      "democrat": 65,
+      "general": 9,
+      "margin": 196,
+      "pctMargin": 60.2,
+      "repPct": 80.1,
+      "demPct": 19.9,
+      "districts": {
+        "commission": "1",
+        "senate": "11",
+        "house": "26",
+        "school": "1",
+        "city": ""
+      }
+    },
+    {
+      "name": "COLLEGEDALE B",
+      "total": 237,
+      "primaryTotal": 236,
+      "republican": 189,
+      "democrat": 47,
+      "general": 1,
+      "margin": 142,
+      "pctMargin": 60.2,
+      "repPct": 80.1,
+      "demPct": 19.9,
+      "districts": {
+        "commission": "10",
+        "senate": "10",
+        "house": "29",
+        "school": "10",
+        "city": ""
+      }
+    },
+    {
+      "name": "KINGSPOINT",
+      "total": 222,
+      "primaryTotal": 220,
+      "republican": 43,
+      "democrat": 177,
+      "general": 2,
+      "margin": 134,
+      "pctMargin": 61.0,
+      "repPct": 19.5,
+      "demPct": 80.5,
+      "districts": {
+        "commission": "4",
+        "senate": "11",
+        "house": "28",
+        "school": "4",
+        "city": "5"
+      }
+    },
+    {
+      "name": "MOWBRAY B",
+      "total": 94,
+      "primaryTotal": 94,
+      "republican": 76,
+      "democrat": 18,
+      "general": 0,
+      "margin": 58,
+      "pctMargin": 61.8,
+      "repPct": 80.9,
+      "demPct": 19.1,
+      "districts": {
+        "commission": "1",
+        "senate": "11",
+        "house": "27",
+        "school": "1",
+        "city": ""
+      }
+    },
+    {
+      "name": "EASTSIDE",
+      "total": 277,
+      "primaryTotal": 268,
+      "republican": 50,
+      "democrat": 218,
+      "general": 9,
+      "margin": 168,
+      "pctMargin": 62.6,
+      "repPct": 18.7,
+      "demPct": 81.3,
+      "districts": {
+        "commission": "11",
+        "senate": "10",
+        "house": "28",
+        "school": "11",
+        "city": "9"
+      }
+    },
+    {
+      "name": "POSSUM CREEK",
+      "total": 564,
+      "primaryTotal": 562,
+      "republican": 458,
+      "democrat": 104,
+      "general": 2,
+      "margin": 354,
+      "pctMargin": 63.0,
+      "repPct": 81.5,
+      "demPct": 18.5,
+      "districts": {
+        "commission": "1",
+        "senate": "11",
+        "house": "26",
+        "school": "1",
+        "city": ""
+      }
+    },
+    {
+      "name": "SODDY DAISY A",
+      "total": 444,
+      "primaryTotal": 439,
+      "republican": 358,
+      "democrat": 81,
+      "general": 5,
+      "margin": 277,
+      "pctMargin": 63.0,
+      "repPct": 81.5,
+      "demPct": 18.5,
+      "districts": {
+        "commission": "1",
+        "senate": "11",
+        "house": "27",
+        "school": "1",
+        "city": ""
+      }
+    },
+    {
+      "name": "OOLTEWAH GEORGETOWN",
+      "total": 260,
+      "primaryTotal": 255,
+      "republican": 208,
+      "democrat": 47,
+      "general": 5,
+      "margin": 161,
+      "pctMargin": 63.2,
+      "repPct": 81.6,
+      "demPct": 18.4,
+      "districts": {
+        "commission": "10",
+        "senate": "11",
+        "house": "29",
+        "school": "10",
+        "city": ""
+      }
+    },
+    {
+      "name": "GLENWOOD",
+      "total": 278,
+      "primaryTotal": 275,
+      "republican": 48,
+      "democrat": 227,
+      "general": 3,
+      "margin": 179,
+      "pctMargin": 65.0,
+      "repPct": 17.5,
+      "demPct": 82.5,
+      "districts": {
+        "commission": "5",
+        "senate": "11",
+        "house": "28",
+        "school": "5",
+        "city": "9"
+      }
+    },
+    {
+      "name": "COURTHOUSE",
+      "total": 94,
+      "primaryTotal": 93,
+      "republican": 16,
+      "democrat": 77,
+      "general": 1,
+      "margin": 61,
+      "pctMargin": 65.6,
+      "repPct": 17.2,
+      "demPct": 82.8,
+      "districts": {
+        "commission": "4",
+        "senate": "10",
+        "house": "28",
+        "school": "4",
+        "city": "8"
+      }
+    },
+    {
+      "name": "SODDY DAISY C",
+      "total": 322,
+      "primaryTotal": 310,
+      "republican": 260,
+      "democrat": 50,
+      "general": 12,
+      "margin": 210,
+      "pctMargin": 67.8,
+      "repPct": 83.9,
+      "demPct": 16.1,
+      "districts": {
+        "commission": "1",
+        "senate": "11",
+        "house": "27",
+        "school": "1",
+        "city": ""
+      }
+    },
+    {
+      "name": "APISON A",
+      "total": 199,
+      "primaryTotal": 196,
+      "republican": 165,
+      "democrat": 31,
+      "general": 3,
+      "margin": 134,
+      "pctMargin": 68.4,
+      "repPct": 84.2,
+      "demPct": 15.8,
+      "districts": {
+        "commission": "7",
+        "senate": "10",
+        "house": "30",
+        "school": "7",
+        "city": ""
+      }
+    },
+    {
+      "name": "MEADOWVIEW",
+      "total": 388,
+      "primaryTotal": 384,
+      "republican": 325,
+      "democrat": 59,
+      "general": 4,
+      "margin": 266,
+      "pctMargin": 69.2,
+      "repPct": 84.6,
+      "demPct": 15.4,
+      "districts": {
+        "commission": "9",
+        "senate": "11",
+        "house": "29",
+        "school": "9",
+        "city": ""
+      }
+    },
+    {
+      "name": "BIRCHWOOD",
+      "total": 195,
+      "primaryTotal": 192,
+      "republican": 165,
+      "democrat": 27,
+      "general": 3,
+      "margin": 138,
+      "pctMargin": 71.8,
+      "repPct": 85.9,
+      "demPct": 14.1,
+      "districts": {
+        "commission": "9",
+        "senate": "11",
+        "house": "29",
+        "school": "9",
+        "city": ""
+      }
+    },
+    {
+      "name": "RIDGEDALE",
+      "total": 250,
+      "primaryTotal": 242,
+      "republican": 29,
+      "democrat": 213,
+      "general": 8,
+      "margin": 184,
+      "pctMargin": 76.0,
+      "repPct": 12.0,
+      "demPct": 88.0,
+      "districts": {
+        "commission": "4",
+        "senate": "10",
+        "house": "28",
+        "school": "4",
+        "city": "8"
+      }
+    },
+    {
+      "name": "WALDEN",
+      "total": 152,
+      "primaryTotal": 151,
+      "republican": 133,
+      "democrat": 18,
+      "general": 1,
+      "margin": 115,
+      "pctMargin": 76.2,
+      "repPct": 88.1,
+      "demPct": 11.9,
+      "districts": {
+        "commission": "2",
+        "senate": "11",
+        "house": "27",
+        "school": "2",
+        "city": ""
+      }
+    },
+    {
+      "name": "LAKE HILLS",
+      "total": 173,
+      "primaryTotal": 169,
+      "republican": 19,
+      "democrat": 150,
+      "general": 4,
+      "margin": 131,
+      "pctMargin": 77.6,
+      "repPct": 11.2,
+      "demPct": 88.8,
+      "districts": {
+        "commission": "5",
+        "senate": "11",
+        "house": "28",
+        "school": "5",
+        "city": "5"
+      }
+    },
+    {
+      "name": "EASTGATE",
+      "total": 295,
+      "primaryTotal": 292,
+      "republican": 32,
+      "democrat": 260,
+      "general": 3,
+      "margin": 228,
+      "pctMargin": 78.0,
+      "repPct": 11.0,
+      "demPct": 89.0,
+      "districts": {
+        "commission": "5",
+        "senate": "10",
+        "house": "28",
+        "school": "5",
+        "city": "5"
+      }
+    },
+    {
+      "name": "BONNY OAKS",
+      "total": 294,
+      "primaryTotal": 291,
+      "republican": 31,
+      "democrat": 260,
+      "general": 3,
+      "margin": 229,
+      "pctMargin": 78.6,
+      "repPct": 10.7,
+      "demPct": 89.3,
+      "districts": {
+        "commission": "5",
+        "senate": "11",
+        "house": "28",
+        "school": "5",
+        "city": "5"
+      }
+    },
+    {
+      "name": "BUSHTOWN",
+      "total": 239,
+      "primaryTotal": 235,
+      "republican": 24,
+      "democrat": 211,
+      "general": 4,
+      "margin": 187,
+      "pctMargin": 79.6,
+      "repPct": 10.2,
+      "demPct": 89.8,
+      "districts": {
+        "commission": "4",
+        "senate": "11",
+        "house": "28",
+        "school": "4",
+        "city": "8"
+      }
+    },
+    {
+      "name": "ALTON PARK",
+      "total": 164,
+      "primaryTotal": 156,
+      "republican": 14,
+      "democrat": 142,
+      "general": 8,
+      "margin": 128,
+      "pctMargin": 82.0,
+      "repPct": 9.0,
+      "demPct": 91.0,
+      "districts": {
+        "commission": "11",
+        "senate": "10",
+        "house": "28",
+        "school": "11",
+        "city": "7"
+      }
+    },
+    {
+      "name": "EAST CHATTANOOGA",
+      "total": 235,
+      "primaryTotal": 227,
+      "republican": 18,
+      "democrat": 209,
+      "general": 8,
+      "margin": 191,
+      "pctMargin": 84.2,
+      "repPct": 7.9,
+      "demPct": 92.1,
+      "districts": {
+        "commission": "4",
+        "senate": "11",
+        "house": "28",
+        "school": "4",
+        "city": "9"
+      }
+    },
+    {
+      "name": "DALEWOOD",
+      "total": 350,
+      "primaryTotal": 347,
+      "republican": 21,
+      "democrat": 326,
+      "general": 3,
+      "margin": 305,
+      "pctMargin": 87.8,
+      "repPct": 6.1,
+      "demPct": 93.9,
+      "districts": {
+        "commission": "5",
+        "senate": "11",
+        "house": "28",
+        "school": "5",
+        "city": "5"
+      }
+    },
+    {
+      "name": "AVONDALE",
+      "total": 105,
+      "primaryTotal": 103,
+      "republican": 6,
+      "democrat": 97,
+      "general": 2,
+      "margin": 91,
+      "pctMargin": 88.4,
+      "repPct": 5.8,
+      "demPct": 94.2,
+      "districts": {
+        "commission": "4",
+        "senate": "11",
+        "house": "28",
+        "school": "4",
+        "city": "8"
+      }
+    },
+    {
+      "name": "WOODMORE",
+      "total": 323,
+      "primaryTotal": 320,
+      "republican": 13,
+      "democrat": 307,
+      "general": 3,
+      "margin": 294,
+      "pctMargin": 91.8,
+      "repPct": 4.1,
+      "demPct": 95.9,
+      "districts": {
+        "commission": "5",
+        "senate": "10",
+        "house": "28",
+        "school": "5",
+        "city": "5"
+      }
     }
   ],
   "districtShares": {

@@ -385,11 +385,11 @@ def main():
         dist_shares = data_js_loaded.get("districtShares")
 
         has_pace = isinstance(daily_pace, list) and len(daily_pace) > 0
-        has_comp = isinstance(comp_precincts, list) and len(comp_precincts) > 0
+        has_comp = isinstance(comp_precincts, list) and len(comp_precincts) > 0 and "districts" in comp_precincts[0]
         has_shares = isinstance(dist_shares, dict) and "commission" in dist_shares
 
         if has_pace and has_comp and has_shares:
-            log_pass("CSV-007", f"Verified campaign metrics structures (dailyPace={len(daily_pace)} days, competitivePrecincts={len(comp_precincts)} precincts, districtShares validated).")
+            log_pass("CSV-007", f"Verified campaign metrics & precinct district structures (dailyPace={len(daily_pace)} days, competitivePrecincts={len(comp_precincts)} precincts with district mappings, districtShares validated).")
         else:
             missing_campaign = []
             if not has_pace: missing_campaign.append("dailyPace")
