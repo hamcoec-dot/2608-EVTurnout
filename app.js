@@ -2949,8 +2949,8 @@ function renderDailyPaceChart() {
 
   var isDelta = (currentDailyPaceMode === 'delta');
   var barColors = values.map(function(val) {
-    if (!isDelta) return '#1976D2';
-    return val >= 0 ? '#1976D2' : '#D32F2F';
+    if (!isDelta) return '#0D9488';
+    return val >= 0 ? '#0D9488' : '#D97706';
   });
 
   dailyPaceChartRef = new Chart(ctx, {
