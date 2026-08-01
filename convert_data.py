@@ -703,6 +703,57 @@ def main():
                             
                     historical[year] = res
                     
+    # Calculate Daily Acceleration Pace & Velocity
+    daily_pace = []
+    prev_cnt = 0
+    for entry in daily_turnout:
+        cnt = entry.get("total", 0)
+        d_lbl = entry.get("date", "")
+        delta = cnt - prev_cnt if prev_cnt > 0 else cnt
+        prev_cnt = cnt
+        daily_pace.append({
+            "date": d_lbl,
+            "count": cnt,
+            "delta": delta
+        })
+
+    # Calculate Competitive / Battleground Precincts (ranked by closest primary split margin)
+    competitive_precincts = []
+    for prec_name, p_data in precinct_dist.items():
+        tot = p_data.get("total", 0)
+        rep = p_data.get("republican", 0)
+        dem = p_data.get("democrat", 0)
+        gen = p_data.get("general", 0)
+        if tot >= 10:
+            margin = abs(rep - dem)
+            competitive_precincts.append({
+                "name": prec_name,
+                "total": tot,
+                "republican": rep,
+                "democrat": dem,
+                "general": gen,
+                "margin": margin,
+                "repPct": round((rep / tot * 100), 1) if tot > 0 else 0.0,
+                "demPct": round((dem / tot * 100), 1) if tot > 0 else 0.0
+            })
+    competitive_precincts.sort(key=lambda x: (x["margin"], -x["total"]))
+
+    # Calculate District Share of Total County Ballots
+    district_shares = {}
+    for d_type in ["commission", "senate", "house", "school", "city"]:
+        d_dict = demographics["districts"].get(d_type, {})
+        shares = {}
+        for d_name, d_data in d_dict.items():
+            t = d_data.get("total", 0)
+            shares[d_name] = {
+                "total": t,
+                "sharePct": round((t / grand_total_calc * 100), 2) if grand_total_calc > 0 else 0.0,
+                "republican": d_data.get("republican", 0),
+                "democrat": d_data.get("democrat", 0),
+                "general": d_data.get("general", 0)
+            }
+        district_shares[d_type] = shares
+
     data = {
         "reportTitle": report_title,
         "electionName": election_name,
@@ -711,6 +762,9 @@ def main():
         "earlyVotingEndDate": early_voting_end,
         "locations": locations,
         "dailyTurnout": daily_turnout,
+        "dailyPace": daily_pace,
+        "competitivePrecincts": competitive_precincts,
+        "districtShares": district_shares,
         "totals": totals,
         "summary": {
             "totalRegistered": total_registered,
@@ -723,7 +777,8 @@ def main():
             "republican": republican_total,
             "democrat": democrat_total,
             "general": general_total,
-            "total": party_total_sum
+            "total": party_total_sum,
+            "hasPartisanData": (republican_total > 0 or democrat_total > 0)
         },
         "historical": historical,
         "demographics": demographics,

@@ -49,6 +49,17 @@ var currentTop5DistType = 'commission';
 var currentTop5DistName = 'ALL';
 var currentTop5DistMode = 'count';
 
+// Campaign Strategy Chart Refs & State
+var dailyPaceChartRef = null;
+var currentDailyPaceMode = 'delta';
+
+var districtShareChartRef = null;
+var currentDistrictShareType = 'commission';
+var currentDistrictShareMode = 'pct';
+
+var competitivePrecinctChartRef = null;
+var currentCompetitivePrecinctMode = 'close';
+
 var currentFTPartyMode = 'pct';
 var currentFTSexMode = 'pct';
 var currentFTAgeMode = 'pct';
@@ -270,12 +281,21 @@ function renderMetricStats() {
   }
 }
 
-// Render First-Time Hamilton County Voters KPI section cards
-function renderFirstTimeKpis() {
-  if (!TURNOUT_DATA.firstTimeVoters) return;
-  var ft = TURNOUT_DATA.firstTimeVoters;
+function hasPartisanData() {
+  if (typeof TURNOUT_DATA === 'undefined' || !TURNOUT_DATA || !TURNOUT_DATA.partyTotals) return false;
+  var pt = TURNOUT_DATA.partyTotals;
+  if (typeof pt.hasPartisanData !== 'undefined') return pt.hasPartisanData;
+  return ((pt.republican || 0) > 0 || (pt.democrat || 0) > 0);
+}
 
-  // KPI 1: Total & % Turnout Share
+// Render First-Time Voters KPI cards
+function renderFirstTimeKpis() {
+  if (!TURNOUT_DATA || !TURNOUT_DATA.firstTimeVoters) return;
+
+  var ft = TURNOUT_DATA.firstTimeVoters;
+  var isPartisan = hasPartisanData();
+
+  // KPI 1: Total First-Time Voters
   animateValue("ft-kpi-total", 0, ft.total, 1000, false);
   var turnoutShareEl = document.getElementById("ft-kpi-turnout-share");
   if (turnoutShareEl) {
@@ -292,20 +312,25 @@ function renderFirstTimeKpis() {
 
   var splitEl = document.getElementById("ft-kpi-party-split");
   if (splitEl) {
-    splitEl.innerText = demPct + "% D / " + repPct + "% R";
+    splitEl.innerText = isPartisan ? (demPct + "% D / " + repPct + "% R") : "100% General Ballot";
   }
   var leadEl = document.getElementById("ft-kpi-leading-party");
   if (leadEl) {
-    var diff = demCount - repCount;
-    if (diff > 0) {
-      leadEl.innerText = "Democrat Lead (+" + diff + " voters)";
-      leadEl.style.color = "#1976D2";
-    } else if (diff < 0) {
-      leadEl.innerText = "Republican Lead (+" + Math.abs(diff) + " voters)";
-      leadEl.style.color = "#D32F2F";
+    if (isPartisan) {
+      var diff = demCount - repCount;
+      if (diff > 0) {
+        leadEl.innerText = "Democrat Lead (+" + diff + " voters)";
+        leadEl.style.color = "#1976D2";
+      } else if (diff < 0) {
+        leadEl.innerText = "Republican Lead (+" + Math.abs(diff) + " voters)";
+        leadEl.style.color = "#D32F2F";
+      } else {
+        leadEl.innerText = "Tied Partisan Participation";
+        leadEl.style.color = "var(--text-secondary)";
+      }
     } else {
-      leadEl.innerText = "Tied Partisan Participation";
-      leadEl.style.color = "var(--text-secondary)";
+      leadEl.innerText = "General Election Ballot";
+      leadEl.style.color = "var(--navy)";
     }
   }
 
@@ -353,20 +378,31 @@ function renderFirstTimeKpis() {
 function renderPartyCards() {
   var pt = TURNOUT_DATA.partyTotals;
   var sum = TURNOUT_DATA.summary.grandTotal || 1;
+  var isPartisan = hasPartisanData();
   
-  var repPct = pt.republican / sum;
-  var demPct = pt.democrat / sum;
-  var genPct = pt.general / sum;
+  var repPct = isPartisan ? (pt.republican / sum) : 0;
+  var demPct = isPartisan ? (pt.democrat / sum) : 0;
+  var genPct = isPartisan ? (pt.general / sum) : 1.0;
   
-  animateValue("rep-count", 0, pt.republican, 1000, false);
-  document.getElementById("rep-pct").innerHTML = (repPct * 100).toFixed(1) + '%';
-  document.getElementById("rep-progress").style.width = (repPct * 100) + '%';
+  if (isPartisan) {
+    animateValue("rep-count", 0, pt.republican, 1000, false);
+    document.getElementById("rep-pct").innerHTML = (repPct * 100).toFixed(1) + '%';
+    document.getElementById("rep-progress").style.width = (repPct * 100) + '%';
+    
+    animateValue("dem-count", 0, pt.democrat, 1000, false);
+    document.getElementById("dem-pct").innerHTML = (demPct * 100).toFixed(1) + '%';
+    document.getElementById("dem-progress").style.width = (demPct * 100) + '%';
+  } else {
+    document.getElementById("rep-count").innerText = "N/A";
+    document.getElementById("rep-pct").innerHTML = "0.0%";
+    document.getElementById("rep-progress").style.width = "0%";
+    
+    document.getElementById("dem-count").innerText = "N/A";
+    document.getElementById("dem-pct").innerHTML = "0.0%";
+    document.getElementById("dem-progress").style.width = "0%";
+  }
   
-  animateValue("dem-count", 0, pt.democrat, 1000, false);
-  document.getElementById("dem-pct").innerHTML = (demPct * 100).toFixed(1) + '%';
-  document.getElementById("dem-progress").style.width = (demPct * 100) + '%';
-  
-  animateValue("gen-count", 0, pt.general, 1000, false);
+  animateValue("gen-count", 0, pt.general || sum, 1000, false);
   document.getElementById("gen-pct").innerHTML = (genPct * 100).toFixed(1) + '%';
   document.getElementById("gen-progress").style.width = (genPct * 100) + '%';
 }
@@ -776,10 +812,16 @@ function renderCharts() {
   if (top5AgePrecinctChartRef) top5AgePrecinctChartRef.destroy();
   if (top5FTPrecinctChartRef) top5FTPrecinctChartRef.destroy();
   if (top5DistrictPrecinctChartRef) top5DistrictPrecinctChartRef.destroy();
+  if (dailyPaceChartRef) dailyPaceChartRef.destroy();
+  if (districtShareChartRef) districtShareChartRef.destroy();
+  if (competitivePrecinctChartRef) competitivePrecinctChartRef.destroy();
 
   renderFirstTimeCharts();
   renderDemographicCharts();
   renderTop5LocationPrecinctChart();
+  renderDailyPaceChart();
+  renderDistrictShareChart();
+  renderCompetitivePrecinctChart();
   
   var daily = TURNOUT_DATA.dailyTurnout;
   
@@ -2676,33 +2718,50 @@ function createTop5PrecinctChart(canvasId, currentRef, precinctsDict, isPctMode)
     }
   }
 
+  var isPartisan = hasPartisanData();
+  var datasets = [];
+
+  if (isPartisan) {
+    datasets = [
+      {
+        label: isPctMode ? 'Republican %' : 'Republican',
+        data: repData,
+        backgroundColor: '#D32F2F',
+        barPercentage: 0.75,
+        categoryPercentage: 0.85
+      },
+      {
+        label: isPctMode ? 'Democrat %' : 'Democrat',
+        data: demData,
+        backgroundColor: '#1976D2',
+        barPercentage: 0.75,
+        categoryPercentage: 0.85
+      },
+      {
+        label: isPctMode ? 'General %' : 'General/Other',
+        data: genData,
+        backgroundColor: '#F57C00',
+        barPercentage: 0.75,
+        categoryPercentage: 0.85
+      }
+    ];
+  } else {
+    datasets = [
+      {
+        label: isPctMode ? 'General %' : 'General Voters',
+        data: isPctMode ? genData.map(function() { return 100; }) : genData,
+        backgroundColor: '#1B2A4A',
+        barPercentage: 0.75,
+        categoryPercentage: 0.85
+      }
+    ];
+  }
+
   return new Chart(ctx, {
     type: 'bar',
     data: {
       labels: labels,
-      datasets: [
-        {
-          label: isPctMode ? 'Republican %' : 'Republican',
-          data: repData,
-          backgroundColor: '#D32F2F',
-          barPercentage: 0.75,
-          categoryPercentage: 0.85
-        },
-        {
-          label: isPctMode ? 'Democrat %' : 'Democrat',
-          data: demData,
-          backgroundColor: '#1976D2',
-          barPercentage: 0.75,
-          categoryPercentage: 0.85
-        },
-        {
-          label: isPctMode ? 'General %' : 'General/Other',
-          data: genData,
-          backgroundColor: '#F57C00',
-          barPercentage: 0.75,
-          categoryPercentage: 0.85
-        }
-      ]
+      datasets: datasets
     },
     options: {
       indexAxis: 'y',
@@ -2861,4 +2920,298 @@ function renderTop5DistrictPrecinctChart() {
     }
   }
   top5DistrictPrecinctChartRef = createTop5PrecinctChart('top5DistrictPrecinctChart', top5DistrictPrecinctChartRef, dict, currentTop5DistMode === 'pct');
+}
+
+/* ==========================================================================
+   Campaign Strategy Analytics Visualizations (Daily Pace, District Share, Competitive)
+   ========================================================================== */
+
+function setDailyPaceMode(mode) {
+  currentDailyPaceMode = mode;
+  var btnDelta = document.getElementById('btn-pace-delta');
+  var btnCum = document.getElementById('btn-pace-cumulative');
+  if (btnDelta) btnDelta.classList.toggle('active', mode === 'delta');
+  if (btnCum) btnCum.classList.toggle('active', mode === 'cumulative');
+  renderDailyPaceChart();
+}
+
+function renderDailyPaceChart() {
+  if (dailyPaceChartRef) dailyPaceChartRef.destroy();
+  var ctx = document.getElementById('dailyPaceChart');
+  if (!ctx || !TURNOUT_DATA || !TURNOUT_DATA.dailyPace) return;
+
+  var paceData = TURNOUT_DATA.dailyPace.filter(function(d) { return d.count > 0; });
+  var labels = paceData.map(function(d) { return d.date.replace('-Election Day', ' (ED)'); });
+  var values = paceData.map(function(d) { return currentDailyPaceMode === 'delta' ? d.delta : d.count; });
+
+  var isDelta = (currentDailyPaceMode === 'delta');
+
+  dailyPaceChartRef = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: isDelta ? 'Daily Velocity (Change in Turnout)' : 'Cumulative Turnout Volume',
+        data: values,
+        backgroundColor: '#1976D2',
+        borderRadius: 4,
+        barPercentage: 0.7
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 11, weight: '600' } } },
+        y: {
+          grid: { color: '#E2E8F0' },
+          ticks: { font: { size: 11, weight: '600' } },
+          title: { display: true, text: isDelta ? 'Day-over-Day Acceleration' : 'Cumulative Ballots Cast', font: { size: 11, weight: 'bold' } }
+        }
+      },
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              var val = context.parsed.y;
+              return (isDelta ? 'Daily Velocity: +' : 'Total: ') + formatNumber(val) + ' voters';
+            }
+          }
+        },
+        datalabels: {
+          anchor: 'end',
+          align: 'top',
+          color: '#1B2A4A',
+          font: { weight: 'bold', size: 10 },
+          formatter: function(val) {
+            return val > 0 ? (isDelta ? '+' : '') + formatNumber(val) : '';
+          }
+        }
+      }
+    }
+  });
+}
+
+function setDistrictShareType(type) {
+  currentDistrictShareType = type;
+  ['commission', 'senate', 'house', 'school', 'city'].forEach(function(t) {
+    var btn = document.getElementById('btn-dist-share-' + t);
+    if (btn) btn.classList.toggle('active', t === type);
+  });
+  renderDistrictShareChart();
+}
+
+function setDistrictShareMode(mode) {
+  currentDistrictShareMode = mode;
+  var btnPct = document.getElementById('btn-dist-share-pct');
+  var btnCount = document.getElementById('btn-dist-share-count');
+  if (btnPct) btnPct.classList.toggle('active', mode === 'pct');
+  if (btnCount) btnCount.classList.toggle('active', mode === 'count');
+  renderDistrictShareChart();
+}
+
+function renderDistrictShareChart() {
+  if (districtShareChartRef) districtShareChartRef.destroy();
+  var ctx = document.getElementById('districtShareChart');
+  if (!ctx || !TURNOUT_DATA || !TURNOUT_DATA.districtShares) return;
+
+  var distDict = TURNOUT_DATA.districtShares[currentDistrictShareType] || {};
+  var keys = Object.keys(distDict).sort(function(a, b) {
+    var numA = parseInt(a.replace(/\D/g, '')) || 0;
+    var numB = parseInt(b.replace(/\D/g, '')) || 0;
+    if (numA !== numB) return numA - numB;
+    return a.localeCompare(b);
+  });
+
+  var isPctMode = (currentDistrictShareMode === 'pct');
+
+  var labels = keys;
+  var repData = [];
+  var demData = [];
+  var genData = [];
+
+  keys.forEach(function(k) {
+    var item = distDict[k];
+    var grandTot = TURNOUT_DATA.summary ? TURNOUT_DATA.summary.grandTotal : 1;
+
+    if (isPctMode) {
+      repData.push(parseFloat(((item.republican / grandTot) * 100).toFixed(2)));
+      demData.push(parseFloat(((item.democrat / grandTot) * 100).toFixed(2)));
+      genData.push(parseFloat(((item.general / grandTot) * 100).toFixed(2)));
+    } else {
+      repData.push(item.republican || 0);
+      demData.push(item.democrat || 0);
+      genData.push(item.general || 0);
+    }
+  });
+
+  districtShareChartRef = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: isPctMode ? 'Republican Share %' : 'Republican', data: repData, backgroundColor: '#D32F2F', barPercentage: 0.75 },
+        { label: isPctMode ? 'Democrat Share %' : 'Democrat', data: demData, backgroundColor: '#1976D2', barPercentage: 0.75 },
+        { label: isPctMode ? 'General Share %' : 'General/Other', data: genData, backgroundColor: '#F57C00', barPercentage: 0.75 }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: { stacked: true, grid: { display: false }, ticks: { font: { size: 11, weight: '600' } } },
+        y: {
+          stacked: true,
+          grid: { color: '#E2E8F0' },
+          title: { display: true, text: isPctMode ? 'Share of Total Countywide Ballots (%)' : 'Voters', font: { size: 11, weight: 'bold' } }
+        }
+      },
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              var val = context.parsed.y;
+              var label = context.dataset.label || '';
+              return isPctMode ? label + ': ' + val + '% of county total' : label + ': ' + formatNumber(val) + ' voters';
+            }
+          }
+        },
+        datalabels: {
+          color: '#FFFFFF',
+          font: { weight: 'bold', size: 10 },
+          formatter: function(val) {
+            if (isPctMode) return val > 1.5 ? val.toFixed(1) + '%' : '';
+            return val > 200 ? formatNumber(val) : '';
+          }
+        }
+      }
+    }
+  });
+}
+
+function setCompetitivePrecinctMode(mode) {
+  currentCompetitivePrecinctMode = mode;
+  var btnClose = document.getElementById('btn-comp-close');
+  var btnWide = document.getElementById('btn-comp-wide');
+  if (btnClose) btnClose.classList.toggle('active', mode === 'close');
+  if (btnWide) btnWide.classList.toggle('active', mode === 'wide');
+  renderCompetitivePrecinctChart();
+}
+
+function renderCompetitivePrecinctChart() {
+  if (competitivePrecinctChartRef) competitivePrecinctChartRef.destroy();
+  var ctx = document.getElementById('competitivePrecinctChart');
+  if (!ctx || !TURNOUT_DATA || !TURNOUT_DATA.competitivePrecincts) return;
+
+  var isPartisan = hasPartisanData();
+  var precincts = TURNOUT_DATA.competitivePrecincts.slice();
+
+  if (!isPartisan) {
+    precincts.sort(function(a, b) { return b.total - a.total; });
+    var top10Gen = precincts.slice(0, 10);
+    var genLabels = top10Gen.map(function(item, idx) {
+      return (idx + 1) + ". " + item.name + " (" + formatNumber(item.total) + " voters)";
+    });
+    var genDataVals = top10Gen.map(function() { return 100; });
+
+    competitivePrecinctChartRef = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: genLabels,
+        datasets: [{ label: 'General / Non-Partisan Ballot (100%)', data: genDataVals, backgroundColor: '#1B2A4A', barPercentage: 0.75 }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { stacked: true, max: 100, grid: { color: '#E2E8F0' }, title: { display: true, text: 'Ballot Participation (%)', font: { size: 11, weight: 'bold' } } },
+          y: { stacked: true, grid: { display: false }, ticks: { font: { size: 11, weight: '600' }, color: '#1B2A4A' } }
+        },
+        plugins: {
+          legend: { position: 'top' },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                var pItem = top10Gen[context.dataIndex];
+                return 'General Ballot: ' + formatNumber(pItem.total) + ' voters';
+              }
+            }
+          },
+          datalabels: {
+            color: '#FFFFFF',
+            font: { weight: 'bold', size: 10 },
+            formatter: function() { return '100%'; }
+          }
+        }
+      }
+    });
+    return;
+  }
+
+  if (currentCompetitivePrecinctMode === 'wide') {
+    precincts.sort(function(a, b) { return b.margin - a.margin; });
+  } else {
+    precincts.sort(function(a, b) { return a.margin - b.margin; });
+  }
+
+  var top10 = precincts.slice(0, 10);
+  var labels = top10.map(function(item, idx) {
+    return (idx + 1) + ". " + item.name + " (Split: " + item.repPct + "% R / " + item.demPct + "% D)";
+  });
+
+  var repData = top10.map(function(item) { return item.repPct; });
+  var demData = top10.map(function(item) { return item.demPct; });
+
+  competitivePrecinctChartRef = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: 'Republican Primary %', data: repData, backgroundColor: '#D32F2F', barPercentage: 0.75 },
+        { label: 'Democrat Primary %', data: demData, backgroundColor: '#1976D2', barPercentage: 0.75 }
+      ]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          stacked: true,
+          max: 100,
+          grid: { color: '#E2E8F0' },
+          title: { display: true, text: 'Primary Voter Distribution (%)', font: { size: 11, weight: 'bold' } }
+        },
+        y: {
+          stacked: true,
+          grid: { display: false },
+          ticks: { font: { size: 11, weight: '600' }, color: '#1B2A4A' }
+        }
+      },
+      plugins: {
+        legend: { position: 'top' },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              var val = context.parsed.x;
+              var label = context.dataset.label || '';
+              var pItem = top10[context.dataIndex];
+              var countVal = context.datasetIndex === 0 ? pItem.republican : pItem.democrat;
+              return label + ': ' + val + '% (' + formatNumber(countVal) + ' voters)';
+            }
+          }
+        },
+        datalabels: {
+          color: '#FFFFFF',
+          font: { weight: 'bold', size: 10 },
+          formatter: function(val) {
+            return val > 10 ? val.toFixed(0) + '%' : '';
+          }
+        }
+      }
+    }
+  });
 }

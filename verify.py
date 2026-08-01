@@ -379,6 +379,24 @@ def main():
             if not has_dist_precincts: missing_structs.append("demographics.precinctsByDistrict")
             log_fail("CSV-006", f"Missing Top 5 precinct data structures: {', '.join(missing_structs)}")
 
+        # CSV-007: Campaign Strategy data structures & metrics
+        daily_pace = data_js_loaded.get("dailyPace")
+        comp_precincts = data_js_loaded.get("competitivePrecincts")
+        dist_shares = data_js_loaded.get("districtShares")
+
+        has_pace = isinstance(daily_pace, list) and len(daily_pace) > 0
+        has_comp = isinstance(comp_precincts, list) and len(comp_precincts) > 0
+        has_shares = isinstance(dist_shares, dict) and "commission" in dist_shares
+
+        if has_pace and has_comp and has_shares:
+            log_pass("CSV-007", f"Verified campaign metrics structures (dailyPace={len(daily_pace)} days, competitivePrecincts={len(comp_precincts)} precincts, districtShares validated).")
+        else:
+            missing_campaign = []
+            if not has_pace: missing_campaign.append("dailyPace")
+            if not has_comp: missing_campaign.append("competitivePrecincts")
+            if not has_shares: missing_campaign.append("districtShares")
+            log_fail("CSV-007", f"Missing campaign metrics structures: {', '.join(missing_campaign)}")
+
     print("============================================")
     print(f"  Results: {passes} PASS | {failures} FAIL | {warnings} WARN")
     print("============================================")

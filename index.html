@@ -169,6 +169,23 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Daily Early Voting Acceleration Pace Chart -->
+      <div class="full-width-feature-container card-surface" style="margin-top: 24px;">
+        <div class="chart-header-row header-flex-wrap">
+          <div>
+            <h3 class="major-feature-title">Daily EV Acceleration Pace &amp; Velocity</h3>
+            <p class="feature-subtitle">Day-over-day turnout acceleration and volume progression across all early voting dates.</p>
+          </div>
+          <div class="view-switch-group" role="group" aria-label="Daily Pace Mode Switch">
+            <button type="button" class="view-switch-btn active" id="btn-pace-delta" onclick="setDailyPaceMode('delta')">Daily Velocity (+/-)</button>
+            <button type="button" class="view-switch-btn" id="btn-pace-cumulative" onclick="setDailyPaceMode('cumulative')">Cumulative Volume</button>
+          </div>
+        </div>
+        <div class="chart-wrapper" style="height: 350px !important;">
+          <canvas id="dailyPaceChart"></canvas>
+        </div>
+      </div>
     </section>
 
     <!-- Historical Comparison Table Section -->
@@ -488,10 +505,10 @@
         </div>
       </div>
 
-      <!-- Feature: District Breakdown -->
+      <!-- Feature: District Breakdown by Party -->
       <div class="full-width-feature-container card-surface" id="section-districts" style="margin-bottom: 24px;">
         <div class="chart-header-row header-flex-wrap">
-          <h3 class="major-feature-title">District Breakdown</h3>
+          <h3 class="major-feature-title">District Breakdown by Party</h3>
           <div class="feature-controls">
             <div class="view-switch-group" role="group" aria-label="District Type Switch">
               <button type="button" class="view-switch-btn active" id="btn-dist-commission" onclick="setDistrictView('commission')">Commission</button>
@@ -537,6 +554,32 @@
         </div>
       </div>
 
+      <!-- Feature: District Share of Total County Ballots -->
+      <div class="full-width-feature-container card-surface" style="margin-bottom: 24px;">
+        <div class="chart-header-row header-flex-wrap">
+          <div>
+            <h3 class="major-feature-title">District Share of Total County Ballots</h3>
+            <p class="feature-subtitle">Proportion of total countywide early voting turnout cast per district.</p>
+          </div>
+          <div class="feature-controls">
+            <div class="view-switch-group" role="group" aria-label="District Share Type Switch">
+              <button type="button" class="view-switch-btn active" id="btn-dist-share-commission" onclick="setDistrictShareType('commission')">Commission</button>
+              <button type="button" class="view-switch-btn" id="btn-dist-share-senate" onclick="setDistrictShareType('senate')">Senate</button>
+              <button type="button" class="view-switch-btn" id="btn-dist-share-house" onclick="setDistrictShareType('house')">House</button>
+              <button type="button" class="view-switch-btn" id="btn-dist-share-school" onclick="setDistrictShareType('school')">School</button>
+              <button type="button" class="view-switch-btn" id="btn-dist-share-city" onclick="setDistrictShareType('city')">City</button>
+            </div>
+            <div class="view-switch-group" role="group" aria-label="District Share Mode Switch">
+              <button type="button" class="view-switch-btn active" id="btn-dist-share-pct" onclick="setDistrictShareMode('pct')">% Share</button>
+              <button type="button" class="view-switch-btn" id="btn-dist-share-count" onclick="setDistrictShareMode('count')">Voters</button>
+            </div>
+          </div>
+        </div>
+        <div class="chart-wrapper" style="height: 360px !important;">
+          <canvas id="districtShareChart"></canvas>
+        </div>
+      </div>
+
       <!-- Feature: Top 10 Precincts by Turnout -->
       <div class="full-width-feature-container card-surface" id="section-precincts" style="margin-bottom: 24px;">
         <div class="chart-header-row header-flex-wrap">
@@ -551,6 +594,23 @@
         </div>
         <div class="chart-wrapper" style="height: 420px !important;">
           <canvas id="top10PrecinctChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Feature: Competitive Battleground Precincts -->
+      <div class="full-width-feature-container card-surface" style="margin-bottom: 24px;">
+        <div class="chart-header-row header-flex-wrap">
+          <div>
+            <h3 class="major-feature-title">Competitive Battleground Precincts</h3>
+            <p class="feature-subtitle">Ranked by closest primary split margin between Republican and Democrat participation (50/50 Index).</p>
+          </div>
+          <div class="view-switch-group" role="group" aria-label="Competitive Precinct View Switch">
+            <button type="button" class="view-switch-btn active" id="btn-comp-close" onclick="setCompetitivePrecinctMode('close')">Closest Split (50/50)</button>
+            <button type="button" class="view-switch-btn" id="btn-comp-wide" onclick="setCompetitivePrecinctMode('wide')">Widest Margin</button>
+          </div>
+        </div>
+        <div class="chart-wrapper" style="height: 420px !important;">
+          <canvas id="competitivePrecinctChart"></canvas>
         </div>
       </div>
 
