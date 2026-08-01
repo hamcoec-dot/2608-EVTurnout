@@ -31,6 +31,24 @@ var ftDailyTrendChartRef = null;
 var ftLocationChartRef = null;
 var ftDistrictChartRef = null;
 
+// Top 5 Precinct Analytics Chart Refs & State
+var top5LocationPrecinctChartRef = null;
+var top5AgePrecinctChartRef = null;
+var top5FTPrecinctChartRef = null;
+var top5DistrictPrecinctChartRef = null;
+
+var currentTop5LocLocation = 'ALL';
+var currentTop5LocMode = 'count';
+
+var currentTop5AgeBracket = 'ALL';
+var currentTop5AgeMode = 'count';
+
+var currentFTTop5PrecinctMode = 'count';
+
+var currentTop5DistType = 'commission';
+var currentTop5DistName = 'ALL';
+var currentTop5DistMode = 'count';
+
 var currentFTPartyMode = 'pct';
 var currentFTSexMode = 'pct';
 var currentFTAgeMode = 'pct';
@@ -71,6 +89,10 @@ function initApp() {
   // Render Comparison Table
   renderComparisonTable();
   
+  // Populate Top 5 precinct select dropdowns
+  populateTop5LocationSelectOptions();
+  populateTop5DistrictSelectOptions();
+
   // Render Charts
   renderCharts();
 
@@ -750,9 +772,14 @@ function renderCharts() {
   if (districtChartRef) districtChartRef.destroy();
   if (precinctChartRef) precinctChartRef.destroy();
   if (top10PrecinctChartRef) top10PrecinctChartRef.destroy();
+  if (top5LocationPrecinctChartRef) top5LocationPrecinctChartRef.destroy();
+  if (top5AgePrecinctChartRef) top5AgePrecinctChartRef.destroy();
+  if (top5FTPrecinctChartRef) top5FTPrecinctChartRef.destroy();
+  if (top5DistrictPrecinctChartRef) top5DistrictPrecinctChartRef.destroy();
 
   renderFirstTimeCharts();
   renderDemographicCharts();
+  renderTop5LocationPrecinctChart();
   
   var daily = TURNOUT_DATA.dailyTurnout;
   
@@ -1465,8 +1492,10 @@ function renderDemographicCharts() {
   if (!TURNOUT_DATA || !TURNOUT_DATA.demographics) return;
 
   renderAgeChart();
+  renderTop5AgePrecinctChart();
   renderGenderChart();
   renderDistrictChart();
+  renderTop5DistrictPrecinctChart();
   renderTop10PrecinctChart();
   renderPrecinctChart();
 }
@@ -2051,6 +2080,7 @@ function renderFirstTimeCharts() {
   if (ftDailyTrendChartRef) ftDailyTrendChartRef.destroy();
   if (ftLocationChartRef) ftLocationChartRef.destroy();
   if (ftDistrictChartRef) ftDistrictChartRef.destroy();
+  if (top5FTPrecinctChartRef) top5FTPrecinctChartRef.destroy();
 
   renderFTPartyChart();
   renderFTSexChart();
@@ -2058,6 +2088,7 @@ function renderFirstTimeCharts() {
   renderFTDailyTrendChart();
   renderFTLocationChart();
   renderFTDistrictChart();
+  renderTop5FTPrecinctChart();
 }
 
 function setFTPartyMode(mode) {
@@ -2546,4 +2577,288 @@ function renderFTDistrictChart() {
       }
     }
   });
+}
+
+/* ==========================================================================
+   Top 5 Precinct Analytics Visualizations (Location, Age, FT, Districts)
+   ========================================================================== */
+
+function populateTop5LocationSelectOptions() {
+  var sel = document.getElementById('top5-loc-select');
+  if (!sel || !TURNOUT_DATA || !TURNOUT_DATA.demographics || !TURNOUT_DATA.demographics.precinctsByLocation) return;
+
+  var locs = Object.keys(TURNOUT_DATA.demographics.precinctsByLocation).sort();
+  var currVal = sel.value || 'ALL';
+  sel.innerHTML = '<option value="ALL">All Locations Combined</option>';
+
+  locs.forEach(function(loc) {
+    var opt = document.createElement('option');
+    opt.value = loc;
+    opt.textContent = loc;
+    sel.appendChild(opt);
+  });
+  sel.value = currVal;
+}
+
+function populateTop5DistrictSelectOptions() {
+  var sel = document.getElementById('top5-dist-select');
+  if (!sel || !TURNOUT_DATA || !TURNOUT_DATA.demographics || !TURNOUT_DATA.demographics.precinctsByDistrict) return;
+
+  var distDict = TURNOUT_DATA.demographics.precinctsByDistrict[currentTop5DistType] || {};
+  var distNames = Object.keys(distDict).sort(function(a, b) {
+    var numA = parseInt(a.replace(/\D/g, '')) || 0;
+    var numB = parseInt(b.replace(/\D/g, '')) || 0;
+    if (numA !== numB) return numA - numB;
+    return a.localeCompare(b);
+  });
+
+  var currVal = sel.value || 'ALL';
+  sel.innerHTML = '<option value="ALL">All Districts Combined</option>';
+
+  distNames.forEach(function(dName) {
+    var opt = document.createElement('option');
+    opt.value = dName;
+    opt.textContent = dName;
+    sel.appendChild(opt);
+  });
+  if (distNames.indexOf(currVal) !== -1) {
+    sel.value = currVal;
+  } else {
+    sel.value = 'ALL';
+  }
+  currentTop5DistName = sel.value;
+}
+
+function createTop5PrecinctChart(canvasId, currentRef, precinctsDict, isPctMode) {
+  var ctx = document.getElementById(canvasId);
+  if (!ctx) return null;
+
+  if (currentRef) {
+    currentRef.destroy();
+  }
+
+  var items = [];
+  if (precinctsDict) {
+    for (var name in precinctsDict) {
+      if (precinctsDict.hasOwnProperty(name)) {
+        var group = precinctsDict[name];
+        var tot = group.total || (group.republican + group.democrat + group.general) || 0;
+        if (tot > 0) {
+          items.push({ name: name, data: group, total: tot });
+        }
+      }
+    }
+  }
+
+  items.sort(function(a, b) { return b.total - a.total; });
+  var top5 = items.slice(0, 5);
+
+  var labels = [];
+  var repData = [];
+  var demData = [];
+  var genData = [];
+
+  for (var i = 0; i < top5.length; i++) {
+    var item = top5[i];
+    var group = item.data;
+    var tot = item.total || 1;
+
+    labels.push((i + 1) + ". " + item.name);
+
+    if (isPctMode) {
+      repData.push(parseFloat(((group.republican / tot) * 100).toFixed(1)));
+      demData.push(parseFloat(((group.democrat / tot) * 100).toFixed(1)));
+      genData.push(parseFloat(((group.general / tot) * 100).toFixed(1)));
+    } else {
+      repData.push(group.republican || 0);
+      demData.push(group.democrat || 0);
+      genData.push(group.general || 0);
+    }
+  }
+
+  return new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: isPctMode ? 'Republican %' : 'Republican',
+          data: repData,
+          backgroundColor: '#D32F2F',
+          barPercentage: 0.75,
+          categoryPercentage: 0.85
+        },
+        {
+          label: isPctMode ? 'Democrat %' : 'Democrat',
+          data: demData,
+          backgroundColor: '#1976D2',
+          barPercentage: 0.75,
+          categoryPercentage: 0.85
+        },
+        {
+          label: isPctMode ? 'General %' : 'General/Other',
+          data: genData,
+          backgroundColor: '#F57C00',
+          barPercentage: 0.75,
+          categoryPercentage: 0.85
+        }
+      ]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        x: {
+          stacked: true,
+          max: isPctMode ? 100 : undefined,
+          grid: { color: '#E2E8F0' },
+          title: { display: true, text: isPctMode ? 'Partisan Share (%)' : 'Voter Count', font: { size: 11, weight: 'bold' } }
+        },
+        y: {
+          stacked: true,
+          grid: { display: false },
+          ticks: { font: { size: 11, weight: '600' }, color: '#1B2A4A' }
+        }
+      },
+      plugins: {
+        legend: { position: 'top', labels: { boxWidth: 12, font: { size: 11, weight: '600' } } },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              var val = context.parsed.x;
+              var label = context.dataset.label || '';
+              return isPctMode ? label + ': ' + val + '%' : label + ': ' + formatNumber(val) + ' voters';
+            }
+          }
+        },
+        datalabels: {
+          color: '#FFFFFF',
+          font: { weight: 'bold', size: 10 },
+          formatter: function(value) {
+            if (isPctMode) return value > 8 ? value.toFixed(0) + '%' : '';
+            return value > 10 ? formatNumber(value) : '';
+          }
+        }
+      }
+    }
+  });
+}
+
+function setTop5LocLocation(loc) {
+  currentTop5LocLocation = loc;
+  renderTop5LocationPrecinctChart();
+}
+
+function setTop5LocMode(mode) {
+  currentTop5LocMode = mode;
+  var btnCount = document.getElementById('btn-top5-loc-count');
+  var btnPct = document.getElementById('btn-top5-loc-pct');
+  if (btnCount) btnCount.classList.toggle('active', mode === 'count');
+  if (btnPct) btnPct.classList.toggle('active', mode === 'pct');
+  renderTop5LocationPrecinctChart();
+}
+
+function renderTop5LocationPrecinctChart() {
+  var dict = null;
+  if (currentTop5LocLocation === 'ALL') {
+    dict = TURNOUT_DATA.demographics ? TURNOUT_DATA.demographics.precincts : {};
+  } else if (TURNOUT_DATA.demographics && TURNOUT_DATA.demographics.precinctsByLocation) {
+    dict = TURNOUT_DATA.demographics.precinctsByLocation[currentTop5LocLocation] || {};
+  }
+  top5LocationPrecinctChartRef = createTop5PrecinctChart('top5LocationPrecinctChart', top5LocationPrecinctChartRef, dict, currentTop5LocMode === 'pct');
+}
+
+function setTop5AgeBracket(bracket) {
+  currentTop5AgeBracket = bracket;
+  var map = { 'ALL': 'btn-top5-age-all', '18-29': 'btn-top5-age-18', '30-49': 'btn-top5-age-30', '50-64': 'btn-top5-age-50', '65+': 'btn-top5-age-65' };
+  Object.keys(map).forEach(function(k) {
+    var btn = document.getElementById(map[k]);
+    if (btn) btn.classList.toggle('active', k === bracket);
+  });
+  renderTop5AgePrecinctChart();
+}
+
+function setTop5AgeMode(mode) {
+  currentTop5AgeMode = mode;
+  var btnCount = document.getElementById('btn-top5-age-count');
+  var btnPct = document.getElementById('btn-top5-age-pct');
+  if (btnCount) btnCount.classList.toggle('active', mode === 'count');
+  if (btnPct) btnPct.classList.toggle('active', mode === 'pct');
+  renderTop5AgePrecinctChart();
+}
+
+function renderTop5AgePrecinctChart() {
+  var dict = null;
+  if (currentTop5AgeBracket === 'ALL') {
+    dict = TURNOUT_DATA.demographics ? TURNOUT_DATA.demographics.precincts : {};
+  } else if (TURNOUT_DATA.demographics && TURNOUT_DATA.demographics.precinctsByAgeGroup) {
+    dict = TURNOUT_DATA.demographics.precinctsByAgeGroup[currentTop5AgeBracket] || {};
+  }
+  top5AgePrecinctChartRef = createTop5PrecinctChart('top5AgePrecinctChart', top5AgePrecinctChartRef, dict, currentTop5AgeMode === 'pct');
+}
+
+function setFTTop5PrecinctMode(mode) {
+  currentFTTop5PrecinctMode = mode;
+  var btnCount = document.getElementById('btn-ft-top5-count');
+  var btnPct = document.getElementById('btn-ft-top5-pct');
+  if (btnCount) btnCount.classList.toggle('active', mode === 'count');
+  if (btnPct) btnPct.classList.toggle('active', mode === 'pct');
+  renderTop5FTPrecinctChart();
+}
+
+function renderTop5FTPrecinctChart() {
+  var dict = (TURNOUT_DATA.firstTimeVoters && TURNOUT_DATA.firstTimeVoters.precincts) ? TURNOUT_DATA.firstTimeVoters.precincts : {};
+  top5FTPrecinctChartRef = createTop5PrecinctChart('top5FTPrecinctChart', top5FTPrecinctChartRef, dict, currentFTTop5PrecinctMode === 'pct');
+}
+
+function setTop5DistrictType(type) {
+  currentTop5DistType = type;
+  ['commission', 'senate', 'house', 'school', 'city'].forEach(function(t) {
+    var btn = document.getElementById('btn-top5-dist-' + t);
+    if (btn) btn.classList.toggle('active', t === type);
+  });
+  populateTop5DistrictSelectOptions();
+  renderTop5DistrictPrecinctChart();
+}
+
+function setTop5DistrictName(name) {
+  currentTop5DistName = name;
+  renderTop5DistrictPrecinctChart();
+}
+
+function setTop5DistrictMode(mode) {
+  currentTop5DistMode = mode;
+  var btnCount = document.getElementById('btn-top5-dist-count');
+  var btnPct = document.getElementById('btn-top5-dist-pct');
+  if (btnCount) btnCount.classList.toggle('active', mode === 'count');
+  if (btnPct) btnPct.classList.toggle('active', mode === 'pct');
+  renderTop5DistrictPrecinctChart();
+}
+
+function renderTop5DistrictPrecinctChart() {
+  var dict = null;
+  if (TURNOUT_DATA.demographics && TURNOUT_DATA.demographics.precinctsByDistrict) {
+    var distGroup = TURNOUT_DATA.demographics.precinctsByDistrict[currentTop5DistType] || {};
+    if (currentTop5DistName === 'ALL') {
+      dict = {};
+      for (var dName in distGroup) {
+        if (distGroup.hasOwnProperty(dName)) {
+          var pDict = distGroup[dName];
+          for (var pName in pDict) {
+            if (pDict.hasOwnProperty(pName)) {
+              if (!dict[pName]) dict[pName] = { total: 0, republican: 0, democrat: 0, general: 0 };
+              dict[pName].total += pDict[pName].total || 0;
+              dict[pName].republican += pDict[pName].republican || 0;
+              dict[pName].democrat += pDict[pName].democrat || 0;
+              dict[pName].general += pDict[pName].general || 0;
+            }
+          }
+        }
+      }
+    } else {
+      dict = distGroup[currentTop5DistName] || {};
+    }
+  }
+  top5DistrictPrecinctChartRef = createTop5PrecinctChart('top5DistrictPrecinctChart', top5DistrictPrecinctChartRef, dict, currentTop5DistMode === 'pct');
 }

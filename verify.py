@@ -344,13 +344,40 @@ def main():
                 log_fail("CSV-004", f"Mismatch: data.js grandTotal={js_grand_total}, partyTotals={js_party_total}, CSV count={voter_total_count}")
 
         if demographics and isinstance(demographics, dict):
-            required_demo_keys = ["ageGroups", "sex", "districts", "precincts"]
+            required_demo_keys = ["ageGroups", "sex", "districts", "precincts", "precinctsByLocation", "precinctsByAgeGroup", "precinctsByDistrict"]
             if all(k in demographics for k in required_demo_keys):
-                log_pass("CSV-005", "data.js contains complete demographics object (ageGroups, sex, districts, precincts).")
+                log_pass("CSV-005", "data.js contains complete demographics object including precinct cross-tabulations.")
             else:
                 log_fail("CSV-005", f"data.js demographics missing keys. Found: {list(demographics.keys())}")
         else:
             log_fail("CSV-005", "data.js is missing demographics object.")
+
+        # CSV-006: Top 5 Precinct cross-tabulation data integrity
+        ft_data = data_js_loaded.get("firstTimeVoters", {})
+        has_ft_precincts = "precincts" in ft_data and isinstance(ft_data["precincts"], dict)
+        has_loc_precincts = "precinctsByLocation" in demographics and isinstance(demographics["precinctsByLocation"], dict)
+        has_age_precincts = "precinctsByAgeGroup" in demographics and isinstance(demographics["precinctsByAgeGroup"], dict)
+        has_dist_precincts = "precinctsByDistrict" in demographics and isinstance(demographics["precinctsByDistrict"], dict)
+
+        if has_ft_precincts and has_loc_precincts and has_age_precincts and has_dist_precincts:
+            # Verify numerical totals inside cross-tabulations match expected totals
+            ft_sum = sum(p_data.get("total", 0) for p_data in ft_data["precincts"].values())
+            ft_expected = ft_data.get("total", 0)
+
+            loc_sum = sum(sum(p_data.get("total", 0) for p_data in p_map.values()) for p_map in demographics["precinctsByLocation"].values())
+            age_sum = sum(sum(p_data.get("total", 0) for p_data in p_map.values()) for p_map in demographics["precinctsByAgeGroup"].values())
+
+            if ft_sum == ft_expected and loc_sum == voter_total_count and age_sum == voter_total_count:
+                log_pass("CSV-006", f"Verified exact numerical totals for Top 5 Precinct categories (FT sum={ft_sum}, Loc sum={loc_sum}, Age sum={age_sum}) against CSV dataset.")
+            else:
+                log_fail("CSV-006", f"Numerical mismatch in precinct totals: FT sum={ft_sum}/{ft_expected}, Loc sum={loc_sum}/{voter_total_count}, Age sum={age_sum}/{voter_total_count}")
+        else:
+            missing_structs = []
+            if not has_ft_precincts: missing_structs.append("firstTimeVoters.precincts")
+            if not has_loc_precincts: missing_structs.append("demographics.precinctsByLocation")
+            if not has_age_precincts: missing_structs.append("demographics.precinctsByAgeGroup")
+            if not has_dist_precincts: missing_structs.append("demographics.precinctsByDistrict")
+            log_fail("CSV-006", f"Missing Top 5 precinct data structures: {', '.join(missing_structs)}")
 
     print("============================================")
     print(f"  Results: {passes} PASS | {failures} FAIL | {warnings} WARN")

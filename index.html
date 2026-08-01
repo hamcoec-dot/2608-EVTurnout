@@ -258,6 +258,28 @@
           <canvas id="partyDistributionChart"></canvas>
         </div>
       </div>
+
+      <!-- Row 3: Top 5 Precincts by Location -->
+      <div class="full-width-feature-container card-surface" style="grid-column: 1 / -1; margin-top: 24px;">
+        <div class="chart-header-row header-flex-wrap">
+          <div>
+            <h3 class="major-feature-title">Top 5 Precincts by Location</h3>
+            <p class="feature-subtitle">Highest turnout precincts ranked by location and partisan distribution.</p>
+          </div>
+          <div class="feature-controls">
+            <select id="top5-loc-select" class="location-select-field" onchange="setTop5LocLocation(this.value)">
+              <option value="ALL">All Locations Combined</option>
+            </select>
+            <div class="view-switch-group" role="group" aria-label="Top 5 Location View Switch">
+              <button type="button" class="view-switch-btn active" id="btn-top5-loc-count" onclick="setTop5LocMode('count')">Voters</button>
+              <button type="button" class="view-switch-btn" id="btn-top5-loc-pct" onclick="setTop5LocMode('pct')">% Share</button>
+            </div>
+          </div>
+        </div>
+        <div class="chart-wrapper" style="height: 350px !important;">
+          <canvas id="top5LocationPrecinctChart"></canvas>
+        </div>
+      </div>
     </section>
 
     <!-- First-Time Hamilton County Voters Insights Section -->
@@ -374,26 +396,41 @@
         </div>
       </div>
 
-      <!-- Feature: First-Time Co. Voters District Breakdown -->
-      <div class="full-width-feature-container card-surface" style="margin-top: 24px; margin-bottom: 24px;">
-        <div class="chart-header-row header-flex-wrap">
-          <h3 class="major-feature-title">District Distribution of First-Time Co. Voters</h3>
-          <div class="feature-controls">
-            <div class="view-switch-group" role="group" aria-label="First-Time District Type Switch">
-              <button type="button" class="view-switch-btn active" id="btn-ft-dist-commission" onclick="setFTDistrictView('commission')">Commission</button>
-              <button type="button" class="view-switch-btn" id="btn-ft-dist-senate" onclick="setFTDistrictView('senate')">Senate</button>
-              <button type="button" class="view-switch-btn" id="btn-ft-dist-house" onclick="setFTDistrictView('house')">House</button>
-              <button type="button" class="view-switch-btn" id="btn-ft-dist-school" onclick="setFTDistrictView('school')">School</button>
-              <button type="button" class="view-switch-btn" id="btn-ft-dist-city" onclick="setFTDistrictView('city')">City</button>
-            </div>
-            <div class="view-switch-group" role="group" aria-label="First-Time District Mode Switch">
-              <button type="button" class="view-switch-btn active" id="btn-ft-dist-unit-pct" onclick="setFTDistrictMode('pct')">% Share</button>
-              <button type="button" class="view-switch-btn" id="btn-ft-dist-unit-count" onclick="setFTDistrictMode('count')">Voters</button>
+      <!-- Row 4: Top 5 Precincts & District Distribution for First-Time Voters -->
+      <div class="visualization-grid" style="margin-top: 24px; margin-bottom: 24px;">
+        <div class="chart-container card-surface">
+          <div class="chart-header-row header-flex-wrap">
+            <h3>Top 5 Precincts (First-Time Co. Voters)</h3>
+            <div class="view-switch-group" role="group" aria-label="First-Time Top 5 Precinct Mode Switch">
+              <button type="button" class="view-switch-btn active" id="btn-ft-top5-count" onclick="setFTTop5PrecinctMode('count')">Voters</button>
+              <button type="button" class="view-switch-btn" id="btn-ft-top5-pct" onclick="setFTTop5PrecinctMode('pct')">% Share</button>
             </div>
           </div>
+          <div class="chart-wrapper">
+            <canvas id="top5FTPrecinctChart"></canvas>
+          </div>
         </div>
-        <div class="chart-wrapper" style="height: 350px !important;">
-          <canvas id="ftDistrictChart"></canvas>
+
+        <div class="chart-container card-surface">
+          <div class="chart-header-row header-flex-wrap">
+            <h3>District Distribution (First-Time Co. Voters)</h3>
+            <div class="feature-controls">
+              <div class="view-switch-group" role="group" aria-label="First-Time District Type Switch">
+                <button type="button" class="view-switch-btn active" id="btn-ft-dist-commission" onclick="setFTDistrictView('commission')">Commission</button>
+                <button type="button" class="view-switch-btn" id="btn-ft-dist-senate" onclick="setFTDistrictView('senate')">Senate</button>
+                <button type="button" class="view-switch-btn" id="btn-ft-dist-house" onclick="setFTDistrictView('house')">House</button>
+                <button type="button" class="view-switch-btn" id="btn-ft-dist-school" onclick="setFTDistrictView('school')">School</button>
+                <button type="button" class="view-switch-btn" id="btn-ft-dist-city" onclick="setFTDistrictView('city')">City</button>
+              </div>
+              <div class="view-switch-group" role="group" aria-label="First-Time District Mode Switch">
+                <button type="button" class="view-switch-btn active" id="btn-ft-dist-unit-pct" onclick="setFTDistrictMode('pct')">% Share</button>
+                <button type="button" class="view-switch-btn" id="btn-ft-dist-unit-count" onclick="setFTDistrictMode('count')">Voters</button>
+              </div>
+            </div>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="ftDistrictChart"></canvas>
+          </div>
         </div>
       </div>
     </section>
@@ -428,6 +465,29 @@
         </div>
       </div>
 
+      <!-- Feature: Top 5 Precincts for Age Brackets -->
+      <div class="full-width-feature-container card-surface" style="margin-top: 24px; margin-bottom: 24px;">
+        <div class="chart-header-row header-flex-wrap">
+          <h3 class="major-feature-title">Top 5 Precincts for Age Brackets</h3>
+          <div class="feature-controls">
+            <div class="view-switch-group" role="group" aria-label="Top 5 Age Switch">
+              <button type="button" class="view-switch-btn active" id="btn-top5-age-all" onclick="setTop5AgeBracket('ALL')">All</button>
+              <button type="button" class="view-switch-btn" id="btn-top5-age-18" onclick="setTop5AgeBracket('18-29')">18-29</button>
+              <button type="button" class="view-switch-btn" id="btn-top5-age-30" onclick="setTop5AgeBracket('30-49')">30-49</button>
+              <button type="button" class="view-switch-btn" id="btn-top5-age-50" onclick="setTop5AgeBracket('50-64')">50-64</button>
+              <button type="button" class="view-switch-btn" id="btn-top5-age-65" onclick="setTop5AgeBracket('65+')">65+</button>
+            </div>
+            <div class="view-switch-group" role="group" aria-label="Top 5 Age Mode Switch">
+              <button type="button" class="view-switch-btn active" id="btn-top5-age-count" onclick="setTop5AgeMode('count')">Voters</button>
+              <button type="button" class="view-switch-btn" id="btn-top5-age-pct" onclick="setTop5AgeMode('pct')">% Share</button>
+            </div>
+          </div>
+        </div>
+        <div class="chart-wrapper" style="height: 350px !important;">
+          <canvas id="top5AgePrecinctChart"></canvas>
+        </div>
+      </div>
+
       <!-- Feature: District Breakdown -->
       <div class="full-width-feature-container card-surface" id="section-districts" style="margin-bottom: 24px;">
         <div class="chart-header-row header-flex-wrap">
@@ -448,6 +508,32 @@
         </div>
         <div class="chart-wrapper" style="height: 350px !important;">
           <canvas id="districtChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Feature: Top 5 Precincts for Districts -->
+      <div class="full-width-feature-container card-surface" style="margin-bottom: 24px;">
+        <div class="chart-header-row header-flex-wrap">
+          <h3 class="major-feature-title">Top 5 Precincts for Districts</h3>
+          <div class="feature-controls">
+            <div class="view-switch-group" role="group" aria-label="Top 5 District Type Switch">
+              <button type="button" class="view-switch-btn active" id="btn-top5-dist-commission" onclick="setTop5DistrictType('commission')">Commission</button>
+              <button type="button" class="view-switch-btn" id="btn-top5-dist-senate" onclick="setTop5DistrictType('senate')">Senate</button>
+              <button type="button" class="view-switch-btn" id="btn-top5-dist-house" onclick="setTop5DistrictType('house')">House</button>
+              <button type="button" class="view-switch-btn" id="btn-top5-dist-school" onclick="setTop5DistrictType('school')">School</button>
+              <button type="button" class="view-switch-btn" id="btn-top5-dist-city" onclick="setTop5DistrictType('city')">City</button>
+            </div>
+            <select id="top5-dist-select" class="location-select-field" onchange="setTop5DistrictName(this.value)">
+              <option value="ALL">All Districts Combined</option>
+            </select>
+            <div class="view-switch-group" role="group" aria-label="Top 5 District Mode Switch">
+              <button type="button" class="view-switch-btn active" id="btn-top5-dist-count" onclick="setTop5DistrictMode('count')">Voters</button>
+              <button type="button" class="view-switch-btn" id="btn-top5-dist-pct" onclick="setTop5DistrictMode('pct')">% Share</button>
+            </div>
+          </div>
+        </div>
+        <div class="chart-wrapper" style="height: 350px !important;">
+          <canvas id="top5DistrictPrecinctChart"></canvas>
         </div>
       </div>
 

@@ -530,6 +530,11 @@ def main():
         else:
             return "65+"
 
+    def add_nested_voter(d_dict, key1, key2, party):
+        if key1 not in d_dict:
+            d_dict[key1] = {}
+        add_voter(d_dict[key1], key2, party)
+
     age_groups = {}
     sex_dist = {}
     commission_dist = {}
@@ -539,16 +544,39 @@ def main():
     city_dist = {}
     precinct_dist = {}
 
+    precincts_by_location = {}
+    precincts_by_age_group = {}
+    precincts_by_district = {
+        "commission": {},
+        "senate": {},
+        "house": {},
+        "school": {},
+        "city": {}
+    }
+
     for v in voter_records:
         p = v["party"]
-        add_voter(age_groups, get_age_bracket(v["age"]), p)
+        age_b = get_age_bracket(v["age"])
+        add_voter(age_groups, age_b, p)
         add_voter(sex_dist, v["sex"], p)
         if v["commission"]: add_voter(commission_dist, v["commission"], p)
         if v["senate"]: add_voter(senate_dist, v["senate"], p)
         if v["house"]: add_voter(house_dist, v["house"], p)
         if v["school"]: add_voter(school_dist, v["school"], p)
         if v["city"]: add_voter(city_dist, v["city"], p)
-        if v["precinct"]: add_voter(precinct_dist, v["precinct"], p)
+        if v["precinct"]:
+            prec = v["precinct"]
+            add_voter(precinct_dist, prec, p)
+
+            if v["location"]:
+                add_nested_voter(precincts_by_location, v["location"], prec, p)
+            add_nested_voter(precincts_by_age_group, age_b, prec, p)
+
+            if v["commission"]: add_nested_voter(precincts_by_district["commission"], v["commission"], prec, p)
+            if v["senate"]: add_nested_voter(precincts_by_district["senate"], v["senate"], prec, p)
+            if v["house"]: add_nested_voter(precincts_by_district["house"], v["house"], prec, p)
+            if v["school"]: add_nested_voter(precincts_by_district["school"], v["school"], prec, p)
+            if v["city"]: add_nested_voter(precincts_by_district["city"], v["city"], prec, p)
 
     demographics = {
         "ageGroups": age_groups,
@@ -560,7 +588,10 @@ def main():
             "school": school_dist,
             "city": city_dist
         },
-        "precincts": precinct_dist
+        "precincts": precinct_dist,
+        "precinctsByLocation": precincts_by_location,
+        "precinctsByAgeGroup": precincts_by_age_group,
+        "precinctsByDistrict": precincts_by_district
     }
 
     # Aggregate First-Time Hamilton County Voters statistics
