@@ -2962,8 +2962,8 @@ var TURNOUT_DATA = {
     "total": 31543
   },
   "summary": {
-    "totalRegistered": 218764,
-    "turnoutPercent": 0.14418734343859135,
+    "totalRegistered": 218767,
+    "turnoutPercent": 0.1441853661658294,
     "earlyVoting": 30154,
     "absenteeNH": 1389,
     "grandTotal": 31543
